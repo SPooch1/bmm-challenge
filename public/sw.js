@@ -1,9 +1,22 @@
-const CACHE_NAME = 'bmm-challenge-v1';
+const CACHE_NAME = 'bmm-challenge-v2';
 const STATIC_ASSETS = [
   '/',
+  '/index.html',
+  '/dashboard.html',
   '/css/app.css',
+  '/js/firebase-config.js',
+  '/js/auth.js',
+  '/js/challenge.js',
+  '/js/checkin.js',
+  '/js/progress.js',
+  '/js/breathing-timer.js',
+  '/js/peace-of-mind.js',
+  '/js/survey.js',
+  '/js/app.js',
   '/content/days.json',
-  '/manifest.json'
+  '/manifest.json',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png'
 ];
 
 self.addEventListener('install', event => {
@@ -23,11 +36,39 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  // Network-first for API calls, cache-first for static assets
-  if (event.request.url.includes('firestore') || event.request.url.includes('identitytoolkit')) {
-    return; // Let Firebase handle its own requests
+  const url = new URL(event.request.url);
+
+  // Let Firebase handle its own requests
+  if (url.hostname.includes('firestore') ||
+      url.hostname.includes('identitytoolkit') ||
+      url.hostname.includes('googleapis') ||
+      url.hostname.includes('gstatic')) {
+    return;
   }
+
+  // Google Fonts: cache-first (they rarely change)
+  if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
+    event.respondWith(
+      caches.match(event.request).then(cached => {
+        if (cached) return cached;
+        return fetch(event.request).then(response => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          return response;
+        });
+      })
+    );
+    return;
+  }
+
+  // App assets: network-first with cache fallback (ensures fresh deploys work)
   event.respondWith(
-    caches.match(event.request).then(cached => cached || fetch(event.request))
+    fetch(event.request)
+      .then(response => {
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });

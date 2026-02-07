@@ -124,6 +124,35 @@
     // Load check-in data for today
     await Checkin.loadCheckin(userData.id, day);
 
+    // Streak motivation
+    const progressData = await Progress.loadProgress(userData.id, day);
+    const streakBar = document.getElementById('streak-bar');
+    const streakMsg = document.getElementById('streak-msg');
+    const shareBtn = document.getElementById('share-btn');
+
+    if (progressData && progressData.streak > 0) {
+      streakBar.style.display = 'flex';
+      const s = progressData.streak;
+      if (s >= 21) streakMsg.textContent = '21-day streak! You crushed it.';
+      else if (s >= 14) streakMsg.textContent = s + '-day streak — final stretch!';
+      else if (s >= 7) streakMsg.textContent = s + '-day streak — unstoppable!';
+      else if (s >= 3) streakMsg.textContent = s + '-day streak — building momentum';
+      else streakMsg.textContent = s + '-day streak — keep going!';
+    }
+
+    // Share button (Web Share API)
+    if (navigator.share) {
+      shareBtn.style.display = 'inline-flex';
+      shareBtn.addEventListener('click', () => {
+        const pct = day > 0 ? Math.round((progressData.completedDays / day) * 100) : 0;
+        navigator.share({
+          title: 'Build More Margin Challenge',
+          text: `I'm on Day ${day} of the 21-Day Build More Margin Challenge! ${progressData.streak}-day streak, ${pct}% completion.`,
+          url: 'https://challenge.buildmoremargin.com'
+        }).catch(() => {});
+      });
+    }
+
     // Load savings
     await PeaceOfMind.load(userData.id);
 
