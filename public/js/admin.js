@@ -89,12 +89,18 @@
   });
 
   // Tabs
+  let assessmentsLoaded = false;
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+      // Lazy-load assessments
+      if (btn.dataset.tab === 'assessments' && !assessmentsLoaded && participants.length > 0) {
+        assessmentsLoaded = true;
+        loadAssessments();
+      }
     });
   });
 
@@ -182,8 +188,8 @@
       return;
     }
 
-    tbody.innerHTML = participants.map(p => `
-      <tr>
+    tbody.innerHTML = participants.map((p, i) => `
+      <tr data-idx="${i}">
         <td>${escapeHtml(p.name || p.email)}</td>
         <td>Day ${p.currentDay}</td>
         <td>${p.streak} days</td>
@@ -191,6 +197,14 @@
         <td>${p.lastCheckin}</td>
       </tr>
     `).join('');
+
+    // Click to view detail
+    tbody.querySelectorAll('tr').forEach(row => {
+      row.addEventListener('click', () => {
+        const idx = parseInt(row.dataset.idx);
+        if (participants[idx]) showParticipantDetail(participants[idx]);
+      });
+    });
   }
 
   function escapeHtml(str) {
@@ -239,6 +253,110 @@
       code += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     return code;
+  }
+
+  // Sign out
+  document.getElementById('admin-signout').addEventListener('click', () => auth.signOut());
+
+  // Participant detail overlay
+  const overlay = document.getElementById('detail-overlay');
+  document.getElementById('detail-close').addEventListener('click', () => { overlay.style.display = 'none'; });
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.style.display = 'none'; });
+
+  function showParticipantDetail(p) {
+    const content = document.getElementById('detail-content');
+    let html = `<h2 style="margin-bottom:4px;">${escapeHtml(p.name || 'Unknown')}</h2>`;
+    html += `<p style="color:var(--slate);font-size:0.85rem;margin-bottom:16px;">${escapeHtml(p.email || '')}</p>`;
+
+    // Stats
+    html += `<div style="margin-bottom:16px;">`;
+    html += `<span class="detail-stat"><strong>Day:</strong> ${p.currentDay}</span>`;
+    html += `<span class="detail-stat"><strong>Streak:</strong> ${p.streak}</span>`;
+    html += `<span class="detail-stat"><strong>Completion:</strong> ${p.completionPct}%</span>`;
+    html += `<span class="detail-stat"><strong>Completed Days:</strong> ${p.completedDays}</span>`;
+    html += `</div>`;
+
+    // Daily log history
+    html += `<h3 style="margin-bottom:8px;">Check-in History</h3>`;
+    const logDays = Object.keys(p.logs).map(Number).sort((a, b) => b - a);
+    if (logDays.length === 0) {
+      html += `<p style="color:var(--slate);font-size:0.8rem;">No check-ins yet.</p>`;
+    } else {
+      logDays.forEach(d => {
+        const log = p.logs[String(d)];
+        const icon = log.completed ? '<span style="color:var(--green);">&#10003;</span>' : '<span style="color:var(--text-light);">&#9675;</span>';
+        html += `<div class="detail-log-row">
+          ${icon}
+          <span style="font-weight:600;min-width:50px;">Day ${d}</span>
+          <span style="color:var(--slate);">Stress: ${log.stress || '-'}</span>
+          <span style="color:var(--slate);">Sleep: ${log.sleep || '-'}</span>
+          <span style="color:var(--slate);">Steps: ${log.steps || '-'}</span>
+          ${log.breathing ? '<span style="color:var(--green);font-size:0.75rem;">Breathed</span>' : ''}
+        </div>`;
+      });
+    }
+
+    content.innerHTML = html;
+    overlay.style.display = 'flex';
+  }
+
+  // Load assessments for the assessments tab
+  async function loadAssessments() {
+    const container = document.getElementById('assessment-results');
+    const QUESTIONS = [
+      { id: 'stress', label: 'Stress', inverse: true },
+      { id: 'sleep', label: 'Sleep' },
+      { id: 'financial', label: 'Financial' },
+      { id: 'energy', label: 'Energy' },
+      { id: 'overwhelm', label: 'Overwhelm', inverse: true },
+      { id: 'savings', label: 'Savings' },
+      { id: 'exercise', label: 'Exercise' },
+      { id: 'breathing', label: 'Breathing' }
+    ];
+
+    const rows = [];
+    for (const p of participants) {
+      try {
+        const preDoc = await db.collection('users').doc(p.id).collection('assessments').doc('pre').get();
+        const postDoc = await db.collection('users').doc(p.id).collection('assessments').doc('post').get();
+        if (preDoc.exists) {
+          rows.push({
+            name: p.name || p.email,
+            pre: preDoc.data().responses,
+            post: postDoc.exists ? postDoc.data().responses : null
+          });
+        }
+      } catch (e) { /* skip if no access */ }
+    }
+
+    if (rows.length === 0) {
+      container.innerHTML = '<p style="color:var(--slate);font-size:0.8rem;">No assessment data yet.</p>';
+      return;
+    }
+
+    let html = '<table class="participant-table"><thead><tr><th>Name</th>';
+    QUESTIONS.forEach(q => { html += `<th style="text-align:center;">${q.label}</th>`; });
+    html += '</tr></thead><tbody>';
+
+    rows.forEach(r => {
+      html += `<tr><td>${escapeHtml(r.name)}</td>`;
+      QUESTIONS.forEach(q => {
+        const pre = r.pre[q.id];
+        if (r.post) {
+          const post = r.post[q.id];
+          const improved = q.inverse ? post < pre : post > pre;
+          const color = improved ? 'var(--green)' : post === pre ? 'var(--slate)' : 'var(--red)';
+          html += `<td style="text-align:center;"><span style="color:var(--slate);font-size:0.75rem;">${pre}</span> <span style="color:${color};font-weight:600;">${post}</span></td>`;
+        } else {
+          html += `<td style="text-align:center;color:var(--slate);">${pre}</td>`;
+        }
+      });
+      html += '</tr>';
+    });
+
+    html += '</tbody></table>';
+    html += '<p style="color:var(--slate);font-size:0.75rem;margin-top:8px;">Pre scores in gray. Post scores in bold (green = improved, red = declined).</p>';
+    container.innerHTML = html;
   }
 
   // CSV Export
