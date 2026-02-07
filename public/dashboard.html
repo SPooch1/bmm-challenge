@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1a2332">
+  <title>BMM Challenge — Corporate Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/app.css">
+  <style>
+    .dashboard-container { max-width: 960px; margin: 0 auto; padding: 24px; }
+    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 16px 0; }
+    .metric-card { background: var(--white); border-radius: var(--radius-lg); padding: 20px; text-align: center; box-shadow: var(--shadow); border: 1px solid var(--border); }
+    .metric-value { font-size: 2rem; font-weight: 700; color: var(--navy); }
+    .metric-label { font-size: 0.8rem; color: var(--slate); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+    .participant-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    .participant-table th { text-align: left; padding: 10px 12px; background: var(--bg); color: var(--slate); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid var(--border); }
+    .participant-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+    .participant-table tr:hover td { background: var(--bg); }
+    .status-active { color: var(--green); font-weight: 600; }
+    .status-inactive { color: var(--red); }
+    .invite-section { display: flex; gap: 8px; margin: 12px 0; }
+    .invite-section input { flex: 1; }
+    .tab-bar { display: flex; gap: 4px; margin-bottom: 16px; border-bottom: 2px solid var(--border); }
+    .tab-btn { padding: 10px 20px; background: none; border: none; font-size: 0.9rem; font-weight: 600; color: var(--slate); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; }
+    .tab-btn.active { color: var(--navy); border-bottom-color: var(--green); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+  </style>
+</head>
+<body>
+  <!-- Admin Auth Screen -->
+  <div id="admin-auth" class="auth-screen">
+    <div class="logo">BMM Corporate Dashboard</div>
+    <div class="tagline">Admin Access</div>
+    <div class="auth-box">
+      <h2>Admin Sign In</h2>
+      <div id="admin-error" class="error-msg"></div>
+      <form id="admin-auth-form">
+        <div class="form-group">
+          <label for="admin-email">Email</label>
+          <input type="email" id="admin-email" required autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label for="admin-password">Password</label>
+          <input type="password" id="admin-password" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+      </form>
+      <div style="text-align:center;margin-top:12px;">
+        <a href="#" id="admin-forgot-link" style="font-size:0.85rem;color:var(--slate);">Forgot password?</a>
+      </div>
+      <div id="admin-reset-sent" style="display:none;text-align:center;color:var(--green);font-size:0.85rem;padding:8px;">Reset email sent!</div>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboard" style="display:none;">
+    <header class="app-header">
+      <h1>BMM Corporate Dashboard</h1>
+      <div class="subtitle" id="company-name"></div>
+    </header>
+
+    <div class="dashboard-container">
+      <!-- Metrics -->
+      <div class="dashboard-grid" id="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-value" id="m-participants">0</div>
+          <div class="metric-label">Participants</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" id="m-active">0%</div>
+          <div class="metric-label">Active Today</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" id="m-avg-stress">-</div>
+          <div class="metric-label">Avg Stress</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" id="m-completion">0%</div>
+          <div class="metric-label">Avg Completion</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="participants">Participants</button>
+        <button class="tab-btn" data-tab="invite">Invite</button>
+        <button class="tab-btn" data-tab="export">Export</button>
+      </div>
+
+      <!-- Participants Tab -->
+      <div class="tab-panel active" id="tab-participants">
+        <div class="card">
+          <table class="participant-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Day</th>
+                <th>Streak</th>
+                <th>Completion</th>
+                <th>Last Check-in</th>
+              </tr>
+            </thead>
+            <tbody id="participant-rows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Invite Tab -->
+      <div class="tab-panel" id="tab-invite">
+        <div class="card">
+          <h3>Invite Employees</h3>
+          <p style="margin-bottom:12px;color:var(--slate);font-size:0.875rem;">Share this invite code with your employees. They'll use it when signing up for the challenge.</p>
+          <div style="background:var(--bg);padding:16px;border-radius:var(--radius);text-align:center;margin-bottom:16px;">
+            <div style="font-size:0.75rem;color:var(--slate);text-transform:uppercase;margin-bottom:4px;">Invite Code</div>
+            <div style="font-size:1.5rem;font-weight:700;color:var(--navy);letter-spacing:2px;" id="invite-code">---</div>
+            <button class="btn btn-outline" style="margin-top:8px;" id="copy-code">Copy Code</button>
+          </div>
+          <button class="btn btn-primary btn-full" id="gen-code">Generate New Code</button>
+        </div>
+      </div>
+
+      <!-- Export Tab -->
+      <div class="tab-panel" id="tab-export">
+        <div class="card">
+          <h3>Export Data</h3>
+          <p style="margin-bottom:16px;color:var(--slate);font-size:0.875rem;">Download participant data as CSV for your HR review.</p>
+          <button class="btn btn-primary btn-full" id="export-csv">Export CSV</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="/js/firebase-config.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

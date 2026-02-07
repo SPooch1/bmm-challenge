@@ -1,0 +1,112 @@
+// Main app controller
+(async () => {
+  // Register service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(err =>
+      console.warn('SW registration failed:', err)
+    );
+  }
+
+  // Navigation
+  const navItems = document.querySelectorAll('.nav-item');
+  const views = document.querySelectorAll('.view');
+
+  function switchView(viewName) {
+    views.forEach(v => v.classList.remove('active'));
+    navItems.forEach(n => n.classList.remove('active'));
+    const target = document.getElementById('view-' + viewName);
+    if (target) target.classList.add('active');
+    const navBtn = document.querySelector(`.nav-item[data-view="${viewName}"]`);
+    if (navBtn) navBtn.classList.add('active');
+  }
+
+  navItems.forEach(item => {
+    item.addEventListener('click', () => switchView(item.dataset.view));
+  });
+
+  // Load challenge content
+  await Challenge.loadDays();
+
+  // Initialize check-in form
+  Checkin.init(
+    () => Auth.getUid(),
+    () => Challenge.getCurrentDay()
+  );
+
+  // Auth state listener
+  Auth.onAuthStateChanged(async userData => {
+    if (!userData) return;
+
+    // Calculate current day
+    const day = Challenge.calculateCurrentDay(userData.challengeStartDate);
+
+    // Check if pre-assessment needed (Day 0 or first visit)
+    const surveyView = document.getElementById('view-survey');
+    const surveyContainer = document.getElementById('survey-container');
+    const preSurvey = await Survey.getSurvey(userData.id, 'pre');
+
+    if (!preSurvey && day <= 1) {
+      // Show pre-assessment survey
+      surveyView.style.display = 'block';
+      document.getElementById('view-today').classList.remove('active');
+      surveyView.classList.add('active');
+      await Survey.showSurvey(userData.id, 'pre', surveyContainer, () => {
+        surveyView.style.display = 'none';
+        surveyView.classList.remove('active');
+        document.getElementById('view-today').classList.add('active');
+        surveyContainer.innerHTML = '<div class="card" style="text-align:center;"><h3 style="color:var(--green);">Baseline saved!</h3><p>Let\'s start your challenge.</p></div>';
+      });
+    }
+
+    // Show post-assessment on Day 21+ if pre exists but post doesn't
+    if (preSurvey && day >= 21) {
+      const postSurvey = await Survey.getSurvey(userData.id, 'post');
+      if (!postSurvey) {
+        surveyView.style.display = 'block';
+        document.getElementById('view-today').classList.remove('active');
+        surveyView.classList.add('active');
+        await Survey.showSurvey(userData.id, 'post', surveyContainer, async responses => {
+          const postData = { responses };
+          surveyView.classList.remove('active');
+          document.getElementById('view-today').classList.add('active');
+          Survey.renderComparison(preSurvey, postData, surveyContainer);
+        });
+      }
+    }
+
+    // Render today's content
+    Challenge.renderToday(day);
+
+    // Load check-in data for today
+    await Checkin.loadCheckin(userData.id, day);
+
+    // Load savings
+    await PeaceOfMind.load(userData.id);
+
+    // Profile
+    document.getElementById('profile-name').textContent = userData.name || '';
+    document.getElementById('profile-email').textContent = userData.email || '';
+    document.getElementById('profile-type').textContent = userData.companyId ? 'Company Challenge' : 'Individual Challenge';
+    document.getElementById('profile-start-date').value = userData.challengeStartDate || '';
+
+    // Profile save
+    document.getElementById('profile-save').onclick = async () => {
+      const newDate = document.getElementById('profile-start-date').value;
+      if (newDate) {
+        await db.collection('users').doc(userData.id).update({ challengeStartDate: newDate });
+        userData.challengeStartDate = newDate;
+        const newDay = Challenge.calculateCurrentDay(newDate);
+        Challenge.renderToday(newDay);
+        await Checkin.loadCheckin(userData.id, newDay);
+      }
+    };
+  });
+
+  // Load progress when switching to progress tab
+  document.querySelector('.nav-item[data-view="progress"]').addEventListener('click', async () => {
+    const uid = Auth.getUid();
+    if (uid) {
+      await Progress.loadProgress(uid, Challenge.getCurrentDay());
+    }
+  });
+})();

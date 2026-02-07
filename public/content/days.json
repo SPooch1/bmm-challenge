@@ -1,0 +1,200 @@
+[
+  {
+    "day": 0,
+    "title": "Welcome & Setup",
+    "phase": "welcome",
+    "pillar": null,
+    "videoUrl": "",
+    "exercise": "Download your Challenge Roadmap. Read it tonight. Set your starting-point scores and get oriented.",
+    "description": "For the next 21 days, we're going to reset three key areas of your life: your finances, your body, and your mindset."
+  },
+  {
+    "day": 1,
+    "title": "Reset Your Mindset",
+    "phase": "foundation",
+    "pillar": "mindset",
+    "videoUrl": "",
+    "exercise": "Write down one area where you've been cycling (money, fitness, stress). What's your honest baseline right now? Don't judge it. Just name it.",
+    "description": "Most of us live in a yo-yo: we spike, we crash, we promise to restart. Today we reset the narrative."
+  },
+  {
+    "day": 2,
+    "title": "Financial Pillar \u2014 Peace of Mind Account",
+    "phase": "foundation",
+    "pillar": "financial",
+    "videoUrl": "",
+    "exercise": "Calculate your baseline monthly needs: housing, food, utilities, essential transport. Write it down. That's your Peace of Mind number.",
+    "description": "We're building a Peace of Mind Account \u2014 a separate savings bucket that exists for one purpose: to cover 30 days of your basic expenses."
+  },
+  {
+    "day": 3,
+    "title": "Physical Pillar \u2014 Establish Baseline",
+    "phase": "foundation",
+    "pillar": "physical",
+    "videoUrl": "",
+    "exercise": "Track three things for the next 7 days: (1) daily steps or movement minutes, (2) one meal per day, and (3) sleep quality (1\u201310 scale). Just observe.",
+    "description": "Your baseline is: how much movement are you doing right now? How's your energy? Your sleep? Your basic nutrition?"
+  },
+  {
+    "day": 4,
+    "title": "Psychological Pillar \u2014 Stress Architecture",
+    "phase": "foundation",
+    "pillar": "psychological",
+    "videoUrl": "",
+    "exercise": "For three days this week, note: What triggered stress? How did your body respond? How did you recover (or not)? Write it down.",
+    "description": "Stress architecture = the invisible patterns that trigger your stress, the way you respond, and the recovery (or lack thereof)."
+  },
+  {
+    "day": 5,
+    "title": "Integration \u2014 Three-Pillar Snapshot",
+    "phase": "foundation",
+    "pillar": "integration",
+    "videoUrl": "",
+    "exercise": "Write one sentence for each pillar about your baseline. Example: 'Financially, I need $3,500/month to feel stable. Physically, I'm moving 4k steps/day. Psychologically, Monday mornings are my stress trigger.'",
+    "description": "Your financial stress often shows up as physical tension. Your sleep baseline impacts your spending baseline. We're optimizing one life with three dimensions."
+  },
+  {
+    "day": 6,
+    "title": "Weekly Reflection",
+    "phase": "foundation",
+    "pillar": "reflection",
+    "videoUrl": "",
+    "exercise": "Write down three things you noticed this week about your baseline. It could be a surprise, a pattern, or just a clearer number than before.",
+    "description": "Reflection isn't just feel-good journaling. It's the pause that lets you actually integrate what you've learned."
+  },
+  {
+    "day": 7,
+    "title": "Foundation Recap",
+    "phase": "foundation",
+    "pillar": "recap",
+    "videoUrl": "",
+    "exercise": "Pick one baseline number from this week (your Peace of Mind number, your daily step goal, your stress trigger). Write it somewhere visible. That's your anchor.",
+    "description": "In seven days, you've done something most people never do: you've gotten honest about where you actually are."
+  },
+  {
+    "day": 8,
+    "title": "Financial \u2014 Spending Baseline",
+    "phase": "momentum",
+    "pillar": "financial",
+    "videoUrl": "",
+    "exercise": "Pull your last 30 days of spending. Categorize into: Essentials (needs), Comfort (small pleasures), and Leaks (recurring charges you forgot about).",
+    "description": "Most of us spend money on autopilot. Today we make it conscious."
+  },
+  {
+    "day": 9,
+    "title": "Physical \u2014 Deepening",
+    "phase": "momentum",
+    "pillar": "physical",
+    "videoUrl": "",
+    "exercise": "Take your baseline movement from week one. Add 5\u201310% to it. If you were at 5,000 steps/day, aim for 5,250.",
+    "description": "Baseline bending works because it's gradual. Your body resists extreme change. But 5% more movement? Your body can do that."
+  },
+  {
+    "day": 10,
+    "title": "Psychological \u2014 Stress Response as Data",
+    "phase": "momentum",
+    "pillar": "psychological",
+    "videoUrl": "",
+    "exercise": "Pick one stress trigger from last week. Write down: (1) the trigger, (2) your physical response, (3) what you needed in that moment.",
+    "description": "Instead of fighting your stress response, let's learn from it. Your stress response isn't broken. It's information."
+  },
+  {
+    "day": 11,
+    "title": "Turbocharge Protocol Teaser",
+    "phase": "momentum",
+    "pillar": "integration",
+    "videoUrl": "",
+    "exercise": "Review your three-pillar baseline from Day 5. Where's the biggest opportunity for a 15% improvement?",
+    "description": "Starting Day 15, we introduce the Turbocharge Protocol \u2014 a three-day framework that creates a rapid-iteration cycle."
+  },
+  {
+    "day": 12,
+    "title": "Tracking System Audit",
+    "phase": "momentum",
+    "pillar": "integration",
+    "videoUrl": "",
+    "exercise": "Set up your tracking for the next three days: one column for financial, one for physical, one for psychological. Use whatever tool feels natural.",
+    "description": "You don't need fancy apps. You need clarity. Simple tracking beats fancy apps every time."
+  },
+  {
+    "day": 13,
+    "title": "Midpoint \u2014 Corporate Soft Mention",
+    "phase": "momentum",
+    "pillar": "reflection",
+    "videoUrl": "",
+    "exercise": "One reflection: What's one thing you wish you'd had clarity on earlier? That's the thing worth building systems around.",
+    "description": "You're halfway through the challenge. Clarity changes everything."
+  },
+  {
+    "day": 14,
+    "title": "Midpoint Reflection",
+    "phase": "momentum",
+    "pillar": "reflection",
+    "videoUrl": "",
+    "exercise": "Write down three specific changes you've noticed since Day 1. Then write one thing you want to nail in the final seven days.",
+    "description": "In two weeks, you've mapped your baseline across three pillars. You're not the same person who started 14 days ago."
+  },
+  {
+    "day": 15,
+    "title": "Turbocharge Protocol \u2014 Part 1: Alignment",
+    "phase": "activation",
+    "pillar": "integration",
+    "videoUrl": "",
+    "exercise": "Look at your three pillars. Identify one place where they're working against each other. Write down one small fix for each connection.",
+    "description": "Making sure your financial baseline, physical baseline, and psychological baseline are working together, not against each other."
+  },
+  {
+    "day": 16,
+    "title": "Turbocharge Protocol \u2014 Part 2: Optimization",
+    "phase": "activation",
+    "pillar": "integration",
+    "videoUrl": "",
+    "exercise": "For each pillar, write down your 15% move: one spending leak to cut, one movement adjustment, one stress-response change.",
+    "description": "What's one 15% improvement in each pillar that you can execute right now?"
+  },
+  {
+    "day": 17,
+    "title": "Turbocharge Protocol \u2014 Part 3: Lock In",
+    "phase": "activation",
+    "pillar": "integration",
+    "videoUrl": "",
+    "exercise": "For your three 15% moves, write down: How will you do this automatically? System beats willpower. Always.",
+    "description": "Turning those 15% improvements into habits, systems, and daily routines. Not through willpower. Through design."
+  },
+  {
+    "day": 18,
+    "title": "Habit Stacking",
+    "phase": "activation",
+    "pillar": "integration",
+    "videoUrl": "",
+    "exercise": "Identify three existing routines (morning coffee, lunch break, evening wind-down). For each one, write down one new habit you'll stack onto it.",
+    "description": "Habit Stacking = linking a new habit to an existing routine. Don't rely on motivation. Routines are permanent."
+  },
+  {
+    "day": 19,
+    "title": "Setbacks & Reset Protocol",
+    "phase": "activation",
+    "pillar": "integration",
+    "videoUrl": "",
+    "exercise": "Write down your Reset Protocol in one paragraph. What do you do when you slip financially, physically, or psychologically?",
+    "description": "You're going to slip. That's not failure. That's data. The Reset Protocol is what you do when you slip."
+  },
+  {
+    "day": 20,
+    "title": "Fusion Formula",
+    "phase": "activation",
+    "pillar": "integration",
+    "videoUrl": "",
+    "exercise": "On one sheet of paper, write: My Peace of Mind number is $___. My daily movement baseline is ___. My stress reset routine is ___.",
+    "description": "The Fusion Formula is your complete operating system for the next 90 days and beyond."
+  },
+  {
+    "day": 21,
+    "title": "90-Day Plan & Pathways Forward",
+    "phase": "activation",
+    "pillar": "integration",
+    "videoUrl": "",
+    "exercise": "Read all three pathways (Solo, 401Grow for business owners, Build More Margin for teams). Which resonates?",
+    "description": "In 21 days, you've built a complete framework. Now comes the real question: How do you sustain this? And what's next?"
+  }
+]
