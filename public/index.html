@@ -20,8 +20,16 @@
     }
   </script>
 
+  <!-- Loading Screen -->
+  <div id="loading-screen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--navy);">
+    <div style="text-align:center;color:var(--white);">
+      <div class="spinner" style="border-top-color:var(--green);margin-bottom:16px;"></div>
+      <div style="font-weight:600;">Build More Margin</div>
+    </div>
+  </div>
+
   <!-- Auth Screen -->
-  <div id="auth-screen" class="auth-screen">
+  <div id="auth-screen" class="auth-screen" style="display:none;">
     <div class="logo">Build More Margin</div>
     <div class="tagline">21-Day Challenge</div>
     <div class="auth-box">
@@ -74,6 +82,14 @@
       <!-- Today View -->
       <div id="view-today" class="view active">
         <div style="height:16px;"></div>
+
+        <!-- Completion banner (hidden until Day 21 + post-survey done) -->
+        <div id="completion-banner" class="card" style="display:none;text-align:center;background:linear-gradient(135deg,var(--navy),var(--navy-light));color:var(--white);">
+          <h2 style="margin-bottom:8px;">Challenge Complete!</h2>
+          <p style="color:var(--text-light);margin-bottom:12px;">You finished all 21 days. That puts you ahead of 95% of people who start something like this.</p>
+          <p style="font-weight:600;color:var(--green);">Your Fusion Formula is built. Now sustain it.</p>
+        </div>
+
         <div class="card">
           <div class="day-indicator">
             <div class="day-number" id="today-day-num">0</div>

@@ -52,6 +52,9 @@ const BreathingTimer = (() => {
     const phase = PHASES[currentPhase];
     currentCount = phase.duration;
 
+    // Haptic feedback on phase change
+    if (navigator.vibrate) navigator.vibrate(50);
+
     circle.className = 'breathing-circle ' + phase.class;
     textEl.textContent = phase.name;
     countEl.textContent = currentCount;
@@ -77,6 +80,7 @@ const BreathingTimer = (() => {
   function complete() {
     running = false;
     clearInterval(timerInterval);
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
     circle.className = 'breathing-circle';
     textEl.textContent = 'Complete!';
     countEl.textContent = '';

@@ -108,6 +108,9 @@ const Auth = (() => {
 
   function onAuthStateChanged(callback) {
     auth.onAuthStateChanged(async user => {
+      const loadingScreen = document.getElementById('loading-screen');
+      if (loadingScreen) loadingScreen.style.display = 'none';
+
       currentUser = user;
       if (user) {
         await loadUserData(user);

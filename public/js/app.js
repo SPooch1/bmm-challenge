@@ -77,6 +77,11 @@
     // Render today's content
     Challenge.renderToday(day);
 
+    // Show completion banner on Day 21
+    if (day >= 21) {
+      document.getElementById('completion-banner').style.display = 'block';
+    }
+
     // Load check-in data for today
     await Checkin.loadCheckin(userData.id, day);
 
