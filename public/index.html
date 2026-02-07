@@ -91,14 +91,21 @@
         </div>
 
         <div class="card">
-          <div class="day-indicator">
-            <div class="day-number" id="today-day-num">0</div>
-            <div>
-              <h3 id="today-title">Loading...</h3>
-              <div class="phase-label" id="today-phase"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <button class="btn btn-outline" id="day-prev" style="padding:8px 12px;font-size:0.8rem;" disabled>&larr;</button>
+            <div class="day-indicator" style="flex:1;justify-content:center;margin-bottom:0;">
+              <div class="day-number" id="today-day-num">0</div>
+              <div>
+                <h3 id="today-title">Loading...</h3>
+                <div class="phase-label" id="today-phase"></div>
+              </div>
             </div>
+            <button class="btn btn-outline" id="day-next" style="padding:8px 12px;font-size:0.8rem;" disabled>&rarr;</button>
           </div>
-          <span class="pillar-badge" id="today-pillar-badge" style="display:none;"></span>
+          <div style="text-align:center;margin-top:8px;">
+            <span class="pillar-badge" id="today-pillar-badge" style="display:none;"></span>
+            <a href="#" id="day-back-to-today" style="display:none;font-size:0.8rem;color:var(--green);margin-left:8px;">Back to Today</a>
+          </div>
         </div>
 
         <!-- Video -->
@@ -191,6 +198,12 @@
         <div class="card">
           <h3>Challenge Phases</h3>
           <div id="phase-list"></div>
+        </div>
+
+        <!-- Trends -->
+        <div class="card">
+          <h3>Trends</h3>
+          <div id="trend-chart"></div>
         </div>
 
         <!-- Daily log history -->

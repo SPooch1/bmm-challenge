@@ -32,10 +32,47 @@ const Progress = (() => {
     // Phase progress
     renderPhases(currentDay);
 
+    // Trends
+    renderTrends(logs, currentDay);
+
     // Log history
     renderHistory(logs, currentDay);
 
     return { completedDays, streak, pct, logs };
+  }
+
+  function renderTrends(logs, currentDay) {
+    const container = document.getElementById('trend-chart');
+    const days = [];
+    for (let d = 0; d <= Math.min(currentDay, 21); d++) {
+      if (logs[String(d)]) days.push({ day: d, ...logs[String(d)] });
+    }
+
+    if (days.length < 2) {
+      container.innerHTML = '<p style="color:var(--slate);font-size:0.8rem;">Complete at least 2 check-ins to see trends.</p>';
+      return;
+    }
+
+    function barRow(label, values, color, invert) {
+      let html = `<div style="margin-bottom:16px;"><div style="font-size:0.8rem;font-weight:600;margin-bottom:6px;">${label}</div>`;
+      html += '<div style="display:flex;align-items:flex-end;gap:3px;height:60px;">';
+      values.forEach(v => {
+        const val = v.val || 0;
+        const h = Math.max(4, (val / 10) * 100);
+        const barColor = invert ? (val <= 4 ? 'var(--green)' : val >= 7 ? 'var(--red)' : 'var(--gold)') : (val >= 7 ? 'var(--green)' : val <= 3 ? 'var(--red)' : 'var(--gold)');
+        html += `<div style="flex:1;display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:0.6rem;color:var(--slate);margin-bottom:2px;">${val}</div>
+          <div style="width:100%;height:${h}%;background:${barColor};border-radius:3px 3px 0 0;min-height:4px;"></div>
+          <div style="font-size:0.55rem;color:var(--text-light);margin-top:2px;">${v.day}</div>
+        </div>`;
+      });
+      html += '</div></div>';
+      return html;
+    }
+
+    let html = barRow('Stress', days.map(d => ({ day: d.day, val: d.stress })), 'var(--red)', true);
+    html += barRow('Sleep', days.map(d => ({ day: d.day, val: d.sleep })), 'var(--green)', false);
+    container.innerHTML = html;
   }
 
   function renderPhases(currentDay) {

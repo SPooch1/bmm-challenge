@@ -75,12 +75,51 @@
     }
 
     // Render today's content
+    let viewingDay = day;
     Challenge.renderToday(day);
 
     // Show completion banner on Day 21
     if (day >= 21) {
       document.getElementById('completion-banner').style.display = 'block';
     }
+
+    // Day navigation
+    const prevBtn = document.getElementById('day-prev');
+    const nextBtn = document.getElementById('day-next');
+    const backLink = document.getElementById('day-back-to-today');
+
+    function updateDayNav() {
+      prevBtn.disabled = viewingDay <= 0;
+      nextBtn.disabled = viewingDay >= day;
+      backLink.style.display = viewingDay !== day ? 'inline' : 'none';
+      // Hide check-in form when viewing past/future days
+      document.getElementById('checkin-card').style.display = viewingDay === day ? 'block' : 'none';
+    }
+
+    prevBtn.addEventListener('click', () => {
+      if (viewingDay > 0) {
+        viewingDay--;
+        Challenge.renderToday(viewingDay);
+        updateDayNav();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (viewingDay < day) {
+        viewingDay++;
+        Challenge.renderToday(viewingDay);
+        updateDayNav();
+      }
+    });
+
+    backLink.addEventListener('click', e => {
+      e.preventDefault();
+      viewingDay = day;
+      Challenge.renderToday(day);
+      updateDayNav();
+    });
+
+    updateDayNav();
 
     // Load check-in data for today
     await Checkin.loadCheckin(userData.id, day);

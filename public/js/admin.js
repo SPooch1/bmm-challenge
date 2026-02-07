@@ -363,12 +363,29 @@
   document.getElementById('export-csv').addEventListener('click', () => {
     if (participants.length === 0) return;
 
-    const headers = ['Name', 'Email', 'Current Day', 'Completed Days', 'Completion %', 'Streak', 'Last Check-in'];
-    const rows = participants.map(p => [
-      p.name || '', p.email || '', p.currentDay, p.completedDays, p.completionPct + '%', p.streak, p.lastCheckin
-    ]);
+    // Summary sheet
+    const headers = ['Name', 'Email', 'Current Day', 'Completed Days', 'Completion %', 'Streak', 'Last Check-in', 'Avg Stress', 'Avg Sleep'];
+    const rows = participants.map(p => {
+      const stressVals = Object.values(p.logs).map(l => l.stress).filter(Boolean);
+      const sleepVals = Object.values(p.logs).map(l => l.sleep).filter(Boolean);
+      const avgStress = stressVals.length > 0 ? (stressVals.reduce((a, b) => a + b, 0) / stressVals.length).toFixed(1) : '-';
+      const avgSleep = sleepVals.length > 0 ? (sleepVals.reduce((a, b) => a + b, 0) / sleepVals.length).toFixed(1) : '-';
+      return [p.name || '', p.email || '', p.currentDay, p.completedDays, p.completionPct + '%', p.streak, p.lastCheckin, avgStress, avgSleep];
+    });
 
-    const csv = [headers.join(','), ...rows.map(r => r.map(v => `"${v}"`).join(','))].join('\n');
+    let csv = '--- SUMMARY ---\n';
+    csv += [headers.join(','), ...rows.map(r => r.map(v => `"${v}"`).join(','))].join('\n');
+
+    // Daily detail sheet
+    csv += '\n\n--- DAILY LOGS ---\n';
+    csv += 'Name,Day,Completed,Stress,Sleep,Steps,Breathing,Meal\n';
+    participants.forEach(p => {
+      Object.keys(p.logs).sort((a, b) => Number(a) - Number(b)).forEach(day => {
+        const l = p.logs[day];
+        csv += [p.name || p.email, day, l.completed ? 'Yes' : 'No', l.stress || '', l.sleep || '', l.steps || '', l.breathing ? 'Yes' : 'No', l.meal ? 'Yes' : 'No'].map(v => `"${v}"`).join(',') + '\n';
+      });
+    });
+
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
