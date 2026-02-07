@@ -28,8 +28,16 @@ const PeaceOfMind = (() => {
     const pct = Math.min(100, Math.round((total / GOAL) * 100));
     barFill.style.width = pct + '%';
 
+    // Goal reached
+    if (total >= GOAL) {
+      amountEl.style.color = 'var(--green)';
+      barFill.style.background = 'var(--green)';
+      const goalEl = document.querySelector('.savings-goal');
+      if (goalEl) goalEl.innerHTML = '<strong style="color:var(--green);">Goal reached!</strong>';
+    }
+
     if (entries.length === 0) {
-      historyEl.innerHTML = '<p style="color:var(--slate);font-size:0.8rem;">No deposits yet.</p>';
+      historyEl.innerHTML = '<p style="color:var(--slate);font-size:0.8rem;">No deposits yet. Start small — even $5 counts.</p>';
     } else {
       historyEl.innerHTML = entries.slice().reverse().slice(0, 10).map(e =>
         `<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:0.8rem;border-bottom:1px solid var(--border);">

@@ -115,14 +115,14 @@
             </div>
 
             <div class="form-group" style="margin-top:12px;">
-              <label>Stress Level (1-10)</label>
-              <input type="range" id="checkin-stress" min="1" max="10" value="5">
+              <label>Stress Level: <span id="stress-val" style="color:var(--green);font-size:1.1em;">5</span>/10</label>
+              <input type="range" id="checkin-stress" min="1" max="10" value="5" oninput="document.getElementById('stress-val').textContent=this.value">
               <div class="range-labels"><span>Low</span><span>High</span></div>
             </div>
 
             <div class="form-group">
-              <label>Sleep Quality (1-10)</label>
-              <input type="range" id="checkin-sleep" min="1" max="10" value="5">
+              <label>Sleep Quality: <span id="sleep-val" style="color:var(--green);font-size:1.1em;">5</span>/10</label>
+              <input type="range" id="checkin-sleep" min="1" max="10" value="5" oninput="document.getElementById('sleep-val').textContent=this.value">
               <div class="range-labels"><span>Poor</span><span>Great</span></div>
             </div>
 

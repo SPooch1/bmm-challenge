@@ -14,10 +14,8 @@ const Checkin = (() => {
       document.getElementById('checkin-steps').value = data.steps || '';
       document.getElementById('checkin-breathing').checked = data.breathing || false;
       document.getElementById('checkin-meal').checked = data.meal || false;
-      // Show saved state
       submitBtn.textContent = 'Update Check-in';
     } else {
-      // Reset form
       document.getElementById('checkin-completed').checked = false;
       document.getElementById('checkin-stress').value = 5;
       document.getElementById('checkin-sleep').value = 5;
@@ -26,6 +24,9 @@ const Checkin = (() => {
       document.getElementById('checkin-meal').checked = false;
       submitBtn.textContent = 'Save Check-in';
     }
+    // Sync slider value displays
+    document.getElementById('stress-val').textContent = document.getElementById('checkin-stress').value;
+    document.getElementById('sleep-val').textContent = document.getElementById('checkin-sleep').value;
     savedMsg.style.display = 'none';
   }
 
