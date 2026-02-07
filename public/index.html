@@ -20,6 +20,11 @@
     }
   </script>
 
+  <!-- Offline Banner -->
+  <div id="offline-banner" style="display:none;position:fixed;top:0;left:0;right:0;background:var(--gold);color:var(--navy);text-align:center;padding:6px;font-size:0.8rem;font-weight:600;z-index:300;">
+    You're offline — some features may be limited
+  </div>
+
   <!-- Loading Screen -->
   <div id="loading-screen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--navy);">
     <div style="text-align:center;color:var(--white);">
@@ -63,6 +68,13 @@
         <a href="#" id="auth-toggle-link">Sign Up</a>
       </div>
     </div>
+  </div>
+
+  <!-- iOS Install Prompt -->
+  <div id="ios-install" style="display:none;position:fixed;bottom:70px;left:16px;right:16px;background:var(--white);border-radius:var(--radius-lg);padding:16px;box-shadow:var(--shadow-md);z-index:150;text-align:center;border:1px solid var(--border);">
+    <div style="font-weight:600;margin-bottom:6px;">Install this app</div>
+    <div style="font-size:0.8rem;color:var(--slate);">Tap the share button <span style="font-size:1.1em;">&#8593;</span> then "Add to Home Screen"</div>
+    <button onclick="document.getElementById('ios-install').style.display='none';localStorage.setItem('iosInstallDismissed','1');" style="margin-top:8px;background:none;border:none;color:var(--green);font-weight:600;cursor:pointer;font-size:0.85rem;">Got it</button>
   </div>
 
   <!-- Main App -->

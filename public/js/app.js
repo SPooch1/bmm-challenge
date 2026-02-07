@@ -7,6 +7,19 @@
     );
   }
 
+  // iOS PWA install prompt
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  if (isIOS && !isStandalone && !localStorage.getItem('iosInstallDismissed')) {
+    setTimeout(() => { document.getElementById('ios-install').style.display = 'block'; }, 3000);
+  }
+
+  // Offline detection
+  const offlineBanner = document.getElementById('offline-banner');
+  window.addEventListener('online', () => { offlineBanner.style.display = 'none'; });
+  window.addEventListener('offline', () => { offlineBanner.style.display = 'block'; });
+  if (!navigator.onLine) offlineBanner.style.display = 'block';
+
   // Navigation
   const navItems = document.querySelectorAll('.nav-item');
   const views = document.querySelectorAll('.view');
