@@ -247,6 +247,17 @@
       });
     }
 
+    // Breathing nudge (show after noon if not done today)
+    const hour = new Date().getHours();
+    if (hour >= 12 && !document.getElementById('checkin-breathing').checked) {
+      document.getElementById('breathing-nudge').style.display = 'block';
+      document.getElementById('nudge-breathe').addEventListener('click', e => {
+        e.preventDefault();
+        document.getElementById('breathing-nudge').style.display = 'none';
+        switchView('breathing');
+      });
+    }
+
     // Load savings
     await PeaceOfMind.load(userData.id);
 

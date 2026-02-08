@@ -27,6 +27,15 @@
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
+    @media print {
+      .app-header, .tab-bar, #participant-search, #refresh-data, #admin-signout { display: none !important; }
+      .dashboard-container { max-width: 100%; padding: 0; }
+      .tab-panel { display: block !important; page-break-inside: avoid; }
+      .detail-overlay { display: none !important; }
+      body { background: white; }
+      .metric-card, .card { box-shadow: none; border: 1px solid #ddd; }
+    }
+
     @media (max-width: 600px) {
       .dashboard-container { padding: 12px; }
       .dashboard-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
@@ -124,14 +133,18 @@
       <!-- Participants Tab -->
       <div class="tab-panel active" id="tab-participants">
         <div class="card">
+          <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;">
+            <input type="text" id="participant-search" placeholder="Search by name or email..." style="flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:0.85rem;">
+            <button class="btn btn-outline" id="refresh-data" style="padding:8px 12px;font-size:0.8rem;" title="Refresh data">&#8635;</button>
+          </div>
           <table class="participant-table">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Day</th>
-                <th>Streak</th>
-                <th>Completion</th>
-                <th>Last Check-in</th>
+                <th class="sortable" data-sort="name" style="cursor:pointer;">Name &#8597;</th>
+                <th class="sortable" data-sort="currentDay" style="cursor:pointer;">Day &#8597;</th>
+                <th class="sortable" data-sort="streak" style="cursor:pointer;">Streak &#8597;</th>
+                <th class="sortable" data-sort="completionPct" style="cursor:pointer;">Completion &#8597;</th>
+                <th class="sortable" data-sort="lastCheckinDay" style="cursor:pointer;">Last Check-in &#8597;</th>
               </tr>
             </thead>
             <tbody id="participant-rows"></tbody>

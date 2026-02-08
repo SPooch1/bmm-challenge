@@ -270,6 +270,44 @@
   // Sign out
   document.getElementById('admin-signout').addEventListener('click', () => auth.signOut());
 
+  // Refresh data
+  document.getElementById('refresh-data').addEventListener('click', async () => {
+    const btn = document.getElementById('refresh-data');
+    btn.disabled = true;
+    btn.textContent = '...';
+    await loadParticipants();
+    btn.textContent = '↻';
+    btn.disabled = false;
+  });
+
+  // Search filter
+  document.getElementById('participant-search').addEventListener('input', e => {
+    const q = e.target.value.toLowerCase();
+    const rows = document.querySelectorAll('#participant-rows tr');
+    rows.forEach(row => {
+      const text = row.textContent.toLowerCase();
+      row.style.display = text.includes(q) ? '' : 'none';
+    });
+  });
+
+  // Sortable columns
+  let sortField = 'name';
+  let sortAsc = true;
+  document.querySelectorAll('.sortable').forEach(th => {
+    th.addEventListener('click', () => {
+      const field = th.dataset.sort;
+      if (sortField === field) { sortAsc = !sortAsc; } else { sortField = field; sortAsc = true; }
+      participants.sort((a, b) => {
+        let va = field === 'name' ? (a.name || a.email || '').toLowerCase() : (a[field] || 0);
+        let vb = field === 'name' ? (b.name || b.email || '').toLowerCase() : (b[field] || 0);
+        if (va < vb) return sortAsc ? -1 : 1;
+        if (va > vb) return sortAsc ? 1 : -1;
+        return 0;
+      });
+      renderTable();
+    });
+  });
+
   // Participant detail overlay
   const overlay = document.getElementById('detail-overlay');
   document.getElementById('detail-close').addEventListener('click', () => { overlay.style.display = 'none'; });

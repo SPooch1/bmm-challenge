@@ -53,9 +53,7 @@ const Challenge = (() => {
       videoEl.src = data.videoUrl;
       placeholder.style.display = 'none';
     } else {
-      videoCard.style.display = 'block';
-      videoEl.style.display = 'none';
-      placeholder.style.display = 'flex';
+      videoCard.style.display = 'none';
     }
   }
 
