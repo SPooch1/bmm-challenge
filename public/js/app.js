@@ -57,6 +57,15 @@
   // Load challenge content
   await Challenge.loadDays();
 
+  // Exercise expand/collapse
+  document.getElementById('exercise-toggle').addEventListener('click', () => {
+    const detail = document.getElementById('exercise-detail');
+    const arrow = document.getElementById('exercise-arrow');
+    const show = detail.style.display === 'none';
+    detail.style.display = show ? 'block' : 'none';
+    arrow.style.transform = show ? 'rotate(180deg)' : '';
+  });
+
   // Initialize check-in form
   Checkin.init(
     () => Auth.getUid(),

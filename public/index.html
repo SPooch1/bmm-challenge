@@ -168,15 +168,17 @@
           </div>
         </div>
 
-        <!-- Exercise -->
+        <!-- Exercise + Description -->
         <div class="card">
-          <h3>Today's Exercise</h3>
-          <p id="today-exercise"></p>
-        </div>
-
-        <!-- Description -->
-        <div class="card">
-          <p id="today-description"></p>
+          <h3 style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;" id="exercise-toggle">
+            Today's Exercise
+            <span id="exercise-arrow" style="font-size:0.8rem;color:var(--slate);transition:transform 0.2s;">&#9660;</span>
+          </h3>
+          <p id="today-exercise" style="margin-top:8px;"></p>
+          <div id="exercise-detail" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+            <div style="font-size:0.75rem;text-transform:uppercase;color:var(--slate);letter-spacing:0.5px;margin-bottom:4px;">Why This Matters</div>
+            <p id="today-description" style="font-size:0.9rem;color:var(--slate);"></p>
+          </div>
         </div>
 
         <!-- Daily Check-in -->
@@ -213,6 +215,11 @@
             <div class="check-item">
               <input type="checkbox" id="checkin-meal">
               <label for="checkin-meal">Logged a meal</label>
+            </div>
+
+            <div class="form-group" style="margin-top:12px;">
+              <label for="checkin-notes">Notes / Journal (optional)</label>
+              <textarea id="checkin-notes" rows="3" placeholder="What did you learn today? How are you feeling?" style="resize:vertical;"></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary btn-full" id="checkin-submit">Save Check-in</button>

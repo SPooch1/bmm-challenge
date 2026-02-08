@@ -285,13 +285,14 @@
       logDays.forEach(d => {
         const log = p.logs[String(d)];
         const icon = log.completed ? '<span style="color:var(--green);">&#10003;</span>' : '<span style="color:var(--text-light);">&#9675;</span>';
-        html += `<div class="detail-log-row">
+        html += `<div class="detail-log-row" style="flex-wrap:wrap;">
           ${icon}
           <span style="font-weight:600;min-width:50px;">Day ${d}</span>
           <span style="color:var(--slate);">Stress: ${log.stress || '-'}</span>
           <span style="color:var(--slate);">Sleep: ${log.sleep || '-'}</span>
           <span style="color:var(--slate);">Steps: ${log.steps || '-'}</span>
           ${log.breathing ? '<span style="color:var(--green);font-size:0.75rem;">Breathed</span>' : ''}
+          ${log.notes ? '<div style="width:100%;padding:4px 0 0 40px;font-size:0.75rem;color:var(--slate);font-style:italic;">"' + escapeHtml(log.notes) + '"</div>' : ''}
         </div>`;
       });
     }

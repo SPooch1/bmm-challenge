@@ -14,6 +14,7 @@ const Checkin = (() => {
       document.getElementById('checkin-steps').value = data.steps || '';
       document.getElementById('checkin-breathing').checked = data.breathing || false;
       document.getElementById('checkin-meal').checked = data.meal || false;
+      document.getElementById('checkin-notes').value = data.notes || '';
       submitBtn.textContent = 'Update Check-in';
     } else {
       document.getElementById('checkin-completed').checked = false;
@@ -22,6 +23,7 @@ const Checkin = (() => {
       document.getElementById('checkin-steps').value = '';
       document.getElementById('checkin-breathing').checked = false;
       document.getElementById('checkin-meal').checked = false;
+      document.getElementById('checkin-notes').value = '';
       submitBtn.textContent = 'Save Check-in';
     }
     // Sync slider value displays
@@ -38,6 +40,7 @@ const Checkin = (() => {
       steps: parseInt(document.getElementById('checkin-steps').value) || 0,
       breathing: document.getElementById('checkin-breathing').checked,
       meal: document.getElementById('checkin-meal').checked,
+      notes: document.getElementById('checkin-notes').value.trim(),
       savedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
