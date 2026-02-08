@@ -32,6 +32,9 @@ const Progress = (() => {
     // Phase progress
     renderPhases(currentDay);
 
+    // Badges
+    renderBadges(completedDays, streak, currentDay, logs);
+
     // Trends
     renderTrends(logs, currentDay);
 
@@ -73,6 +76,29 @@ const Progress = (() => {
     let html = barRow('Stress', days.map(d => ({ day: d.day, val: d.stress })), 'var(--red)', true);
     html += barRow('Sleep', days.map(d => ({ day: d.day, val: d.sleep })), 'var(--green)', false);
     container.innerHTML = html;
+  }
+
+  function renderBadges(completedDays, streak, currentDay, logs) {
+    const breathingCount = Object.values(logs).filter(l => l.breathing).length;
+    const badges = [
+      { icon: '&#127793;', label: 'First Step', earned: completedDays >= 1, desc: 'Complete your first day' },
+      { icon: '&#128293;', label: '3-Day Streak', earned: streak >= 3, desc: '3 consecutive days' },
+      { icon: '&#9889;', label: '7-Day Streak', earned: streak >= 7, desc: '7 consecutive days' },
+      { icon: '&#127942;', label: '14-Day Streak', earned: streak >= 14, desc: '14 consecutive days' },
+      { icon: '&#128081;', label: 'Champion', earned: streak >= 21, desc: 'Complete all 21 days' },
+      { icon: '&#129504;', label: 'Breather', earned: breathingCount >= 5, desc: '5 breathing sessions' },
+      { icon: '&#128170;', label: 'Halfway', earned: completedDays >= 11, desc: 'Complete 11+ days' },
+      { icon: '&#127775;', label: 'All-Star', earned: completedDays >= 18, desc: '18+ days completed' }
+    ];
+
+    const container = document.getElementById('badges-grid');
+    container.innerHTML = badges.map(b => {
+      const cls = b.earned ? 'earned' : 'locked';
+      return `<div class="badge-item ${cls}" title="${b.desc}">
+        <div class="badge-icon">${b.icon}</div>
+        <div class="badge-label">${b.label}</div>
+      </div>`;
+    }).join('');
   }
 
   function renderPhases(currentDay) {

@@ -93,5 +93,14 @@ const BreathingTimer = (() => {
   startBtn.addEventListener('click', start);
   stopBtn.addEventListener('click', stop);
 
+  // Spacebar to start/stop when breathing view is active
+  document.addEventListener('keydown', e => {
+    if (e.code !== 'Space') return;
+    const breathingView = document.getElementById('view-breathing');
+    if (!breathingView || !breathingView.classList.contains('active')) return;
+    e.preventDefault();
+    if (running) stop(); else start();
+  });
+
   return { start, stop };
 })();
