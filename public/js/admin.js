@@ -185,12 +185,38 @@
     document.getElementById('m-avg-stress').textContent = avgStress;
     document.getElementById('m-completion').textContent = avgCompletion + '%';
 
+    // Engagement chart
+    renderEngagementChart();
+
     // At-risk indicator
     const atRiskEl = document.getElementById('m-at-risk');
     if (atRiskEl) {
       atRiskEl.textContent = atRisk;
       atRiskEl.style.color = atRisk > 0 ? 'var(--red)' : 'var(--green)';
     }
+  }
+
+  function renderEngagementChart() {
+    const container = document.getElementById('engagement-chart');
+    const total = participants.length;
+    if (total === 0) { container.innerHTML = '<span style="color:var(--slate);font-size:0.8rem;">No data yet.</span>'; return; }
+
+    const dayCounts = [];
+    for (let d = 1; d <= 21; d++) {
+      let count = 0;
+      participants.forEach(p => {
+        if (p.logs[String(d)] && p.logs[String(d)].completed) count++;
+      });
+      dayCounts.push(count);
+    }
+
+    const max = Math.max(...dayCounts, 1);
+    container.innerHTML = dayCounts.map((c, i) => {
+      const h = Math.max(4, (c / max) * 100);
+      const pct = total > 0 ? Math.round((c / total) * 100) : 0;
+      const color = pct >= 70 ? 'var(--green)' : pct >= 40 ? 'var(--gold)' : pct > 0 ? 'var(--red)' : 'var(--border)';
+      return `<div style="flex:1;height:${h}%;background:${color};border-radius:2px 2px 0 0;min-height:4px;" title="Day ${i + 1}: ${c}/${total} (${pct}%)"></div>`;
+    }).join('');
   }
 
   function renderTable() {

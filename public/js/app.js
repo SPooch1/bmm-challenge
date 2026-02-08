@@ -261,6 +261,25 @@
     // Load savings
     await PeaceOfMind.load(userData.id);
 
+    // Personalized greeting
+    const greetingEl = document.getElementById('app-greeting');
+    const hour = new Date().getHours();
+    const firstName = (userData.name || '').split(' ')[0];
+    if (firstName) {
+      const timeGreeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+      greetingEl.textContent = `${timeGreeting}, ${firstName}`;
+    }
+
+    // Step presets
+    document.querySelectorAll('.step-preset').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.getElementById('checkin-steps').value = btn.dataset.val;
+        btn.style.background = 'var(--green)';
+        btn.style.color = 'var(--white)';
+        btn.style.borderColor = 'var(--green)';
+      });
+    });
+
     // Profile
     document.getElementById('profile-name').textContent = userData.name || '';
     document.getElementById('profile-email').textContent = userData.email || '';

@@ -110,7 +110,7 @@
   <!-- Main App -->
   <div id="app" style="display:none;">
     <header class="app-header">
-      <h1>Build More Margin</h1>
+      <h1 id="app-greeting">Build More Margin</h1>
       <div class="subtitle">21-Day Challenge</div>
     </header>
 
@@ -205,6 +205,12 @@
             <div class="form-group">
               <label for="checkin-steps">Steps / Movement Minutes</label>
               <input type="number" id="checkin-steps" placeholder="e.g. 5000">
+              <div style="display:flex;gap:6px;margin-top:6px;">
+                <button type="button" class="step-preset" data-val="3000" style="flex:1;padding:4px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);font-size:0.7rem;cursor:pointer;">3K</button>
+                <button type="button" class="step-preset" data-val="5000" style="flex:1;padding:4px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);font-size:0.7rem;cursor:pointer;">5K</button>
+                <button type="button" class="step-preset" data-val="7500" style="flex:1;padding:4px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);font-size:0.7rem;cursor:pointer;">7.5K</button>
+                <button type="button" class="step-preset" data-val="10000" style="flex:1;padding:4px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);font-size:0.7rem;cursor:pointer;">10K</button>
+              </div>
             </div>
 
             <div class="check-item">
