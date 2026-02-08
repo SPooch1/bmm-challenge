@@ -485,6 +485,27 @@ input[type="range"]::-webkit-slider-thumb {
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* Dark mode */
+body.dark {
+  --navy: #0f1923;
+  --navy-light: #1a2a3c;
+  --text: #e2e8f0;
+  --text-light: #64748b;
+  --bg: #111827;
+  --white: #1e293b;
+  --border: #334155;
+  --shadow: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+body.dark .auth-box { background: var(--white); color: var(--text); }
+body.dark .auth-screen { background: var(--navy); }
+body.dark .error-msg { background: #1c1917; }
+body.dark input, body.dark select, body.dark textarea { background: var(--bg); color: var(--text); border-color: var(--border); }
+body.dark .bottom-nav { background: #0f172a; border-color: var(--border); }
+body.dark .stat-card { background: var(--bg); }
+body.dark .participant-table th { background: var(--bg); }
+
 /* Video embed */
 .video-container {
   position: relative;

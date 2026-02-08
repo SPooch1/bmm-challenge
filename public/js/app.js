@@ -7,6 +7,23 @@
     );
   }
 
+  // Dark mode
+  const darkToggle = document.getElementById('dark-toggle');
+  const darkThumb = document.getElementById('dark-thumb');
+  const darkTrack = document.getElementById('dark-track');
+  function applyDark(on) {
+    document.body.classList.toggle('dark', on);
+    darkToggle.checked = on;
+    darkThumb.style.left = on ? '24px' : '2px';
+    darkTrack.style.background = on ? 'var(--green)' : 'var(--border)';
+  }
+  if (localStorage.getItem('darkMode') === '1') applyDark(true);
+  darkToggle.addEventListener('change', () => {
+    const on = darkToggle.checked;
+    localStorage.setItem('darkMode', on ? '1' : '0');
+    applyDark(on);
+  });
+
   // iOS PWA install prompt
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
@@ -133,6 +150,23 @@
     });
 
     updateDayNav();
+
+    // Tomorrow preview
+    if (day < 21) {
+      const tomorrow = Challenge.getDayData(day + 1);
+      if (tomorrow) {
+        const card = document.getElementById('tomorrow-card');
+        card.style.display = 'block';
+        document.getElementById('tomorrow-day-num').textContent = day + 1;
+        document.getElementById('tomorrow-title').textContent = tomorrow.title;
+        const pillar = document.getElementById('tomorrow-pillar');
+        if (tomorrow.pillar) {
+          pillar.style.display = 'inline-block';
+          pillar.textContent = tomorrow.pillar;
+          pillar.className = 'pillar-badge pillar-' + tomorrow.pillar;
+        }
+      }
+    }
 
     // Load check-in data for today
     await Checkin.loadCheckin(userData.id, day);
