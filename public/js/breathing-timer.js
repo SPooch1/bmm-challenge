@@ -15,6 +15,9 @@ const BreathingTimer = (() => {
   ];
 
   const TOTAL_CYCLES = 4;
+  let sessionCount = parseInt(localStorage.getItem('breathingSessions') || '0');
+  const totalEl = document.getElementById('breathing-total');
+  if (totalEl) totalEl.textContent = sessionCount;
   let running = false;
   let timerInterval = null;
   let currentPhase = 0;
@@ -81,6 +84,9 @@ const BreathingTimer = (() => {
     running = false;
     clearInterval(timerInterval);
     if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+    sessionCount++;
+    localStorage.setItem('breathingSessions', String(sessionCount));
+    if (totalEl) totalEl.textContent = sessionCount;
     circle.className = 'breathing-circle';
     textEl.textContent = 'Complete!';
     countEl.textContent = '';

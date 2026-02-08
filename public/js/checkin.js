@@ -16,6 +16,7 @@ const Checkin = (() => {
       document.getElementById('checkin-meal').checked = data.meal || false;
       document.getElementById('checkin-notes').value = data.notes || '';
       submitBtn.textContent = 'Update Check-in';
+      clearDraft();
     } else {
       document.getElementById('checkin-completed').checked = false;
       document.getElementById('checkin-stress').value = 5;
@@ -25,6 +26,8 @@ const Checkin = (() => {
       document.getElementById('checkin-meal').checked = false;
       document.getElementById('checkin-notes').value = '';
       submitBtn.textContent = 'Save Check-in';
+      // Try loading draft if no saved data
+      loadDraft();
     }
     // Sync slider value displays
     document.getElementById('stress-val').textContent = document.getElementById('checkin-stress').value;
@@ -71,12 +74,55 @@ const Checkin = (() => {
     setTimeout(() => container.remove(), 3000);
   }
 
+  // Auto-save draft to localStorage
+  function saveDraft() {
+    const draft = {
+      completed: document.getElementById('checkin-completed').checked,
+      stress: document.getElementById('checkin-stress').value,
+      sleep: document.getElementById('checkin-sleep').value,
+      steps: document.getElementById('checkin-steps').value,
+      breathing: document.getElementById('checkin-breathing').checked,
+      meal: document.getElementById('checkin-meal').checked,
+      notes: document.getElementById('checkin-notes').value
+    };
+    localStorage.setItem('checkinDraft', JSON.stringify(draft));
+  }
+
+  function loadDraft() {
+    const raw = localStorage.getItem('checkinDraft');
+    if (!raw) return;
+    try {
+      const d = JSON.parse(raw);
+      document.getElementById('checkin-completed').checked = d.completed || false;
+      document.getElementById('checkin-stress').value = d.stress || 5;
+      document.getElementById('checkin-sleep').value = d.sleep || 5;
+      document.getElementById('checkin-steps').value = d.steps || '';
+      document.getElementById('checkin-breathing').checked = d.breathing || false;
+      document.getElementById('checkin-meal').checked = d.meal || false;
+      document.getElementById('checkin-notes').value = d.notes || '';
+      document.getElementById('stress-val').textContent = d.stress || 5;
+      document.getElementById('sleep-val').textContent = d.sleep || 5;
+    } catch (e) { /* ignore bad draft */ }
+  }
+
+  function clearDraft() {
+    localStorage.removeItem('checkinDraft');
+  }
+
   function init(getUid, getCurrentDay) {
+    // Auto-save on any input change
+    ['checkin-completed', 'checkin-stress', 'checkin-sleep', 'checkin-steps', 'checkin-breathing', 'checkin-meal', 'checkin-notes'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', saveDraft);
+      if (el) el.addEventListener('change', saveDraft);
+    });
+
     form.addEventListener('submit', async e => {
       e.preventDefault();
       submitBtn.disabled = true;
       try {
         await saveCheckin(getUid(), getCurrentDay());
+        clearDraft();
       } catch (err) {
         console.error('Failed to save check-in:', err);
       }

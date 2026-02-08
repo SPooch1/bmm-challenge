@@ -152,9 +152,12 @@
     }
     participant.streak = streak;
 
-    // Last check-in
+    // Last check-in + inactive detection
     const logDays = Object.keys(participant.logs).map(Number).sort((a, b) => b - a);
+    participant.lastCheckinDay = logDays.length > 0 ? logDays[0] : -1;
     participant.lastCheckin = logDays.length > 0 ? 'Day ' + logDays[0] : 'None';
+    participant.daysSinceCheckin = participant.lastCheckinDay >= 0 ? currentDay - participant.lastCheckinDay : currentDay;
+    participant.inactive = participant.daysSinceCheckin >= 3;
   }
 
   function renderMetrics() {
@@ -175,10 +178,19 @@
       ? Math.round(participants.reduce((sum, p) => sum + p.completionPct, 0) / total)
       : 0;
 
+    const atRisk = participants.filter(p => p.inactive).length;
+
     document.getElementById('m-participants').textContent = total;
     document.getElementById('m-active').textContent = total > 0 ? Math.round((activeToday / total) * 100) + '%' : '0%';
     document.getElementById('m-avg-stress').textContent = avgStress;
     document.getElementById('m-completion').textContent = avgCompletion + '%';
+
+    // At-risk indicator
+    const atRiskEl = document.getElementById('m-at-risk');
+    if (atRiskEl) {
+      atRiskEl.textContent = atRisk;
+      atRiskEl.style.color = atRisk > 0 ? 'var(--red)' : 'var(--green)';
+    }
   }
 
   function renderTable() {
@@ -189,8 +201,8 @@
     }
 
     tbody.innerHTML = participants.map((p, i) => `
-      <tr data-idx="${i}">
-        <td>${escapeHtml(p.name || p.email)}</td>
+      <tr data-idx="${i}" style="${p.inactive ? 'background:rgba(231,76,60,0.06);' : ''}">
+        <td>${escapeHtml(p.name || p.email)}${p.inactive ? ' <span style="color:var(--red);font-size:0.7rem;font-weight:600;">AT RISK</span>' : ''}</td>
         <td>Day ${p.currentDay}</td>
         <td>${p.streak} days</td>
         <td>${p.completionPct}%</td>
