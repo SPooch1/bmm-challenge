@@ -45,7 +45,27 @@ const Checkin = (() => {
 
     savedMsg.style.display = 'block';
     submitBtn.textContent = 'Update Check-in';
+    showConfetti();
     setTimeout(() => { savedMsg.style.display = 'none'; }, 3000);
+  }
+
+  function showConfetti() {
+    const container = document.createElement('div');
+    container.className = 'confetti-container';
+    document.body.appendChild(container);
+    const colors = ['#2ecc71', '#f39c12', '#3498db', '#e74c3c', '#9b59b6'];
+    for (let i = 0; i < 30; i++) {
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.left = Math.random() * 100 + '%';
+      piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+      piece.style.animationDelay = Math.random() * 0.5 + 's';
+      piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      piece.style.width = (6 + Math.random() * 8) + 'px';
+      piece.style.height = (6 + Math.random() * 8) + 'px';
+      container.appendChild(piece);
+    }
+    setTimeout(() => container.remove(), 3000);
   }
 
   function init(getUid, getCurrentDay) {

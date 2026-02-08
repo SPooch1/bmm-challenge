@@ -70,6 +70,36 @@
     </div>
   </div>
 
+  <!-- Onboarding Overlay -->
+  <div id="onboarding" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:250;overflow-y:auto;">
+    <div style="max-width:400px;margin:60px auto;padding:24px;text-align:center;color:var(--white);">
+      <div style="font-size:2.5rem;margin-bottom:16px;">&#127919;</div>
+      <h2 style="color:var(--white);margin-bottom:12px;">Welcome to Your Challenge</h2>
+      <p style="color:var(--text-light);margin-bottom:24px;">Here's how to make the most of the next 21 days.</p>
+
+      <div style="text-align:left;margin-bottom:24px;">
+        <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;">
+          <div style="min-width:32px;height:32px;border-radius:50%;background:var(--green);color:var(--white);display:flex;align-items:center;justify-content:center;font-weight:700;">1</div>
+          <div><strong style="color:var(--white);">Watch & Do</strong><br><span style="color:var(--text-light);font-size:0.85rem;">Each day has a short video and an exercise. Do both.</span></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;">
+          <div style="min-width:32px;height:32px;border-radius:50%;background:var(--green);color:var(--white);display:flex;align-items:center;justify-content:center;font-weight:700;">2</div>
+          <div><strong style="color:var(--white);">Check In Daily</strong><br><span style="color:var(--text-light);font-size:0.85rem;">Log your stress, sleep, and movement. Track your streak.</span></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;">
+          <div style="min-width:32px;height:32px;border-radius:50%;background:var(--green);color:var(--white);display:flex;align-items:center;justify-content:center;font-weight:700;">3</div>
+          <div><strong style="color:var(--white);">Breathe</strong><br><span style="color:var(--text-light);font-size:0.85rem;">Use the 4x4x4x4 breathing timer. Two minutes to reset.</span></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="min-width:32px;height:32px;border-radius:50%;background:var(--green);color:var(--white);display:flex;align-items:center;justify-content:center;font-weight:700;">4</div>
+          <div><strong style="color:var(--white);">Save</strong><br><span style="color:var(--text-light);font-size:0.85rem;">Build your Peace of Mind Account. Goal: $500.</span></div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-full" id="onboarding-start">Let's Go</button>
+    </div>
+  </div>
+
   <!-- iOS Install Prompt -->
   <div id="ios-install" style="display:none;position:fixed;bottom:70px;left:16px;right:16px;background:var(--white);border-radius:var(--radius-lg);padding:16px;box-shadow:var(--shadow-md);z-index:150;text-align:center;border:1px solid var(--border);">
     <div style="font-weight:600;margin-bottom:6px;">Install this app</div>
@@ -125,6 +155,9 @@
           <div id="streak-msg" style="font-size:0.85rem;font-weight:600;color:var(--gold);"></div>
           <button class="btn btn-outline" id="share-btn" style="padding:6px 14px;font-size:0.75rem;display:none;">Share</button>
         </div>
+
+        <!-- Daily Quote -->
+        <div id="daily-quote" style="text-align:center;padding:0 16px 12px;font-style:italic;font-size:0.8rem;color:var(--slate);"></div>
 
         <!-- Video -->
         <div class="card" id="today-video-card" style="display:none;">

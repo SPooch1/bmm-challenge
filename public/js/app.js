@@ -151,6 +151,44 @@
 
     updateDayNav();
 
+    // Daily quote
+    const quotes = [
+      'The goal isn\'t perfection. It\'s progress.',
+      'Small daily improvements are the key to staggering long-term results.',
+      'You don\'t have to be extreme. Just consistent.',
+      'Margin isn\'t found. It\'s built.',
+      'The best time to start was yesterday. The second best time is now.',
+      'Systems beat willpower. Every time.',
+      'What you track, you improve.',
+      'Peace of mind is a financial strategy.',
+      'Stress isn\'t the enemy. Unmanaged stress is.',
+      'Your baseline is your launchpad.',
+      'Progress is progress, no matter how small.',
+      'The compound effect works for habits too.',
+      'Breathe. Reset. Continue.',
+      'Clarity changes everything.',
+      'Don\'t count the days. Make the days count.',
+      'One percent better every day.',
+      'Your future self will thank you.',
+      'Consistency compounds.',
+      'Build the system. Trust the process.',
+      'You\'re closer than you think.',
+      'Finish what you started. You\'re almost there.',
+      'Twenty-one days to a new foundation.'
+    ];
+    const quoteEl = document.getElementById('daily-quote');
+    quoteEl.textContent = '"' + (quotes[day] || quotes[day % quotes.length]) + '"';
+
+    // Onboarding (first visit only)
+    if (!localStorage.getItem('onboardingSeen') && day <= 1) {
+      const overlay = document.getElementById('onboarding');
+      overlay.style.display = 'block';
+      document.getElementById('onboarding-start').addEventListener('click', () => {
+        overlay.style.display = 'none';
+        localStorage.setItem('onboardingSeen', '1');
+      });
+    }
+
     // Tomorrow preview
     if (day < 21) {
       const tomorrow = Challenge.getDayData(day + 1);
