@@ -27,7 +27,16 @@ const Progress = (() => {
     document.getElementById('progress-day').textContent = currentDay;
     document.getElementById('progress-streak').textContent = streak;
     document.getElementById('progress-pct').textContent = pct + '%';
-    document.getElementById('progress-bar-fill').style.width = Math.round((currentDay / 21) * 100) + '%';
+
+    // Animate progress ring
+    const ringCircle = document.getElementById('progress-ring-circle');
+    const ringPct = document.getElementById('progress-ring-pct');
+    if (ringCircle) {
+      const circumference = 326.73;
+      const offset = circumference - (Math.round((currentDay / 21) * 100) / 100) * circumference;
+      setTimeout(() => { ringCircle.style.strokeDashoffset = offset; }, 100);
+      ringPct.textContent = Math.round((currentDay / 21) * 100) + '%';
+    }
 
     // Phase progress
     renderPhases(currentDay);

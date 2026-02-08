@@ -264,9 +264,12 @@
               <div class="stat-label">Complete</div>
             </div>
           </div>
-          <div class="progress-bar">
-            <div class="progress-fill" id="progress-bar-fill" style="width:0%"></div>
-          </div>
+          <svg class="progress-ring" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="52" fill="none" stroke="var(--border)" stroke-width="8"/>
+            <circle id="progress-ring-circle" cx="60" cy="60" r="52" fill="none" stroke="var(--green)" stroke-width="8" stroke-linecap="round" stroke-dasharray="326.73" stroke-dashoffset="326.73"/>
+            <text class="progress-ring-text" x="60" y="58" text-anchor="middle" id="progress-ring-pct">0%</text>
+            <text class="progress-ring-label" x="60" y="72" text-anchor="middle">COMPLETE</text>
+          </svg>
         </div>
 
         <!-- Badges -->
@@ -279,6 +282,12 @@
         <div class="card">
           <h3>Challenge Phases</h3>
           <div id="phase-list"></div>
+        </div>
+
+        <!-- Leaderboard (company participants only) -->
+        <div class="card" id="leaderboard-card" style="display:none;">
+          <h3>Team Leaderboard</h3>
+          <div id="leaderboard-list"></div>
         </div>
 
         <!-- Trends -->

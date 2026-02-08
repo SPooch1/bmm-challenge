@@ -14,6 +14,24 @@ const BreathingTimer = (() => {
     { name: 'Hold', class: 'hold-out', duration: 4 }
   ];
 
+  // Chime sound via Web Audio API
+  let audioCtx = null;
+  function playChime(freq, duration) {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.frequency.value = freq;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      osc.start(audioCtx.currentTime);
+      osc.stop(audioCtx.currentTime + duration);
+    } catch (e) { /* audio not supported */ }
+  }
+
   const TOTAL_CYCLES = 4;
   let sessionCount = parseInt(localStorage.getItem('breathingSessions') || '0');
   const totalEl = document.getElementById('breathing-total');
@@ -55,8 +73,10 @@ const BreathingTimer = (() => {
     const phase = PHASES[currentPhase];
     currentCount = phase.duration;
 
-    // Haptic feedback on phase change
+    // Haptic + audio feedback on phase change
     if (navigator.vibrate) navigator.vibrate(50);
+    const tones = { inhale: 523, hold: 659, exhale: 440, 'hold-out': 392 };
+    playChime(tones[phase.class] || 440, 0.4);
 
     circle.className = 'breathing-circle ' + phase.class;
     textEl.textContent = phase.name;
@@ -84,6 +104,8 @@ const BreathingTimer = (() => {
     running = false;
     clearInterval(timerInterval);
     if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+    playChime(784, 0.8);
+    setTimeout(() => playChime(1047, 0.6), 300);
     sessionCount++;
     localStorage.setItem('breathingSessions', String(sessionCount));
     if (totalEl) totalEl.textContent = sessionCount;

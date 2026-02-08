@@ -506,6 +506,31 @@ body.dark .bottom-nav { background: #0f172a; border-color: var(--border); }
 body.dark .stat-card { background: var(--bg); }
 body.dark .participant-table th { background: var(--bg); }
 
+/* Progress Ring */
+.progress-ring {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 12px;
+}
+
+.progress-ring circle {
+  transition: stroke-dashoffset 1s ease;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+.progress-ring-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  fill: var(--navy);
+}
+
+.progress-ring-label {
+  font-size: 0.6rem;
+  fill: var(--slate);
+  text-transform: uppercase;
+}
+
 /* Badges */
 .badge-item {
   text-align: center;

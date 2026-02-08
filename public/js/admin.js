@@ -316,7 +316,7 @@
   function showParticipantDetail(p) {
     const content = document.getElementById('detail-content');
     let html = `<h2 style="margin-bottom:4px;">${escapeHtml(p.name || 'Unknown')}</h2>`;
-    html += `<p style="color:var(--slate);font-size:0.85rem;margin-bottom:16px;">${escapeHtml(p.email || '')}</p>`;
+    html += `<p style="color:var(--slate);font-size:0.85rem;margin-bottom:16px;"><a href="mailto:${escapeHtml(p.email || '')}" style="color:var(--green);">${escapeHtml(p.email || '')}</a></p>`;
 
     // Stats
     html += `<div style="margin-bottom:16px;">`;

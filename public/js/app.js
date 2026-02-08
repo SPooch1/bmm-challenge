@@ -285,6 +285,55 @@
     const uid = Auth.getUid();
     if (uid) {
       await Progress.loadProgress(uid, Challenge.getCurrentDay());
+      // Load leaderboard for company participants
+      const user = Auth.getUser();
+      if (user && user.companyId) {
+        loadLeaderboard(user.companyId, uid);
+      }
     }
   });
+
+  async function loadLeaderboard(companyId, myUid) {
+    const card = document.getElementById('leaderboard-card');
+    const list = document.getElementById('leaderboard-list');
+    try {
+      const snapshot = await db.collection('users')
+        .where('companyId', '==', companyId)
+        .where('role', '==', 'participant')
+        .get();
+
+      if (snapshot.empty || snapshot.size < 2) return;
+
+      const entries = [];
+      const logPromises = [];
+
+      snapshot.forEach(doc => {
+        const data = { id: doc.id, ...doc.data() };
+        entries.push(data);
+        logPromises.push(
+          db.collection('users').doc(doc.id).collection('dailyLogs').get().then(logs => {
+            data.completedDays = 0;
+            logs.forEach(l => { if (l.data().completed) data.completedDays++; });
+          })
+        );
+      });
+
+      await Promise.all(logPromises);
+      entries.sort((a, b) => b.completedDays - a.completedDays);
+
+      card.style.display = 'block';
+      list.innerHTML = entries.slice(0, 10).map((e, i) => {
+        const isMe = e.id === myUid;
+        const medal = i === 0 ? '&#129351;' : i === 1 ? '&#129352;' : i === 2 ? '&#129353;' : '';
+        const firstName = (e.name || 'Anonymous').split(' ')[0];
+        return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);${isMe ? 'font-weight:700;color:var(--green);' : ''}">
+          <span style="min-width:28px;text-align:center;font-size:${medal ? '1.2rem' : '0.85rem'};">${medal || (i + 1)}</span>
+          <span style="flex:1;">${firstName}${isMe ? ' (You)' : ''}</span>
+          <span style="font-size:0.85rem;color:var(--slate);">${e.completedDays} days</span>
+        </div>`;
+      }).join('');
+    } catch (e) {
+      // Can't load leaderboard — might not have permissions
+    }
+  }
 })();
