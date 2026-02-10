@@ -263,7 +263,6 @@
 
     // Personalized greeting
     const greetingEl = document.getElementById('app-greeting');
-    const hour = new Date().getHours();
     const firstName = (userData.name || '').split(' ')[0];
     if (firstName) {
       const timeGreeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
