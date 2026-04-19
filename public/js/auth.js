@@ -102,6 +102,18 @@ const Auth = (() => {
     const doc = await db.collection('users').doc(user.uid).get();
     if (doc.exists) {
       userData = { id: user.uid, ...doc.data() };
+    } else {
+      // Doc missing — create it with defaults so app.js doesn't crash on userData.challengeStartDate
+      const defaults = {
+        email: user.email || '',
+        name: user.displayName || '',
+        role: 'participant',
+        companyId: null,
+        challengeStartDate: new Date().toISOString().split('T')[0],
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      await db.collection('users').doc(user.uid).set(defaults);
+      userData = { id: user.uid, ...defaults };
     }
     return userData;
   }

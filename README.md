@@ -1,6 +1,6 @@
 # BMM Challenge
 
-30-day Build More Margin challenge app — daily videos, exercises, journaling, and progress tracking for business owners.
+21-day Build More Margin challenge app — daily videos, exercises, journaling, and progress tracking for teams.
 
 ## Live URLs
 

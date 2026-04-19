@@ -125,6 +125,10 @@ const Checkin = (() => {
         clearDraft();
       } catch (err) {
         console.error('Failed to save check-in:', err);
+        savedMsg.textContent = 'Save failed. Check your connection and try again.';
+        savedMsg.style.color = 'var(--red)';
+        savedMsg.style.display = 'block';
+        setTimeout(() => { savedMsg.style.display = 'none'; savedMsg.textContent = 'Saved!'; savedMsg.style.color = 'var(--green)'; }, 4000);
       }
       submitBtn.disabled = false;
     });

@@ -13,8 +13,11 @@ const PeaceOfMind = (() => {
   async function load(userId) {
     uid = userId;
     const doc = await db.collection('users').doc(uid).get();
-    const data = doc.data();
-    entries = data.savingsEntries || [];
+    if (!doc.exists || !doc.data()) {
+      entries = [];
+    } else {
+      entries = doc.data().savingsEntries || [];
+    }
     render();
   }
 

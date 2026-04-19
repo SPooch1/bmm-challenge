@@ -125,6 +125,7 @@
     await Promise.all(promises);
     renderMetrics();
     renderTable();
+    updateTimestamp();
   }
 
   async function loadParticipantLogs(participant) {
@@ -158,6 +159,14 @@
     participant.lastCheckin = logDays.length > 0 ? 'Day ' + logDays[0] : 'None';
     participant.daysSinceCheckin = participant.lastCheckinDay >= 0 ? currentDay - participant.lastCheckinDay : currentDay;
     participant.inactive = participant.daysSinceCheckin >= 3;
+  }
+
+  function updateTimestamp() {
+    const el = document.getElementById('last-updated');
+    if (el) {
+      const now = new Date();
+      el.textContent = 'Updated ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
   }
 
   function renderMetrics() {
@@ -265,6 +274,17 @@
   }
 
   document.getElementById('gen-code').addEventListener('click', async () => {
+    // Deactivate existing codes for this company
+    const existing = await db.collection('inviteCodes')
+      .where('companyId', '==', companyId)
+      .where('active', '==', true)
+      .get();
+    const deactivations = [];
+    existing.forEach(doc => {
+      deactivations.push(db.collection('inviteCodes').doc(doc.id).update({ active: false }));
+    });
+    await Promise.all(deactivations);
+
     const code = generateCode();
     await db.collection('inviteCodes').doc(code).set({
       companyId,
@@ -455,11 +475,11 @@
 
     // Daily detail sheet
     csv += '\n\n--- DAILY LOGS ---\n';
-    csv += 'Name,Day,Completed,Stress,Sleep,Steps,Breathing,Meal\n';
+    csv += 'Name,Day,Completed,Stress,Sleep,Steps,Breathing,Meal,Notes\n';
     participants.forEach(p => {
       Object.keys(p.logs).sort((a, b) => Number(a) - Number(b)).forEach(day => {
         const l = p.logs[day];
-        csv += [p.name || p.email, day, l.completed ? 'Yes' : 'No', l.stress || '', l.sleep || '', l.steps || '', l.breathing ? 'Yes' : 'No', l.meal ? 'Yes' : 'No'].map(v => `"${v}"`).join(',') + '\n';
+        csv += [p.name || p.email, day, l.completed ? 'Yes' : 'No', l.stress || '', l.sleep || '', l.steps || '', l.breathing ? 'Yes' : 'No', l.meal ? 'Yes' : 'No', (l.notes || '').replace(/"/g, '""')].map(v => `"${v}"`).join(',') + '\n';
       });
     });
 

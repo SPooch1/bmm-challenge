@@ -4,8 +4,8 @@
     "title": "Welcome & Setup",
     "phase": "welcome",
     "pillar": null,
-    "videoUrl": "",
-    "exercise": "Download your Challenge Roadmap. Read it tonight. Set your starting-point scores and get oriented.",
+    "videoUrl": "https://bmm-deliverables-a.s3.amazonaws.com/videos/BMM%20Welcome%21-VEED.mp4",
+    "exercise": "Review the three pillars: Financial, Physical, and Psychological. Set your intention for the next 21 days. Write down one sentence about where you are right now in each area.",
     "description": "For the next 21 days, we're going to reset three key areas of your life: your finances, your body, and your mindset."
   },
   {
@@ -22,7 +22,7 @@
     "title": "Financial Pillar \u2014 Peace of Mind Account",
     "phase": "foundation",
     "pillar": "financial",
-    "videoUrl": "",
+    "videoUrl": "https://bmm-deliverables-a.s3.amazonaws.com/BMM%20Financial%20Margin-VEED.mp4",
     "exercise": "Calculate your baseline monthly needs: housing, food, utilities, essential transport. Write it down. That's your Peace of Mind number.",
     "description": "We're building a Peace of Mind Account \u2014 a separate savings bucket that exists for one purpose: to cover 30 days of your basic expenses."
   },
@@ -31,7 +31,7 @@
     "title": "Physical Pillar \u2014 Establish Baseline",
     "phase": "foundation",
     "pillar": "physical",
-    "videoUrl": "",
+    "videoUrl": "https://bmm-deliverables-a.s3.amazonaws.com/videos/BMM%20Physical%20Margin-VEED.mp4",
     "exercise": "Track three things for the next 7 days: (1) daily steps or movement minutes, (2) one meal per day, and (3) sleep quality (1\u201310 scale). Just observe.",
     "description": "Your baseline is: how much movement are you doing right now? How's your energy? Your sleep? Your basic nutrition?"
   },
@@ -40,7 +40,7 @@
     "title": "Psychological Pillar \u2014 Stress Architecture",
     "phase": "foundation",
     "pillar": "psychological",
-    "videoUrl": "",
+    "videoUrl": "https://bmm-deliverables-a.s3.amazonaws.com/BMM%20Psychological%20Margin-VEED.mp4",
     "exercise": "For three days this week, note: What triggered stress? How did your body respond? How did you recover (or not)? Write it down.",
     "description": "Stress architecture = the invisible patterns that trigger your stress, the way you respond, and the recovery (or lack thereof)."
   },
@@ -49,7 +49,7 @@
     "title": "Integration \u2014 Three-Pillar Snapshot",
     "phase": "foundation",
     "pillar": "integration",
-    "videoUrl": "",
+    "videoUrl": "https://bmm-deliverables-a.s3.amazonaws.com/BMM%20Bonus%20video-VEED.mp4",
     "exercise": "Write one sentence for each pillar about your baseline. Example: 'Financially, I need $3,500/month to feel stable. Physically, I'm moving 4k steps/day. Psychologically, Monday mornings are my stress trigger.'",
     "description": "Your financial stress often shows up as physical tension. Your sleep baseline impacts your spending baseline. We're optimizing one life with three dimensions."
   },
@@ -118,7 +118,7 @@
   },
   {
     "day": 13,
-    "title": "Midpoint \u2014 Corporate Soft Mention",
+    "title": "Midpoint \u2014 How Far You've Come",
     "phase": "momentum",
     "pillar": "reflection",
     "videoUrl": "",

@@ -4,9 +4,25 @@ const Challenge = (() => {
   let currentDay = 0;
 
   async function loadDays() {
-    const resp = await fetch('/content/days.json');
-    daysData = await resp.json();
-    return daysData;
+    return fetch('/content/days.json')
+      .then(resp => {
+        if (!resp.ok) {
+          throw new Error('HTTP ' + resp.status);
+        }
+        return resp.json();
+      })
+      .then(data => {
+        daysData = data;
+        return daysData;
+      })
+      .catch(err => {
+        console.error('loadDays failed:', err);
+        const titleEl = document.getElementById('today-title');
+        if (titleEl) {
+          titleEl.textContent = 'Unable to load challenge content. Please check your connection and refresh.';
+        }
+        return [];
+      });
   }
 
   function calculateCurrentDay(startDate) {

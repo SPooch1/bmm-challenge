@@ -23,8 +23,8 @@ const Survey = (() => {
     QUESTIONS.forEach(q => {
       html += `
         <div class="form-group" style="margin-bottom:20px;">
-          <label style="font-weight:600;margin-bottom:8px;display:block;">${q.label}</label>
-          <input type="range" id="survey-${q.id}" min="1" max="10" value="5" style="width:100%;">
+          <label style="font-weight:600;margin-bottom:8px;display:block;">${q.label}: <span id="survey-${q.id}-val" style="color:var(--green);font-size:1.1em;">5</span>/10</label>
+          <input type="range" id="survey-${q.id}" min="1" max="10" value="5" style="width:100%;" oninput="document.getElementById('survey-${q.id}-val').textContent=this.value">
           <div class="range-labels"><span>${q.min}</span><span>${q.max}</span></div>
         </div>`;
     });

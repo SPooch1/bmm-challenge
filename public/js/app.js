@@ -106,6 +106,7 @@
         surveyView.classList.add('active');
         await Survey.showSurvey(userData.id, 'post', surveyContainer, async responses => {
           const postData = { responses };
+          surveyView.style.display = 'none';
           surveyView.classList.remove('active');
           document.getElementById('view-today').classList.add('active');
           Survey.renderComparison(preSurvey, postData, surveyContainer);
@@ -258,6 +259,13 @@
       });
     }
 
+    // Sync breathing sessions from Firebase
+    if (userData.breathingSessions && userData.breathingSessions > parseInt(localStorage.getItem('breathingSessions') || '0')) {
+      localStorage.setItem('breathingSessions', String(userData.breathingSessions));
+      const btEl = document.getElementById('breathing-total');
+      if (btEl) btEl.textContent = userData.breathingSessions;
+    }
+
     // Load savings
     await PeaceOfMind.load(userData.id);
 
@@ -273,6 +281,12 @@
     document.querySelectorAll('.step-preset').forEach(btn => {
       btn.addEventListener('click', () => {
         document.getElementById('checkin-steps').value = btn.dataset.val;
+        // Reset all presets first
+        document.querySelectorAll('.step-preset').forEach(b => {
+          b.style.background = 'var(--bg)';
+          b.style.color = '';
+          b.style.borderColor = 'var(--border)';
+        });
         btn.style.background = 'var(--green)';
         btn.style.color = 'var(--white)';
         btn.style.borderColor = 'var(--green)';

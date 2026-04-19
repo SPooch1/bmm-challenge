@@ -109,6 +109,13 @@ const BreathingTimer = (() => {
     sessionCount++;
     localStorage.setItem('breathingSessions', String(sessionCount));
     if (totalEl) totalEl.textContent = sessionCount;
+    // Sync to Firebase if user is logged in
+    try {
+      const uid = typeof Auth !== 'undefined' && Auth.getUid ? Auth.getUid() : null;
+      if (uid) {
+        db.collection('users').doc(uid).update({ breathingSessions: sessionCount }).catch(() => {});
+      }
+    } catch (e) { /* ignore */ }
     circle.className = 'breathing-circle';
     textEl.textContent = 'Complete!';
     countEl.textContent = '';
