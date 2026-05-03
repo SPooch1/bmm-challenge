@@ -208,7 +208,7 @@
   function renderEngagementChart() {
     const container = document.getElementById('engagement-chart');
     const total = participants.length;
-    if (total === 0) { container.innerHTML = '<span style="color:var(--slate);font-size:0.8rem;">No data yet.</span>'; return; }
+    if (total === 0) { container.innerHTML = '<div style="width:100%;display:flex;align-items:center;justify-content:center;color:var(--slate);font-size:0.8rem;font-style:italic;">Engagement data will appear here as participants check in daily.</div>'; return; }
 
     const dayCounts = [];
     for (let d = 1; d <= 21; d++) {

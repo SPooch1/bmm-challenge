@@ -147,7 +147,7 @@
           </div>
           <div style="text-align:center;margin-top:8px;">
             <span class="pillar-badge" id="today-pillar-badge" style="display:none;"></span>
-            <a href="#" id="day-back-to-today" style="display:none;font-size:0.8rem;color:var(--green);margin-left:8px;">Back to Today</a>
+            <a href="#" id="day-back-to-today" style="display:none;font-size:0.75rem;font-weight:600;color:var(--white);background:var(--green);padding:4px 12px;border-radius:12px;text-decoration:none;margin-left:8px;">↩ Today</a>
           </div>
         </div>
 
@@ -226,7 +226,7 @@
 
             <div class="form-group" style="margin-top:12px;">
               <label for="checkin-notes">Notes / Journal (optional)</label>
-              <textarea id="checkin-notes" rows="3" placeholder="What did you learn today? How are you feeling?" style="resize:vertical;"></textarea>
+              <textarea id="checkin-notes" rows="3" placeholder="What's one thing you're proud of today? What was hardest?" style="resize:vertical;"></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary btn-full" id="checkin-submit">Save Check-in</button>
@@ -234,10 +234,6 @@
           </form>
         </div>
 
-        <!-- Breathing Nudge -->
-        <div id="breathing-nudge" class="card" style="display:none;text-align:center;padding:14px;background:linear-gradient(135deg,#e8f8f5,#d5f5e3);border:1px solid var(--green);">
-          <div style="font-size:0.85rem;">Take 2 minutes to reset. <a href="#" id="nudge-breathe" style="color:var(--green);font-weight:600;">Start Breathing Exercise →</a></div>
-        </div>
 
         <!-- Tomorrow Preview -->
         <div class="card" id="tomorrow-card" style="display:none;opacity:0.85;">
@@ -325,8 +321,9 @@
             </div>
           </div>
           <div class="breathing-cycle" id="breathing-cycle">Tap Start or press Space to begin</div>
-          <div style="margin-top:16px;">
+          <div style="margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
             <button class="btn btn-primary" id="breathing-start">Start</button>
+            <button class="btn btn-outline" id="breathing-pause" style="display:none;">Pause</button>
             <button class="btn btn-outline" id="breathing-stop" style="display:none;">Stop</button>
           </div>
           <div style="margin-top:16px;font-size:0.8rem;color:var(--slate);">

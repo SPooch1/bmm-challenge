@@ -431,10 +431,15 @@ input[type="range"]::-webkit-slider-thumb {
 .bottom-nav {
   position: fixed;
   bottom: 0;
-  left: 0;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
   background: var(--white);
   border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   display: flex;
   justify-content: space-around;
   padding: 8px 0 env(safe-area-inset-bottom, 8px);
@@ -528,6 +533,22 @@ body.dark .bottom-nav { background: #0f172a; border-color: var(--border); }
 body.dark .stat-card { background: var(--bg); }
 body.dark .participant-table th { background: var(--bg); }
 
+/* Dark mode contrast fixes */
+body.dark .app-header { color: #f1f5f9; }
+body.dark .app-header .subtitle { color: rgba(241,245,249,0.5); }
+body.dark .stat-value { color: var(--text); }
+body.dark .breathing-text { color: var(--text); }
+body.dark .progress-ring-text { fill: #e2e8f0; }
+body.dark .progress-ring-label { fill: #64748b; }
+body.dark #completion-banner { color: #f1f5f9; }
+body.dark .badge-item.earned .badge-icon {
+  background: linear-gradient(135deg, #2d1f06, #4a3210);
+  border-color: var(--gold);
+  box-shadow: 0 2px 12px rgba(243,156,18,0.5);
+}
+body.dark .btn-outline { color: var(--text); border-color: var(--border); }
+body.dark .btn-outline:hover { border-color: var(--text-light); color: var(--text); }
+
 /* Progress Ring */
 .progress-ring {
   width: 120px;
@@ -592,6 +613,32 @@ body.dark .participant-table th { background: var(--bg); }
 
 .badge-item.earned .badge-label {
   color: var(--gold);
+}
+
+.badge-hint {
+  font-size: 0.6rem;
+  color: var(--text-light);
+  margin-top: 2px;
+  line-height: 1.2;
+}
+
+/* Toast notification */
+.toast {
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--navy);
+  color: #f1f5f9;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  z-index: 400;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  white-space: nowrap;
+  transition: opacity 0.4s;
+  pointer-events: none;
 }
 
 /* Confetti */

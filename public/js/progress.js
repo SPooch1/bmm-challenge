@@ -33,9 +33,10 @@ const Progress = (() => {
     const ringPct = document.getElementById('progress-ring-pct');
     if (ringCircle) {
       const circumference = 326.73;
-      const offset = circumference - (Math.round((currentDay / 21) * 100) / 100) * circumference;
+      const ringCompletion = Math.min(21, completedDays) / 21;
+      const offset = circumference - ringCompletion * circumference;
       setTimeout(() => { ringCircle.style.strokeDashoffset = offset; }, 100);
-      ringPct.textContent = Math.round((currentDay / 21) * 100) + '%';
+      ringPct.textContent = Math.round(ringCompletion * 100) + '%';
     }
 
     // Phase progress
@@ -106,6 +107,7 @@ const Progress = (() => {
       return `<div class="badge-item ${cls}" title="${b.desc}">
         <div class="badge-icon">${b.icon}</div>
         <div class="badge-label">${b.label}</div>
+        ${!b.earned ? `<div class="badge-hint">${b.desc}</div>` : ''}
       </div>`;
     }).join('');
   }

@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="/css/app.css">
   <style>
     .dashboard-container { max-width: 960px; margin: 0 auto; padding: 24px; }
-    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 16px 0; }
+    .dashboard-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin: 16px 0; }
     .metric-card { background: var(--white); border-radius: var(--radius-lg); padding: 20px; text-align: center; box-shadow: var(--shadow); border: 1px solid var(--border); }
     .metric-value { font-size: 2rem; font-weight: 700; color: var(--navy); }
     .metric-label { font-size: 0.8rem; color: var(--slate); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
@@ -36,6 +36,9 @@
       .metric-card, .card { box-shadow: none; border: 1px solid #ddd; }
     }
 
+    @media (max-width: 700px) {
+      .dashboard-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    }
     @media (max-width: 600px) {
       .dashboard-container { padding: 12px; }
       .dashboard-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
@@ -128,7 +131,7 @@
       <!-- Engagement Chart -->
       <div class="card" id="engagement-chart-card">
         <h3>Daily Engagement</h3>
-        <div id="engagement-chart" style="display:flex;align-items:flex-end;gap:2px;height:80px;margin-top:8px;"></div>
+        <div id="engagement-chart" style="display:flex;align-items:flex-end;gap:2px;height:80px;margin-top:8px;border-bottom:1px solid var(--border);"></div>
         <div style="display:flex;justify-content:space-between;font-size:0.65rem;color:var(--slate);margin-top:4px;">
           <span>Day 1</span><span>Day 21</span>
         </div>

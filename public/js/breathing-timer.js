@@ -32,11 +32,14 @@ const BreathingTimer = (() => {
     } catch (e) { /* audio not supported */ }
   }
 
+  const pauseBtn = document.getElementById('breathing-pause');
+
   const TOTAL_CYCLES = 4;
   let sessionCount = parseInt(localStorage.getItem('breathingSessions') || '0');
   const totalEl = document.getElementById('breathing-total');
   if (totalEl) totalEl.textContent = sessionCount;
   let running = false;
+  let paused = false;
   let timerInterval = null;
   let currentPhase = 0;
   let currentCount = 0;
@@ -44,21 +47,56 @@ const BreathingTimer = (() => {
 
   function start() {
     running = true;
+    paused = false;
     currentPhase = 0;
     currentCycle = 1;
     startBtn.style.display = 'none';
+    pauseBtn.style.display = 'inline-flex';
+    pauseBtn.textContent = 'Pause';
     stopBtn.style.display = 'inline-flex';
     runPhase();
   }
 
+  function pause() {
+    running = false;
+    paused = true;
+    clearInterval(timerInterval);
+    pauseBtn.textContent = 'Resume';
+    cycleEl.textContent = 'Paused — tap Resume to continue';
+  }
+
+  function resume() {
+    running = true;
+    paused = false;
+    pauseBtn.textContent = 'Pause';
+    cycleEl.textContent = `Cycle ${currentCycle} of ${TOTAL_CYCLES}`;
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      currentCount--;
+      countEl.textContent = currentCount;
+      if (currentCount <= 0) {
+        clearInterval(timerInterval);
+        currentPhase++;
+        if (currentPhase >= PHASES.length) {
+          currentPhase = 0;
+          currentCycle++;
+        }
+        runPhase();
+      }
+    }, 1000);
+  }
+
   function stop() {
     running = false;
+    paused = false;
     clearInterval(timerInterval);
     circle.className = 'breathing-circle';
     textEl.textContent = 'Ready';
     countEl.textContent = '';
-    cycleEl.textContent = 'Tap Start to begin';
+    cycleEl.textContent = 'Tap Start or press Space to begin';
     startBtn.style.display = 'inline-flex';
+    startBtn.textContent = 'Start';
+    pauseBtn.style.display = 'none';
     stopBtn.style.display = 'none';
   }
 
@@ -102,6 +140,7 @@ const BreathingTimer = (() => {
 
   function complete() {
     running = false;
+    paused = false;
     clearInterval(timerInterval);
     if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
     playChime(784, 0.8);
@@ -109,7 +148,6 @@ const BreathingTimer = (() => {
     sessionCount++;
     localStorage.setItem('breathingSessions', String(sessionCount));
     if (totalEl) totalEl.textContent = sessionCount;
-    // Sync to Firebase if user is logged in
     try {
       const uid = typeof Auth !== 'undefined' && Auth.getUid ? Auth.getUid() : null;
       if (uid) {
@@ -122,19 +160,23 @@ const BreathingTimer = (() => {
     cycleEl.textContent = '4 cycles done. Great job!';
     startBtn.style.display = 'inline-flex';
     startBtn.textContent = 'Restart';
+    pauseBtn.style.display = 'none';
     stopBtn.style.display = 'none';
   }
 
   startBtn.addEventListener('click', start);
+  pauseBtn.addEventListener('click', () => { if (paused) resume(); else pause(); });
   stopBtn.addEventListener('click', stop);
 
-  // Spacebar to start/stop when breathing view is active
+  // Spacebar to start/pause/resume when breathing view is active
   document.addEventListener('keydown', e => {
     if (e.code !== 'Space') return;
     const breathingView = document.getElementById('view-breathing');
     if (!breathingView || !breathingView.classList.contains('active')) return;
     e.preventDefault();
-    if (running) stop(); else start();
+    if (!running && !paused) start();
+    else if (running) pause();
+    else if (paused) resume();
   });
 
   return { start, stop };

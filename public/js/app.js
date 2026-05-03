@@ -1,4 +1,13 @@
 // Main app controller
+
+function showToast(message) {
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 400); }, 3000);
+}
+
 (async () => {
   // Register service worker
   if ('serviceWorker' in navigator) {
@@ -118,10 +127,6 @@
     let viewingDay = day;
     Challenge.renderToday(day);
 
-    // Show completion banner on Day 21
-    if (day >= 21) {
-      document.getElementById('completion-banner').style.display = 'block';
-    }
 
     // Day navigation
     const prevBtn = document.getElementById('day-prev');
@@ -221,6 +226,12 @@
 
     // Streak motivation
     const progressData = await Progress.loadProgress(userData.id, day);
+
+    // Show completion banner only when all 21 days are actually checked in
+    if (progressData && progressData.completedDays >= 21) {
+      document.getElementById('completion-banner').style.display = 'block';
+    }
+
     const streakBar = document.getElementById('streak-bar');
     const streakMsg = document.getElementById('streak-msg');
     const shareBtn = document.getElementById('share-btn');
@@ -248,17 +259,6 @@
       });
     }
 
-    // Breathing nudge (show after noon if not done today)
-    const hour = new Date().getHours();
-    if (hour >= 12 && !document.getElementById('checkin-breathing').checked) {
-      document.getElementById('breathing-nudge').style.display = 'block';
-      document.getElementById('nudge-breathe').addEventListener('click', e => {
-        e.preventDefault();
-        document.getElementById('breathing-nudge').style.display = 'none';
-        switchView('breathing');
-      });
-    }
-
     // Sync breathing sessions from Firebase
     if (userData.breathingSessions && userData.breathingSessions > parseInt(localStorage.getItem('breathingSessions') || '0')) {
       localStorage.setItem('breathingSessions', String(userData.breathingSessions));
@@ -281,14 +281,13 @@
     document.querySelectorAll('.step-preset').forEach(btn => {
       btn.addEventListener('click', () => {
         document.getElementById('checkin-steps').value = btn.dataset.val;
-        // Reset all presets first
         document.querySelectorAll('.step-preset').forEach(b => {
           b.style.background = 'var(--bg)';
           b.style.color = '';
           b.style.borderColor = 'var(--border)';
         });
         btn.style.background = 'var(--green)';
-        btn.style.color = 'var(--white)';
+        btn.style.color = '#fff';
         btn.style.borderColor = 'var(--green)';
       });
     });
@@ -297,18 +296,28 @@
     document.getElementById('profile-name').textContent = userData.name || '';
     document.getElementById('profile-email').textContent = userData.email || '';
     document.getElementById('profile-type').textContent = userData.companyId ? 'Company Challenge' : 'Individual Challenge';
-    document.getElementById('profile-start-date').value = userData.challengeStartDate || '';
 
-    // Profile save
-    document.getElementById('profile-save').onclick = async () => {
-      const newDate = document.getElementById('profile-start-date').value;
-      if (newDate) {
-        await db.collection('users').doc(userData.id).update({ challengeStartDate: newDate });
-        userData.challengeStartDate = newDate;
-        const newDay = Challenge.calculateCurrentDay(newDate);
-        Challenge.renderToday(newDay);
-        await Checkin.loadCheckin(userData.id, newDay);
-      }
+    const startDateInput = document.getElementById('profile-start-date');
+    const saveDateBtn = document.getElementById('profile-save');
+    const origDate = userData.challengeStartDate || '';
+    startDateInput.value = origDate;
+    saveDateBtn.disabled = true;
+
+    startDateInput.addEventListener('change', () => {
+      saveDateBtn.disabled = startDateInput.value === origDate || !startDateInput.value;
+    });
+
+    saveDateBtn.onclick = async () => {
+      const newDate = startDateInput.value;
+      if (!newDate || newDate === origDate) return;
+      saveDateBtn.disabled = true;
+      saveDateBtn.textContent = 'Saved!';
+      await db.collection('users').doc(userData.id).update({ challengeStartDate: newDate });
+      userData.challengeStartDate = newDate;
+      const newDay = Challenge.calculateCurrentDay(newDate);
+      Challenge.renderToday(newDay);
+      await Checkin.loadCheckin(userData.id, newDay);
+      setTimeout(() => { saveDateBtn.textContent = 'Save Settings'; }, 2000);
     };
   });
 
