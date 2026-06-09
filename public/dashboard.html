@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#1a2332">
+  <meta name="theme-color" content="#0F172A">
   <title>BMM Challenge — Corporate Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/app.css">
@@ -181,23 +181,46 @@
       <!-- Invite Tab -->
       <div class="tab-panel" id="tab-invite">
         <div class="card">
-          <h3>Invite Employees</h3>
-          <p style="margin-bottom:12px;color:var(--slate);font-size:0.875rem;">Share this invite code with your employees. They'll use it when signing up for the challenge.</p>
-          <div style="background:var(--bg);padding:16px;border-radius:var(--radius);text-align:center;margin-bottom:16px;">
+          <h3>Set Up the Cohort</h3>
+          <p style="margin-bottom:16px;color:var(--slate);font-size:0.875rem;">Pick a start date and seat count, generate the code, then send employees the <strong>join link</strong>. They self-enroll — you never collect their emails.</p>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;">
+            <div class="form-group" style="flex:1;min-width:160px;margin-bottom:0;">
+              <label for="cohort-start">Cohort start date</label>
+              <input type="date" id="cohort-start">
+            </div>
+            <div class="form-group" style="width:110px;margin-bottom:0;">
+              <label for="cohort-seats">Seats</label>
+              <input type="number" id="cohort-seats" min="1" value="25">
+            </div>
+          </div>
+          <button class="btn btn-primary btn-full" id="gen-code">Generate Cohort Code</button>
+
+          <div style="background:var(--bg);padding:16px;border-radius:var(--radius);margin-top:16px;">
             <div style="font-size:0.75rem;color:var(--slate);text-transform:uppercase;margin-bottom:4px;">Invite Code</div>
             <div style="font-size:1.5rem;font-weight:700;color:var(--navy);letter-spacing:2px;" id="invite-code">---</div>
-            <button class="btn btn-outline" style="margin-top:8px;" id="copy-code">Copy Code</button>
+            <div id="cohort-meta" style="font-size:0.78rem;color:var(--slate);margin-top:6px;"></div>
+            <div style="margin-top:14px;">
+              <div style="font-size:0.75rem;color:var(--slate);text-transform:uppercase;margin-bottom:4px;">Join link — send this to employees</div>
+              <div style="display:flex;gap:8px;">
+                <input type="text" id="join-link" readonly style="flex:1;font-size:0.8rem;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--white);">
+                <button class="btn btn-outline" id="copy-link" style="padding:8px 14px;font-size:0.8rem;white-space:nowrap;">Copy Link</button>
+              </div>
+            </div>
+            <button class="btn btn-outline" style="margin-top:12px;font-size:0.78rem;padding:6px 12px;" id="copy-code">Copy code only</button>
           </div>
-          <button class="btn btn-primary btn-full" id="gen-code">Generate New Code</button>
         </div>
       </div>
 
       <!-- Export Tab -->
       <div class="tab-panel" id="tab-export">
         <div class="card">
-          <h3>Export Data</h3>
-          <p style="margin-bottom:16px;color:var(--slate);font-size:0.875rem;">Download participant data as CSV for your HR review.</p>
-          <button class="btn btn-primary btn-full" id="export-csv">Export CSV</button>
+          <h3>HR Results Report</h3>
+          <p style="margin-bottom:16px;color:var(--slate);font-size:0.875rem;">The employer-safe summary to share with HR / the CFO: cohort outcomes + per-person <strong>engagement only</strong>. Individual stress, savings, and journal entries are never included. Opens a printable report (save as PDF).</p>
+          <button class="btn btn-primary btn-full" id="results-report" style="margin-bottom:24px;">Generate HR Results Report</button>
+
+          <h3>Full Data Export</h3>
+          <p style="margin-bottom:16px;color:var(--slate);font-size:0.875rem;">Your own coaching records (CSV). Includes check-in data; journal notes stay private to participants.</p>
+          <button class="btn btn-outline btn-full" id="export-csv">Export CSV (your records)</button>
         </div>
       </div>
     </div>

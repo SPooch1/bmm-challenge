@@ -59,7 +59,7 @@ const Checkin = (() => {
     const container = document.createElement('div');
     container.className = 'confetti-container';
     document.body.appendChild(container);
-    const colors = ['#2ecc71', '#f39c12', '#3498db', '#e74c3c', '#9b59b6'];
+    const colors = ['#0EA5E9', '#F59E0B', '#0284C7', '#38BDF8', '#FBBF24'];
     for (let i = 0; i < 30; i++) {
       const piece = document.createElement('div');
       piece.className = 'confetti-piece';

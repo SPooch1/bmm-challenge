@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#1a2332">
+  <meta name="theme-color" content="#0F172A">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="21-Day Challenge to build financial, physical, and psychological margin in your life.">
@@ -27,17 +27,24 @@
   </div>
 
   <!-- Loading Screen -->
-  <div id="loading-screen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--navy);">
+  <div id="loading-screen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 0%, #1E293B, #0B1120 72%);">
     <div style="text-align:center;color:var(--white);">
-      <div class="spinner" style="border-top-color:var(--green);margin-bottom:16px;"></div>
-      <div style="font-weight:600;">Build More Margin</div>
+      <div class="spinner" style="border-top-color:var(--sky);margin-bottom:16px;"></div>
+      <div style="font-weight:700;letter-spacing:-0.02em;">Build More Margin</div>
     </div>
   </div>
 
   <!-- Auth Screen -->
   <div id="auth-screen" class="auth-screen" style="display:none;">
+    <img src="/icons/bitsy.png" alt="Bitsy, the Build More Margin mascot" class="auth-mascot">
     <div class="logo">Build More Margin</div>
-    <div class="tagline">21-Day Challenge</div>
+    <div class="tagline">The 21-Day Challenge</div>
+    <div class="value-line">Build financial, physical, and psychological margin — a few focused minutes a day.</div>
+    <div class="auth-pillars">
+      <span class="auth-pillar">Financial</span>
+      <span class="auth-pillar">Physical</span>
+      <span class="auth-pillar">Psychological</span>
+    </div>
     <div class="auth-box">
       <h2 id="auth-title">Sign In</h2>
       <div id="auth-error" class="error-msg"></div>
@@ -74,7 +81,7 @@
   <!-- Onboarding Overlay -->
   <div id="onboarding" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:250;overflow-y:auto;">
     <div style="max-width:400px;margin:60px auto;padding:24px;text-align:center;color:var(--white);">
-      <div style="font-size:2.5rem;margin-bottom:16px;">&#127919;</div>
+      <img src="/icons/bitsy.png" alt="Bitsy" style="width:84px;height:84px;margin-bottom:12px;filter:drop-shadow(0 8px 24px rgba(0,0,0,0.4));">
       <h2 style="color:var(--white);margin-bottom:12px;">Welcome to Your Challenge</h2>
       <p style="color:var(--text-light);margin-bottom:24px;">Here's how to make the most of the next 21 days.</p>
 
@@ -128,6 +135,7 @@
 
         <!-- Completion banner (hidden until Day 21 + post-survey done) -->
         <div id="completion-banner" class="card" style="display:none;text-align:center;background:linear-gradient(135deg,var(--navy),var(--navy-light));color:var(--white);">
+          <img src="/icons/bitsy.png" alt="Bitsy celebrating" style="width:72px;height:72px;margin-bottom:8px;filter:drop-shadow(0 8px 24px rgba(0,0,0,0.4));animation:bitsy-pop 0.5s cubic-bezier(0.34,1.56,0.64,1);">
           <h2 style="margin-bottom:8px;">Challenge Complete!</h2>
           <p style="color:var(--text-light);margin-bottom:12px;">You finished all 21 days. That puts you ahead of 95% of people who start something like this.</p>
           <p style="font-weight:600;color:var(--green);">Your Fusion Formula is built. Now sustain it.</p>
@@ -152,9 +160,15 @@
         </div>
 
         <!-- Streak & Motivation -->
-        <div id="streak-bar" style="display:none;align-items:center;justify-content:space-between;padding:8px 16px;margin-bottom:16px;">
-          <div id="streak-msg" style="font-size:0.85rem;font-weight:600;color:var(--gold);"></div>
+        <div id="streak-bar" class="streak-chip" style="display:none;align-items:center;justify-content:space-between;padding:10px 16px;margin-bottom:16px;">
+          <div id="streak-msg" style="font-size:0.85rem;font-weight:600;color:var(--amber-dark);"></div>
           <button class="btn btn-outline" id="share-btn" style="padding:6px 14px;font-size:0.75rem;display:none;">Share</button>
+        </div>
+
+        <!-- Bitsy daily line -->
+        <div id="bitsy-line" class="bitsy-line" style="display:none;">
+          <img src="/icons/bitsy.png" alt="Bitsy" class="bitsy-avatar">
+          <div id="bitsy-text"></div>
         </div>
 
         <!-- Daily Quote -->
@@ -162,9 +176,10 @@
 
         <!-- Video -->
         <div class="card" id="today-video-card" style="display:none;">
-          <h3>Today's Video</h3>
-          <div class="video-container">
-            <div class="video-placeholder" id="today-video-placeholder">Video coming soon</div>
+          <h3 id="today-video-heading">Today's Video</h3>
+          <button type="button" id="video-revisit-btn" style="display:none;width:100%;align-items:center;justify-content:center;gap:8px;padding:12px;background:var(--sky-soft);border:1px solid var(--border);border-radius:var(--radius);color:var(--sky-dark);font-size:0.9rem;font-weight:600;cursor:pointer;"></button>
+          <div class="video-container" id="today-video-container">
+            <div class="video-placeholder" id="today-video-placeholder">No video today.</div>
             <video id="today-video" controls style="display:none;"></video>
           </div>
         </div>
@@ -193,19 +208,22 @@
 
             <div class="form-group" style="margin-top:12px;">
               <label>Stress Level: <span id="stress-val" style="color:var(--green);font-size:1.1em;">5</span>/10</label>
-              <input type="range" id="checkin-stress" min="1" max="10" value="5" oninput="document.getElementById('stress-val').textContent=this.value">
+              <input type="range" id="checkin-stress" min="1" max="10" value="5" aria-label="Stress level from 1 to 10" oninput="document.getElementById('stress-val').textContent=this.value">
               <div class="range-labels"><span>Low</span><span>High</span></div>
             </div>
 
-            <div class="form-group">
+            <button type="button" id="checkin-more-toggle" style="width:100%;margin-top:4px;padding:8px;background:none;border:1px dashed var(--border);border-radius:var(--radius);color:var(--slate);font-size:0.8rem;cursor:pointer;">+ Add sleep, steps &amp; notes (optional)</button>
+
+            <div id="checkin-details" style="display:none;">
+            <div class="form-group" style="margin-top:12px;">
               <label>Sleep Quality: <span id="sleep-val" style="color:var(--green);font-size:1.1em;">5</span>/10</label>
-              <input type="range" id="checkin-sleep" min="1" max="10" value="5" oninput="document.getElementById('sleep-val').textContent=this.value">
+              <input type="range" id="checkin-sleep" min="1" max="10" value="5" aria-label="Sleep quality from 1 to 10" oninput="document.getElementById('sleep-val').textContent=this.value">
               <div class="range-labels"><span>Poor</span><span>Great</span></div>
             </div>
 
             <div class="form-group">
               <label for="checkin-steps">Steps / Movement Minutes</label>
-              <input type="number" id="checkin-steps" placeholder="e.g. 5000">
+              <input type="number" id="checkin-steps" placeholder="e.g. 5000" inputmode="numeric">
               <div style="display:flex;gap:6px;margin-top:6px;">
                 <button type="button" class="step-preset" data-val="3000" style="flex:1;padding:4px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);font-size:0.7rem;cursor:pointer;">3K</button>
                 <button type="button" class="step-preset" data-val="5000" style="flex:1;padding:4px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);font-size:0.7rem;cursor:pointer;">5K</button>
@@ -228,6 +246,7 @@
               <label for="checkin-notes">Notes / Journal (optional)</label>
               <textarea id="checkin-notes" rows="3" placeholder="What's one thing you're proud of today? What was hardest?" style="resize:vertical;"></textarea>
             </div>
+            </div><!-- /checkin-details -->
 
             <button type="submit" class="btn btn-primary btn-full" id="checkin-submit">Save Check-in</button>
             <div id="checkin-saved" style="display:none;text-align:center;color:var(--green);font-weight:600;padding:12px;">Saved!</div>
@@ -340,15 +359,21 @@
           <p>Track your $500 savings goal — your financial safety net.</p>
         </div>
         <div class="card savings-display">
-          <div class="savings-amount" id="savings-amount">$0</div>
-          <div class="savings-goal">of $500 goal</div>
-          <div class="progress-bar savings-bar">
-            <div class="progress-fill" id="savings-bar-fill" style="width:0%"></div>
+          <div class="savings-ring-wrap">
+            <svg class="savings-ring" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="52" fill="none" stroke="var(--border)" stroke-width="8"/>
+              <circle id="savings-ring-circle" cx="60" cy="60" r="52" fill="none" stroke="var(--amber)" stroke-width="8" stroke-linecap="round" stroke-dasharray="326.73" stroke-dashoffset="326.73"/>
+            </svg>
+            <div class="savings-ring-center">
+              <div class="savings-amount" id="savings-amount">$0</div>
+              <div class="savings-goal">of $500 goal</div>
+            </div>
           </div>
+          <div id="savings-pace" style="font-size:0.78rem;color:var(--slate);margin-top:4px;min-height:1em;"></div>
           <div class="form-group" style="margin-top:16px;">
             <label for="savings-input">Add to Savings</label>
             <div style="display:flex;gap:8px;">
-              <input type="number" id="savings-input" placeholder="Amount" min="0" step="0.01" style="flex:1;">
+              <input type="number" id="savings-input" placeholder="Amount" min="0" step="0.01" inputmode="decimal" style="flex:1;">
               <button class="btn btn-primary" id="savings-add">Add</button>
             </div>
           </div>

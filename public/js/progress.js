@@ -13,12 +13,21 @@ const Progress = (() => {
     const completedDays = Object.values(logs).filter(l => l.completed).length;
     const pct = currentDay > 0 ? Math.round((completedDays / currentDay) * 100) : 0;
 
-    // Streak calculation
+    // Streak calculation — forgiving: one missed day (grace) won't zero the streak
     let streak = 0;
+    let graceUsed = false;
     for (let d = currentDay; d >= 0; d--) {
-      if (logs[String(d)] && logs[String(d)].completed) {
+      const done = logs[String(d)] && logs[String(d)].completed;
+      if (done) {
         streak++;
-      } else if (d < currentDay) {
+      } else if (d === currentDay) {
+        // Today not checked in yet — no penalty
+        continue;
+      } else if (!graceUsed) {
+        // Forgive a single missed day and keep the streak alive
+        graceUsed = true;
+        continue;
+      } else {
         break;
       }
     }
@@ -51,7 +60,7 @@ const Progress = (() => {
     // Log history
     renderHistory(logs, currentDay);
 
-    return { completedDays, streak, pct, logs };
+    return { completedDays, streak, pct, logs, graceUsed };
   }
 
   function renderTrends(logs, currentDay) {

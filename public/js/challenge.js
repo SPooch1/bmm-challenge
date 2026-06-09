@@ -3,6 +3,17 @@ const Challenge = (() => {
   let daysData = [];
   let currentDay = 0;
 
+  // Pillar anchor videos (owned S3 assets). Days that share a pillar but have no
+  // video of their own surface the pillar's core video — so every teaching day has
+  // relevant video without inventing content. Reflection/recap days stay video-free.
+  const PILLAR_VIDEOS = {
+    financial:     { url: 'https://bmm-deliverables-a.s3.amazonaws.com/BMM%20Financial%20Margin-VEED.mp4', label: 'The Financial Pillar' },
+    physical:      { url: 'https://bmm-deliverables-a.s3.amazonaws.com/videos/BMM%20Physical%20Margin-VEED.mp4', label: 'The Physical Pillar' },
+    psychological: { url: 'https://bmm-deliverables-a.s3.amazonaws.com/BMM%20Psychological%20Margin-VEED.mp4', label: 'The Psychological Pillar' },
+    integration:   { url: 'https://bmm-deliverables-a.s3.amazonaws.com/BMM%20Bonus%20video-VEED.mp4', label: 'Putting It Together' },
+    mindset:       { url: 'https://bmm-deliverables-a.s3.amazonaws.com/videos/BMM%20Welcome%21-VEED.mp4', label: 'Welcome & Foundations' }
+  };
+
   async function loadDays() {
     return fetch('/content/days.json')
       .then(resp => {
@@ -59,15 +70,43 @@ const Challenge = (() => {
       badge.style.display = 'none';
     }
 
-    // Video
+    // Video — own video plays inline; shared-pillar days offer a one-tap "revisit"
+    // so the daily action stays the hero; reflection/recap days show no video card.
     const videoCard = document.getElementById('today-video-card');
     const videoEl = document.getElementById('today-video');
-    const placeholder = document.getElementById('today-video-placeholder');
-    if (data.videoUrl) {
+    const videoHeading = document.getElementById('today-video-heading');
+    const videoContainer = document.getElementById('today-video-container');
+    const revisitBtn = document.getElementById('video-revisit-btn');
+    const ownVideo = (data.videoUrl || '').trim();
+    const fallback = !ownVideo && data.pillar ? PILLAR_VIDEOS[data.pillar] : null;
+
+    // reset
+    revisitBtn.style.display = 'none';
+    revisitBtn.onclick = null;
+    videoContainer.style.display = 'none';
+    videoEl.style.display = 'none';
+    videoEl.removeAttribute('src');
+
+    if (ownVideo) {
       videoCard.style.display = 'block';
+      videoHeading.style.display = 'block';
+      videoHeading.textContent = "Today's Video";
+      videoContainer.style.display = 'block';
+      videoEl.src = ownVideo;
       videoEl.style.display = 'block';
-      videoEl.src = data.videoUrl;
-      placeholder.style.display = 'none';
+    } else if (fallback) {
+      // Repeat pillar video — collapsed behind a tap, action stays primary
+      videoCard.style.display = 'block';
+      videoHeading.style.display = 'none';
+      revisitBtn.style.display = 'flex';
+      revisitBtn.innerHTML = '▶︎  Revisit: ' + fallback.label + ' <span style="opacity:.65;font-weight:500;">· optional</span>';
+      revisitBtn.onclick = () => {
+        revisitBtn.style.display = 'none';
+        videoContainer.style.display = 'block';
+        videoEl.src = fallback.url;
+        videoEl.style.display = 'block';
+        if (videoEl.play) videoEl.play().catch(() => {});
+      };
     } else {
       videoCard.style.display = 'none';
     }

@@ -236,7 +236,7 @@
     }
 
     tbody.innerHTML = participants.map((p, i) => `
-      <tr data-idx="${i}" style="${p.inactive ? 'background:rgba(231,76,60,0.06);' : ''}">
+      <tr data-idx="${i}" style="${p.inactive ? 'background:rgba(239,68,68,0.06);' : ''}">
         <td>${escapeHtml(p.name || p.email)}${p.inactive ? ' <span style="color:var(--red);font-size:0.7rem;font-weight:600;">AT RISK</span>' : ''}</td>
         <td>Day ${p.currentDay}</td>
         <td>${p.streak} days</td>
@@ -260,7 +260,24 @@
     return div.innerHTML;
   }
 
-  // Invite codes
+  // Invite codes / cohort setup
+  const JOIN_BASE = 'https://challenge.buildmoremargin.com/?code=';
+
+  function renderInvite(code, data) {
+    document.getElementById('invite-code').textContent = code;
+    document.getElementById('join-link').value = JOIN_BASE + code;
+    const seats = data && data.maxSeats ? data.maxSeats : null;
+    const start = data && data.challengeStartDate ? data.challengeStartDate : null;
+    const used = participants.length;
+    const parts = [];
+    if (start) parts.push('Starts ' + start);
+    parts.push(seats ? (used + ' / ' + seats + ' seats joined') : (used + ' joined'));
+    document.getElementById('cohort-meta').textContent = parts.join('  ·  ');
+    // Prefill the inputs with the active cohort's settings
+    if (start) document.getElementById('cohort-start').value = start;
+    if (seats) document.getElementById('cohort-seats').value = seats;
+  }
+
   async function loadInviteCode() {
     const snapshot = await db.collection('inviteCodes')
       .where('companyId', '==', companyId)
@@ -269,7 +286,7 @@
       .get();
 
     if (!snapshot.empty) {
-      document.getElementById('invite-code').textContent = snapshot.docs[0].id;
+      renderInvite(snapshot.docs[0].id, snapshot.docs[0].data());
     }
   }
 
@@ -286,12 +303,25 @@
     await Promise.all(deactivations);
 
     const code = generateCode();
+    const challengeStartDate = document.getElementById('cohort-start').value || null;
+    const maxSeats = parseInt(document.getElementById('cohort-seats').value) || 25;
     await db.collection('inviteCodes').doc(code).set({
       companyId,
       active: true,
+      challengeStartDate,
+      maxSeats,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
-    document.getElementById('invite-code').textContent = code;
+    renderInvite(code, { challengeStartDate, maxSeats });
+  });
+
+  document.getElementById('copy-link').addEventListener('click', () => {
+    const link = document.getElementById('join-link').value;
+    if (link) navigator.clipboard.writeText(link).then(() => {
+      const b = document.getElementById('copy-link');
+      b.textContent = 'Copied!';
+      setTimeout(() => { b.textContent = 'Copy Link'; }, 2000);
+    });
   });
 
   document.getElementById('copy-code').addEventListener('click', () => {
@@ -384,11 +414,8 @@
         html += `<div class="detail-log-row" style="flex-wrap:wrap;">
           ${icon}
           <span style="font-weight:600;min-width:50px;">Day ${d}</span>
-          <span style="color:var(--slate);">Stress: ${log.stress || '-'}</span>
-          <span style="color:var(--slate);">Sleep: ${log.sleep || '-'}</span>
-          <span style="color:var(--slate);">Steps: ${log.steps || '-'}</span>
+          <span style="color:var(--slate);">${log.completed ? 'Completed' : 'Not completed'}</span>
           ${log.breathing ? '<span style="color:var(--green);font-size:0.75rem;">Breathed</span>' : ''}
-          ${log.notes ? '<div style="width:100%;padding:4px 0 0 40px;font-size:0.75rem;color:var(--slate);font-style:italic;">"' + escapeHtml(log.notes) + '"</div>' : ''}
         </div>`;
       });
     }
@@ -397,62 +424,61 @@
     overlay.style.display = 'flex';
   }
 
-  // Load assessments for the assessments tab
+  // Assessments — COHORT AGGREGATE ONLY. Individual responses are never shown
+  // (employee anonymity); only the group's pre->post trend per area.
   async function loadAssessments() {
     const container = document.getElementById('assessment-results');
     const QUESTIONS = [
       { id: 'stress', label: 'Stress', inverse: true },
       { id: 'sleep', label: 'Sleep' },
-      { id: 'financial', label: 'Financial' },
+      { id: 'financial', label: 'Financial Confidence' },
       { id: 'energy', label: 'Energy' },
       { id: 'overwhelm', label: 'Overwhelm', inverse: true },
-      { id: 'savings', label: 'Savings' },
+      { id: 'savings', label: 'Savings Habit' },
       { id: 'exercise', label: 'Exercise' },
       { id: 'breathing', label: 'Breathing' }
     ];
 
-    const rows = [];
+    // Collect responses only — names are deliberately NOT retained
+    const pres = [], posts = [];
     for (const p of participants) {
       try {
         const preDoc = await db.collection('users').doc(p.id).collection('assessments').doc('pre').get();
         const postDoc = await db.collection('users').doc(p.id).collection('assessments').doc('post').get();
-        if (preDoc.exists) {
-          rows.push({
-            name: p.name || p.email,
-            pre: preDoc.data().responses,
-            post: postDoc.exists ? postDoc.data().responses : null
-          });
-        }
+        if (preDoc.exists) pres.push(preDoc.data().responses);
+        if (postDoc.exists) posts.push(postDoc.data().responses);
       } catch (e) { /* skip if no access */ }
     }
 
-    if (rows.length === 0) {
+    if (pres.length === 0) {
       container.innerHTML = '<p style="color:var(--slate);font-size:0.8rem;">No assessment data yet.</p>';
       return;
     }
 
-    let html = '<table class="participant-table"><thead><tr><th>Name</th>';
-    QUESTIONS.forEach(q => { html += `<th style="text-align:center;">${q.label}</th>`; });
-    html += '</tr></thead><tbody>';
+    const avg = (arr, id) => {
+      const vals = arr.map(r => r && r[id]).filter(v => typeof v === 'number');
+      return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+    };
 
-    rows.forEach(r => {
-      html += `<tr><td>${escapeHtml(r.name)}</td>`;
-      QUESTIONS.forEach(q => {
-        const pre = r.pre[q.id];
-        if (r.post) {
-          const post = r.post[q.id];
-          const improved = q.inverse ? post < pre : post > pre;
-          const color = improved ? 'var(--green)' : post === pre ? 'var(--slate)' : 'var(--red)';
-          html += `<td style="text-align:center;"><span style="color:var(--slate);font-size:0.75rem;">${pre}</span> <span style="color:${color};font-weight:600;">${post}</span></td>`;
-        } else {
-          html += `<td style="text-align:center;color:var(--slate);">${pre}</td>`;
-        }
-      });
-      html += '</tr>';
+    let html = '<p style="color:var(--slate);font-size:0.85rem;margin-bottom:12px;">Cohort averages (scale 1–10). Individual responses are private to each participant — only the group trend is shown.</p>';
+    html += '<table class="participant-table"><thead><tr><th>Area</th><th style="text-align:center;">Start (avg)</th><th style="text-align:center;">End (avg)</th><th style="text-align:center;">Change</th></tr></thead><tbody>';
+    QUESTIONS.forEach(q => {
+      const pre = avg(pres, q.id);
+      const post = posts.length ? avg(posts, q.id) : null;
+      const preStr = pre != null ? pre.toFixed(1) : '-';
+      let postStr = '-', changeStr = '<span style="color:var(--text-light);">post-survey pending</span>';
+      if (pre != null && post != null) {
+        postStr = post.toFixed(1);
+        const delta = post - pre;
+        const improved = q.inverse ? delta < 0 : delta > 0;
+        const color = delta === 0 ? 'var(--slate)' : (improved ? 'var(--green)' : 'var(--red)');
+        const sign = delta > 0 ? '+' : '';
+        changeStr = `<span style="color:${color};font-weight:600;">${sign}${delta.toFixed(1)}${delta === 0 ? '' : (improved ? ' ↑' : ' ↓')}</span>`;
+      }
+      html += `<tr><td>${q.label}</td><td style="text-align:center;color:var(--slate);">${preStr}</td><td style="text-align:center;font-weight:600;">${postStr}</td><td style="text-align:center;">${changeStr}</td></tr>`;
     });
-
     html += '</tbody></table>';
-    html += '<p style="color:var(--slate);font-size:0.75rem;margin-top:8px;">Pre scores in gray. Post scores in bold (green = improved, red = declined).</p>';
+    html += `<p style="color:var(--slate);font-size:0.72rem;margin-top:8px;">Based on ${pres.length} start / ${posts.length} end responses. Green = improvement (lower stress &amp; overwhelm, higher everything else).</p>`;
     container.innerHTML = html;
   }
 
@@ -461,13 +487,9 @@
     if (participants.length === 0) return;
 
     // Summary sheet
-    const headers = ['Name', 'Email', 'Current Day', 'Completed Days', 'Completion %', 'Streak', 'Last Check-in', 'Avg Stress', 'Avg Sleep'];
+    const headers = ['Name', 'Email', 'Current Day', 'Completed Days', 'Completion %', 'Streak', 'Last Check-in'];
     const rows = participants.map(p => {
-      const stressVals = Object.values(p.logs).map(l => l.stress).filter(Boolean);
-      const sleepVals = Object.values(p.logs).map(l => l.sleep).filter(Boolean);
-      const avgStress = stressVals.length > 0 ? (stressVals.reduce((a, b) => a + b, 0) / stressVals.length).toFixed(1) : '-';
-      const avgSleep = sleepVals.length > 0 ? (sleepVals.reduce((a, b) => a + b, 0) / sleepVals.length).toFixed(1) : '-';
-      return [p.name || '', p.email || '', p.currentDay, p.completedDays, p.completionPct + '%', p.streak, p.lastCheckin, avgStress, avgSleep];
+      return [p.name || '', p.email || '', p.currentDay, p.completedDays, p.completionPct + '%', p.streak, p.lastCheckin];
     });
 
     let csv = '--- SUMMARY ---\n';
@@ -475,11 +497,11 @@
 
     // Daily detail sheet
     csv += '\n\n--- DAILY LOGS ---\n';
-    csv += 'Name,Day,Completed,Stress,Sleep,Steps,Breathing,Meal,Notes\n';
+    csv += 'Name,Day,Completed,Breathing,Meal\n';
     participants.forEach(p => {
       Object.keys(p.logs).sort((a, b) => Number(a) - Number(b)).forEach(day => {
         const l = p.logs[day];
-        csv += [p.name || p.email, day, l.completed ? 'Yes' : 'No', l.stress || '', l.sleep || '', l.steps || '', l.breathing ? 'Yes' : 'No', l.meal ? 'Yes' : 'No', (l.notes || '').replace(/"/g, '""')].map(v => `"${v}"`).join(',') + '\n';
+        csv += [p.name || p.email, day, l.completed ? 'Yes' : 'No', l.breathing ? 'Yes' : 'No', l.meal ? 'Yes' : 'No'].map(v => `"${v}"`).join(',') + '\n';
       });
     });
 
@@ -491,4 +513,70 @@
     a.click();
     URL.revokeObjectURL(url);
   });
+
+  // HR Results Report — employer-safe: cohort aggregates + per-person engagement only.
+  // NEVER includes individual stress, savings, or journal notes.
+  function generateResultsReport() {
+    if (participants.length === 0) { alert('No participants yet.'); return; }
+    const companyName = document.getElementById('company-name').textContent || 'Your Company';
+    const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+    const joined = participants.length;
+    const participated = participants.filter(p => Object.keys(p.logs).length > 0).length;
+    const participationRate = Math.round((participated / joined) * 100);
+    const avgCompletion = Math.round(participants.reduce((s, p) => s + p.completionPct, 0) / joined);
+    const totalBreathing = participants.reduce((s, p) => s + (p.breathingSessions || 0), 0);
+    const totalSaved = participants.reduce((s, p) => s + (p.savingsEntries || []).reduce((a, x) => a + (x.amount || 0), 0), 0);
+
+    function avgStress(lo, hi) {
+      const vals = [];
+      participants.forEach(p => { for (let d = lo; d <= hi; d++) { const l = p.logs[String(d)]; if (l && l.stress) vals.push(l.stress); } });
+      return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+    }
+    const wk1 = avgStress(1, 7), wk3 = avgStress(15, 21);
+    let stressTrend = '—';
+    if (wk1 != null && wk3 != null) {
+      const delta = wk1 - wk3;
+      stressTrend = wk1.toFixed(1) + ' → ' + wk3.toFixed(1) + (delta > 0 ? ' (down ' + delta.toFixed(1) + ')' : '');
+    } else if (wk1 != null) {
+      stressTrend = 'Week 1 avg ' + wk1.toFixed(1);
+    }
+
+    const rows = participants.slice().sort((a, b) => b.completionPct - a.completionPct).map(p => `
+      <tr><td>${escapeHtml(p.name || p.email || 'Participant')}</td>
+        <td style="text-align:center;">Day ${p.currentDay}</td>
+        <td style="text-align:center;">${p.completionPct}%</td>
+        <td style="text-align:center;">${p.streak}</td>
+        <td style="text-align:center;color:${p.inactive ? '#b91c1c' : '#047857'};">${p.inactive ? 'At risk' : 'Active'}</td></tr>`).join('');
+
+    const metric = (val, label) => `<div style="flex:1;min-width:110px;text-align:center;padding:14px;border:1px solid #e2e8f0;border-radius:12px;">
+      <div style="font-size:1.6rem;font-weight:800;color:#0F172A;letter-spacing:-0.02em;">${val}</div>
+      <div style="font-size:0.7rem;color:#475569;text-transform:uppercase;letter-spacing:0.04em;margin-top:4px;">${label}</div></div>`;
+
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>BMM Results — ${escapeHtml(companyName)}</title>
+      <style>*{box-sizing:border-box;}body{font-family:-apple-system,Segoe UI,Inter,sans-serif;color:#0F172A;max-width:760px;margin:0 auto;padding:40px 28px;}
+      h1{font-size:1.5rem;letter-spacing:-0.02em;margin:0 0 4px;}.sub{color:#475569;font-size:0.9rem;margin-bottom:24px;}
+      h2{font-size:0.9rem;text-transform:uppercase;letter-spacing:0.05em;color:#0EA5E9;margin:28px 0 12px;}
+      table{width:100%;border-collapse:collapse;font-size:0.85rem;}th{text-align:left;color:#475569;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.05em;border-bottom:2px solid #e2e8f0;padding:8px 10px;}
+      td{padding:8px 10px;border-bottom:1px solid #eef2f6;}.row{display:flex;gap:12px;flex-wrap:wrap;}
+      .note{font-size:0.72rem;color:#94A3B8;margin-top:28px;border-top:1px solid #e2e8f0;padding-top:12px;line-height:1.5;}@media print{body{padding:0;}}</style></head><body>
+      <h1>Build More Margin — 21-Day Challenge Results</h1>
+      <div class="sub">${escapeHtml(companyName)} · ${today}</div>
+      <h2>Cohort Outcomes</h2>
+      <div class="row">${metric(joined, 'Enrolled')}${metric(participationRate + '%', 'Participated')}${metric(avgCompletion + '%', 'Avg Completion')}${metric('$' + totalSaved.toFixed(0), 'Saved (cohort)')}${metric(totalBreathing, 'Breathing Sessions')}</div>
+      <div style="margin-top:12px;font-size:0.85rem;color:#334155;">Average stress (Week 1 → Week 3): <strong>${stressTrend}</strong></div>
+      <h2>Participation by Person</h2>
+      <table><thead><tr><th>Name</th><th style="text-align:center;">Day</th><th style="text-align:center;">Completion</th><th style="text-align:center;">Streak</th><th style="text-align:center;">Status</th></tr></thead><tbody>${rows}</tbody></table>
+      <div class="note"><strong>Privacy:</strong> This report shows participation and aggregate outcomes only. Individual stress levels, savings amounts, and journal entries are private to each participant and are never shared with employers.</div>
+      </body></html>`;
+
+    const win = window.open('', '_blank');
+    if (!win) { alert('Please allow pop-ups to generate the report.'); return; }
+    win.document.write(html);
+    win.document.close();
+    win.focus();
+    setTimeout(() => win.print(), 500);
+  }
+
+  document.getElementById('results-report').addEventListener('click', generateResultsReport);
 })();

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bmm-challenge-v4';
+const CACHE_NAME = 'bmm-challenge-v7';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -16,7 +16,8 @@ const STATIC_ASSETS = [
   '/content/days.json',
   '/manifest.json',
   '/icons/icon-192.png',
-  '/icons/icon-512.png'
+  '/icons/icon-512.png',
+  '/icons/bitsy.png'
 ];
 
 self.addEventListener('install', event => {
@@ -38,15 +39,8 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  // Let Firebase handle its own requests
-  if (url.hostname.includes('firestore') ||
-      url.hostname.includes('identitytoolkit') ||
-      url.hostname.includes('googleapis') ||
-      url.hostname.includes('gstatic')) {
-    return;
-  }
-
-  // Google Fonts: cache-first (they rarely change)
+  // Google Fonts: cache-first (they rarely change) — must run before the
+  // generic googleapis/gstatic passthrough below, which also matches font hosts
   if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
     event.respondWith(
       caches.match(event.request).then(cached => {
@@ -58,6 +52,14 @@ self.addEventListener('fetch', event => {
         });
       })
     );
+    return;
+  }
+
+  // Let Firebase handle its own requests
+  if (url.hostname.includes('firestore') ||
+      url.hostname.includes('identitytoolkit') ||
+      url.hostname.includes('googleapis') ||
+      url.hostname.includes('gstatic')) {
     return;
   }
 

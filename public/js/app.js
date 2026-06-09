@@ -57,6 +57,7 @@ function showToast(message) {
     if (target) target.classList.add('active');
     const navBtn = document.querySelector(`.nav-item[data-view="${viewName}"]`);
     if (navBtn) navBtn.classList.add('active');
+    window.scrollTo({ top: 0 });
   }
 
   navItems.forEach(item => {
@@ -74,6 +75,17 @@ function showToast(message) {
     detail.style.display = show ? 'block' : 'none';
     arrow.style.transform = show ? 'rotate(180deg)' : '';
   });
+
+  // Quick check-in: optional detail fields collapsed by default (protects the "2 minutes a day" promise)
+  const moreToggle = document.getElementById('checkin-more-toggle');
+  if (moreToggle) {
+    moreToggle.addEventListener('click', () => {
+      const details = document.getElementById('checkin-details');
+      const show = details.style.display === 'none';
+      details.style.display = show ? 'block' : 'none';
+      moreToggle.textContent = show ? '− Hide sleep, steps & notes' : '+ Add sleep, steps & notes (optional)';
+    });
+  }
 
   // Initialize check-in form
   Checkin.init(
@@ -101,8 +113,10 @@ function showToast(message) {
       await Survey.showSurvey(userData.id, 'pre', surveyContainer, () => {
         surveyView.style.display = 'none';
         surveyView.classList.remove('active');
+        surveyContainer.innerHTML = '';
         document.getElementById('view-today').classList.add('active');
-        surveyContainer.innerHTML = '<div class="card" style="text-align:center;"><h3 style="color:var(--green);">Baseline saved!</h3><p>Let\'s start your challenge.</p></div>';
+        window.scrollTo({ top: 0 });
+        showToast('Baseline saved — let\'s start your challenge!');
       });
     }
 
@@ -114,11 +128,22 @@ function showToast(message) {
         document.getElementById('view-today').classList.remove('active');
         surveyView.classList.add('active');
         await Survey.showSurvey(userData.id, 'post', surveyContainer, async responses => {
+          // Keep the survey view on screen so the before/after comparison —
+          // the payoff of the whole challenge — is actually seen
           const postData = { responses };
-          surveyView.style.display = 'none';
-          surveyView.classList.remove('active');
-          document.getElementById('view-today').classList.add('active');
           Survey.renderComparison(preSurvey, postData, surveyContainer);
+          const doneBtn = document.createElement('button');
+          doneBtn.className = 'btn btn-primary btn-full';
+          doneBtn.textContent = 'Continue to Today';
+          doneBtn.onclick = () => {
+            surveyView.style.display = 'none';
+            surveyView.classList.remove('active');
+            surveyContainer.innerHTML = '';
+            document.getElementById('view-today').classList.add('active');
+            window.scrollTo({ top: 0 });
+          };
+          surveyContainer.appendChild(doneBtn);
+          window.scrollTo({ top: 0 });
         });
       }
     }
@@ -141,28 +166,30 @@ function showToast(message) {
       document.getElementById('checkin-card').style.display = viewingDay === day ? 'block' : 'none';
     }
 
-    prevBtn.addEventListener('click', () => {
+    // onclick assignments (not addEventListener) so a sign-out/sign-in
+    // without a reload doesn't stack duplicate handlers
+    prevBtn.onclick = () => {
       if (viewingDay > 0) {
         viewingDay--;
         Challenge.renderToday(viewingDay);
         updateDayNav();
       }
-    });
+    };
 
-    nextBtn.addEventListener('click', () => {
+    nextBtn.onclick = () => {
       if (viewingDay < day) {
         viewingDay++;
         Challenge.renderToday(viewingDay);
         updateDayNav();
       }
-    });
+    };
 
-    backLink.addEventListener('click', e => {
+    backLink.onclick = e => {
       e.preventDefault();
       viewingDay = day;
       Challenge.renderToday(day);
       updateDayNav();
-    });
+    };
 
     updateDayNav();
 
@@ -198,10 +225,10 @@ function showToast(message) {
     if (!localStorage.getItem('onboardingSeen') && day <= 1) {
       const overlay = document.getElementById('onboarding');
       overlay.style.display = 'block';
-      document.getElementById('onboarding-start').addEventListener('click', () => {
+      document.getElementById('onboarding-start').onclick = () => {
         overlay.style.display = 'none';
         localStorage.setItem('onboardingSeen', '1');
-      });
+      };
     }
 
     // Tomorrow preview
@@ -244,19 +271,50 @@ function showToast(message) {
       else if (s >= 7) streakMsg.textContent = s + '-day streak — unstoppable!';
       else if (s >= 3) streakMsg.textContent = s + '-day streak — building momentum';
       else streakMsg.textContent = s + '-day streak — keep going!';
+      if (progressData.graceUsed) streakMsg.textContent += ' 🛡️';
+    }
+
+    // Bitsy — a warm daily line with personality
+    const bitsyText = document.getElementById('bitsy-text');
+    const bitsyLine = document.getElementById('bitsy-line');
+    if (bitsyText && bitsyLine) {
+      const st = progressData ? progressData.streak : 0;
+      let line;
+      if (st >= 14) line = "Final stretch — you're proof this works. Don't be an Itsy now.";
+      else if (st >= 7) line = "A week strong. This is what momentum feels like.";
+      else if (st >= 3) line = "Three days in a row. The habit is taking hold.";
+      else {
+        const lines = [
+          "Welcome aboard. I'm Bitsy — let's build some margin together.",
+          "Small moves today beat big plans someday. Let's go.",
+          "Your Peace of Mind number starts with one deposit. Even $5 counts.",
+          "Movement is margin. A little more than yesterday is a win.",
+          "Stress isn't the enemy — unmanaged stress is. Breathe with me.",
+          "Three pillars, one you. Keep stacking the small stuff.",
+          "Progress over perfection. Just show up today.",
+          "Don't be an Itsy. Two minutes is all today asks.",
+          "You're building something quietly powerful. Keep at it.",
+          "Check in, breathe, save a little. That's the whole game.",
+          "The compound effect is real — and it's working for you.",
+          "Almost there. Finish what you started; future-you is watching."
+        ];
+        line = lines[day % lines.length];
+      }
+      bitsyText.textContent = line;
+      bitsyLine.style.display = 'flex';
     }
 
     // Share button (Web Share API)
     if (navigator.share) {
       shareBtn.style.display = 'inline-flex';
-      shareBtn.addEventListener('click', () => {
+      shareBtn.onclick = () => {
         const pct = day > 0 ? Math.round((progressData.completedDays / day) * 100) : 0;
         navigator.share({
           title: 'Build More Margin Challenge',
           text: `I'm on Day ${day} of the 21-Day Build More Margin Challenge! ${progressData.streak}-day streak, ${pct}% completion.`,
           url: 'https://challenge.buildmoremargin.com'
         }).catch(() => {});
-      });
+      };
     }
 
     // Sync breathing sessions from Firebase
@@ -267,19 +325,24 @@ function showToast(message) {
     }
 
     // Load savings
-    await PeaceOfMind.load(userData.id);
+    await PeaceOfMind.load(userData.id, day);
 
-    // Personalized greeting
+    // Personalized greeting + day counter
     const greetingEl = document.getElementById('app-greeting');
     const firstName = (userData.name || '').split(' ')[0];
     if (firstName) {
+      const hour = new Date().getHours();
       const timeGreeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
       greetingEl.textContent = `${timeGreeting}, ${firstName}`;
+    }
+    const subtitleEl = document.querySelector('.app-header .subtitle');
+    if (subtitleEl && day >= 1) {
+      subtitleEl.textContent = `21-Day Challenge · Day ${day} of 21`;
     }
 
     // Step presets
     document.querySelectorAll('.step-preset').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.onclick = () => {
         document.getElementById('checkin-steps').value = btn.dataset.val;
         document.querySelectorAll('.step-preset').forEach(b => {
           b.style.background = 'var(--bg)';
@@ -289,7 +352,7 @@ function showToast(message) {
         btn.style.background = 'var(--green)';
         btn.style.color = '#fff';
         btn.style.borderColor = 'var(--green)';
-      });
+      };
     });
 
     // Profile
@@ -303,9 +366,9 @@ function showToast(message) {
     startDateInput.value = origDate;
     saveDateBtn.disabled = true;
 
-    startDateInput.addEventListener('change', () => {
+    startDateInput.onchange = () => {
       saveDateBtn.disabled = startDateInput.value === origDate || !startDateInput.value;
-    });
+    };
 
     saveDateBtn.onclick = async () => {
       const newDate = startDateInput.value;

@@ -62,6 +62,7 @@ const Auth = (() => {
 
         // Check invite code if provided
         let companyId = null;
+        let cohortStart = null;
         if (inviteCode) {
           const codeDoc = await db.collection('inviteCodes').doc(inviteCode).get();
           if (!codeDoc.exists || !codeDoc.data().active) {
@@ -70,6 +71,7 @@ const Auth = (() => {
             return;
           }
           companyId = codeDoc.data().companyId;
+          cohortStart = codeDoc.data().challengeStartDate || null; // synchronized cohort start
         }
 
         const cred = await auth.createUserWithEmailAndPassword(email, password);
@@ -78,7 +80,7 @@ const Auth = (() => {
           name,
           role: 'participant',
           companyId,
-          challengeStartDate: new Date().toISOString().split('T')[0],
+          challengeStartDate: cohortStart || new Date().toISOString().split('T')[0],
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
       } else {
@@ -165,6 +167,15 @@ const Auth = (() => {
   toggleLink.addEventListener('click', e => { e.preventDefault(); toggleMode(); });
   form.addEventListener('submit', handleSubmit);
   signOutBtn.addEventListener('click', signOut);
+
+  // Join link: ?code=ABC123 prefills the invite code and opens sign-up
+  (function applyInviteFromUrl() {
+    const code = (new URLSearchParams(window.location.search).get('code') || '').trim().toUpperCase();
+    if (code) {
+      if (!isSignUp) toggleMode();
+      inviteInput.value = code;
+    }
+  })();
 
   return { onAuthStateChanged, signOut, getUser, getUid };
 })();
