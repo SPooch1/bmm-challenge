@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1220 520" role="img" aria-label="Illustration of a 4-string cigar box guitar, the SMOKEHOUSE build">
+  <defs>
+    <linearGradient id="w7" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9c6a35"/>
+      <stop offset=".55" stop-color="#654522"/>
+      <stop offset="1" stop-color="#463018"/>
+    </linearGradient>
+    <linearGradient id="b7" x1="0" y1="0" x2=".3" y2="1">
+      <stop offset="0" stop-color="#6b4322"/>
+      <stop offset=".6" stop-color="#4b2f18"/>
+      <stop offset="1" stop-color="#362211"/>
+    </linearGradient>
+    <radialGradient id="g7" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#ffb46b" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#ffb46b" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <ellipse cx="620" cy="470" rx="520" ry="26" fill="#000" opacity=".28"/>
+  <rect width="1220" height="520" fill="url(#g7)"/>
+
+  <!-- headstock -->
+  <path d="M52 196 L176 214 L176 302 L52 322 Z" fill="url(#w7)" stroke="#463018" stroke-width="2" stroke-linejoin="round"/>
+  <text x="114" y="266" font-family="Georgia, serif" font-size="19" fill="#362211" text-anchor="middle" opacity=".75" letter-spacing="1">Tension</text>
+  <g>
+    <line x1="78" y1="186" x2="78" y2="232" stroke="#a97c26" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="78" cy="186" r="14" fill="#d9a441" stroke="#a97c26" stroke-width="2.5"/>
+    <circle cx="78" cy="186" r="5" fill="#a97c26" opacity=".7"/>
+  </g>
+  <g>
+    <line x1="124" y1="330" x2="124" y2="249.33333333333334" stroke="#a97c26" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="124" cy="330" r="14" fill="#d9a441" stroke="#a97c26" stroke-width="2.5"/>
+    <circle cx="124" cy="330" r="5" fill="#a97c26" opacity=".7"/>
+  </g>
+  <g>
+    <line x1="78" y1="186" x2="78" y2="266.6666666666667" stroke="#a97c26" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="78" cy="186" r="14" fill="#d9a441" stroke="#a97c26" stroke-width="2.5"/>
+    <circle cx="78" cy="186" r="5" fill="#a97c26" opacity=".7"/>
+  </g>
+  <g>
+    <line x1="124" y1="330" x2="124" y2="284" stroke="#a97c26" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="124" cy="330" r="14" fill="#d9a441" stroke="#a97c26" stroke-width="2.5"/>
+    <circle cx="124" cy="330" r="5" fill="#a97c26" opacity=".7"/>
+  </g>
+
+  <!-- neck -->
+  <rect x="174" y="220" width="10" height="76" rx="3" fill="#efe3cd" stroke="#463018" stroke-width="1.5"/>
+  <rect x="182" y="224" width="558" height="68" fill="url(#w7)"/>
+  <path d="M182 232 Q 362 229, 542 234 T 720 232" stroke="#463018" stroke-width="1" fill="none" opacity=".28"/><path d="M182 240 Q 362 237, 542 242 T 720 240" stroke="#463018" stroke-width="1" fill="none" opacity=".28"/><path d="M182 248 Q 362 245, 542 250 T 720 248" stroke="#463018" stroke-width="1" fill="none" opacity=".28"/><path d="M182 256 Q 362 253, 542 258 T 720 256" stroke="#463018" stroke-width="1" fill="none" opacity=".28"/><path d="M182 264 Q 362 261, 542 266 T 720 264" stroke="#463018" stroke-width="1" fill="none" opacity=".28"/><path d="M182 272 Q 362 269, 542 274 T 720 272" stroke="#463018" stroke-width="1" fill="none" opacity=".28"/><path d="M182 280 Q 362 277, 542 282 T 720 280" stroke="#463018" stroke-width="1" fill="none" opacity=".28"/>
+  <line x1="213.4" y1="224" x2="213.4" y2="292" stroke="#e6d9c0" stroke-width="2.5" opacity=".85"/>
+  <line x1="243.1" y1="224" x2="243.1" y2="292" stroke="#e6d9c0" stroke-width="2.5" opacity=".85"/>
+  <line x1="271.1" y1="224" x2="271.1" y2="292" stroke="#e6d9c0" stroke-width="2.5" opacity=".85"/>
+  <line x1="297.5" y1="224" x2="297.5" y2="292" stroke="#e6d9c0" stroke-width="2.5" opacity=".85"/>
+  <line x1="322.5" y1="224" x2="322.5" y2="292" stroke="#e6d9c0" stroke-width="2.5" opacity=".85"/>
+  <line x1="346.0" y1="224" x2="346.0" y2="292" stroke="#e6d9c0" stroke-width="2.5" opacity=".85"/>
+  <line x1="368.2" y1="224" x2="368.2" y2="292" stroke="#e6d9c0" stroke-width="2.5" opacity=".85"/>
+  <line x1="389.2" y1="224" x2="389.2" y2="292" stroke="#e6d9c0" stroke-width="2.5" opacity=".85"/>
+  <line x1="409.0" y1="224" x2="409.0" y2="292" stroke="#e6d9c0" stroke-width="2.5" opacity=".85"/>
+  <line x1="427.7" y1="224" x2="427.7" y2="292" stroke="#e6d9c0" stroke-width="2.5" opacity=".85"/>
+  <line x1="445.4" y1="224" x2="445.4" y2="292" stroke="#e6d9c0" stroke-width="2.5" opacity=".85"/>
+  <circle cx="271.1" cy="258" r="5" fill="#f3e7d2" opacity=".55"/>
+  <circle cx="322.5" cy="258" r="5" fill="#f3e7d2" opacity=".55"/>
+  <circle cx="368.2" cy="258" r="5" fill="#f3e7d2" opacity=".55"/>
+  <circle cx="427.7" cy="258" r="5" fill="#f3e7d2" opacity=".55"/>
+
+  <!-- cigar box body -->
+  <rect x="700" y="108" width="452" height="304" rx="12" fill="url(#b7)" stroke="#362211" stroke-width="3"/>
+  <rect x="714" y="122" width="424" height="276" rx="8" fill="none" stroke="#d9a441" stroke-width="2" opacity=".45"/>
+
+  <!-- lid label -->
+  <rect x="870" y="182" width="200" height="152" rx="8" fill="#f2e6d2" opacity=".93"/>
+  <rect x="880" y="192" width="180" height="132" rx="5" fill="none" stroke="#362211" stroke-width="2"/>
+  <text x="970" y="236" font-family="Georgia, serif" font-size="17" fill="#362211" text-anchor="middle" letter-spacing="3">HOT SAUCE</text>
+  <text x="970" y="270" font-family="Georgia, serif" font-weight="bold" font-size="20" fill="#25170c" text-anchor="middle" letter-spacing="1">SMOKEHOUSE</text>
+  <text x="970" y="300" font-family="Georgia, serif" font-size="14" fill="#362211" text-anchor="middle" letter-spacing="2">No. 07</text>
+
+  <!-- sound holes -->
+  <circle cx="786" cy="174" r="17" fill="#362211"/>
+  <circle cx="786" cy="298" r="17" fill="#362211"/>
+
+  <!-- humbucker, bridge, tailpiece -->
+  <rect x="762" y="214" width="44" height="88" rx="5" fill="#1b1b1f" stroke="#a97c26" stroke-width="2"/>
+  <circle cx="784" cy="232" r="3.5" fill="#cfd2d6"/>
+  <circle cx="784" cy="249.33333333333334" r="3.5" fill="#cfd2d6"/>
+  <circle cx="784" cy="266.6666666666667" r="3.5" fill="#cfd2d6"/>
+  <circle cx="784" cy="284" r="3.5" fill="#cfd2d6"/>
+  <rect x="1000" y="206" width="16" height="104" rx="3" fill="#d9a441" stroke="#a97c26" stroke-width="2"/>
+  <rect x="1112" y="212" width="22" height="92" rx="4" fill="#d9a441" stroke="#a97c26" stroke-width="2"/>
+  <circle cx="740" cy="366" r="13" fill="#d9a441" stroke="#a97c26" stroke-width="2"/>
+  <circle cx="740" cy="154" r="13" fill="#d9a441" stroke="#a97c26" stroke-width="2"/>
+
+  <!-- strings -->
+  <line x1="112" y1="232" x2="1118" y2="232" stroke="#e9edf2" stroke-width="1.4" opacity=".9"/>
+  <line x1="112" y1="249.33333333333334" x2="1118" y2="249.33333333333334" stroke="#e9edf2" stroke-width="1.8499999999999999" opacity=".9"/>
+  <line x1="112" y1="266.6666666666667" x2="1118" y2="266.6666666666667" stroke="#e9edf2" stroke-width="2.3" opacity=".9"/>
+  <line x1="112" y1="284" x2="1118" y2="284" stroke="#e9edf2" stroke-width="2.75" opacity=".9"/>
+</svg>
