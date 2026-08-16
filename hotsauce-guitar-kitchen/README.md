@@ -10,6 +10,24 @@ folder and it runs.
 python3 -m http.server 8000     # then visit http://localhost:8000
 ```
 
+## Design
+
+Light theme on blush paper (`#fff8fb`) with pink as the primary, a rainbow
+accent used for the ticker/CTA/gradient text, and a unicorn as the shop mark
+(`assets/img/logo.svg`, `favicon.svg`).
+
+Two rainbows are defined in `css/styles.css` on purpose:
+
+- `--rainbow` — the soft pastel version, for decoration only (the quote card's
+  edge stripe). It washes out under white text.
+- `--rainbow-text` — a saturated version used anywhere text sits on top:
+  gradient headings, the ticker, the closing CTA. The ticker and CTA also layer
+  a dark scrim over it, because the bare gradient's orange stop measured
+  3.05:1 against white and needed to clear 4.5:1.
+
+If you restyle, re-check those two surfaces — pastel rainbows and white text
+are the easy way to break legibility here.
+
 ## Layout
 
 ```
@@ -31,7 +49,7 @@ items are placeholders and need real values:**
 | Shop email | `js/site.js` → `SHOP_EMAIL` | Currently `hello@example.com`. The form opens the visitor's mail client; it does not send anything on its own. |
 | Social links | `index.html` → footer, marked `EDIT:` | Instagram/YouTube/Reverb URLs need the real profiles. |
 | Prices | `index.html` → commission tiers | Deliberately left as "Quoted per build" rather than inventing numbers. Add real figures if you want them public. |
-| Guitar photos | `assets/img/guitar-*.svg` | Currently illustrations, **not photographs** — see below. |
+| Guitar photos | `assets/img/guitar-*.svg` | Currently pastel illustrations, **not photographs** — see below. |
 | Build names / specs / sold status | `index.html` → `.card` blocks | The nine gallery entries are plausible examples, not a real inventory. |
 
 ### Swapping in real photos
@@ -84,6 +102,9 @@ else in the copy is marketing voice written for the shop and can be freely edite
 - `prefers-reduced-motion` disables the ticker, sway, and reveal animations.
 - Verified in Chromium at 1440px and 390px: no horizontal overflow, working
   mobile menu, working gallery filters, keyboard-focusable form fields.
+- Contrast on the two gradient surfaces was measured from rendered pixels, not
+  eyeballed: ticker 5.30:1 and CTA 4.92:1 against white, both clearing WCAG AA
+  for normal-size text.
 
 ## Deploying
 

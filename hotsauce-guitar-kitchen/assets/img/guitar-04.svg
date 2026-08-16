@@ -1,47 +1,53 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1220 520" role="img" aria-label="Illustration of a 3-string cigar box guitar, the MIDNIGHT build">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1220 520" role="img" aria-label="Illustration of a 3-string cigar box guitar, the LAVENDER build">
   <defs>
     <linearGradient id="w4" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#a06c33"/>
-      <stop offset=".55" stop-color="#684621"/>
-      <stop offset="1" stop-color="#483117"/>
+      <stop offset="0" stop-color="#e3b884"/>
+      <stop offset=".55" stop-color="#947856"/>
+      <stop offset="1" stop-color="#66533b"/>
     </linearGradient>
     <linearGradient id="b4" x1="0" y1="0" x2=".3" y2="1">
-      <stop offset="0" stop-color="#25272e"/>
-      <stop offset=".6" stop-color="#1a1b20"/>
-      <stop offset="1" stop-color="#131417"/>
+      <stop offset="0" stop-color="#b98cf0"/>
+      <stop offset=".6" stop-color="#9873c5"/>
+      <stop offset="1" stop-color="#6b518b"/>
     </linearGradient>
     <radialGradient id="g4" cx=".5" cy=".5" r=".5">
-      <stop offset="0" stop-color="#ffb46b" stop-opacity=".16"/>
-      <stop offset="1" stop-color="#ffb46b" stop-opacity="0"/>
+      <stop offset="0" stop-color="#ff6fae" stop-opacity=".13"/>
+      <stop offset="1" stop-color="#ff6fae" stop-opacity="0"/>
     </radialGradient>
   </defs>
 
-  <ellipse cx="620" cy="470" rx="520" ry="26" fill="#000" opacity=".28"/>
+  <ellipse cx="620" cy="470" rx="520" ry="26" fill="#c9799f" opacity=".2"/>
   <rect width="1220" height="520" fill="url(#g4)"/>
+  <path d="M180 84 Q182.64 93.36, 192 96 Q182.64 98.64, 180 108 Q177.36 98.64, 168 96 Q177.36 93.36, 180 84 Z" fill="#ff6fae" opacity="0.4"/>
+  <path d="M340 45 Q343.74 58.26, 357 62 Q343.74 65.74, 340 79 Q336.26 65.74, 323 62 Q336.26 58.26, 340 45 Z" fill="#b98cf0" opacity="0.4"/>
+  <path d="M980 53 Q981.98 60.02, 989 62 Q981.98 63.98, 980 71 Q978.02 63.98, 971 62 Q978.02 60.02, 980 53 Z" fill="#f7cf5c" opacity="0.4"/>
+  <path d="M1080 118 Q1083.08 128.92, 1094 132 Q1083.08 135.08, 1080 146 Q1076.92 135.08, 1066 132 Q1076.92 128.92, 1080 118 Z" fill="#ff6fae" opacity="0.4"/>
+  <path d="M600 437 Q603.3 448.7, 615 452 Q603.3 455.3, 600 467 Q596.7 455.3, 585 452 Q596.7 448.7, 600 437 Z" fill="#7fd8c4" opacity="0.4"/>
+  <path d="M900 437 Q902.42 445.58, 911 448 Q902.42 450.42, 900 459 Q897.58 450.42, 889 448 Q897.58 445.58, 900 437 Z" fill="#f7cf5c" opacity="0.4"/>
 
   <!-- headstock -->
-  <path d="M52 196 L176 214 L176 302 L52 322 Z" fill="url(#w4)" stroke="#483117" stroke-width="2" stroke-linejoin="round"/>
-  <text x="114" y="266" font-family="Georgia, serif" font-size="19" fill="#131417" text-anchor="middle" opacity=".75" letter-spacing="1">Tension</text>
+  <path d="M52 196 L176 214 L176 302 L52 322 Z" fill="url(#w4)" stroke="#66533b" stroke-width="2" stroke-linejoin="round"/>
+  <text x="114" y="266" font-family="Georgia, serif" font-size="19" fill="#6b518b" text-anchor="middle" opacity=".75" letter-spacing="1">Tension</text>
   <g>
-    <line x1="78" y1="186" x2="78" y2="238" stroke="#a97c26" stroke-width="5" stroke-linecap="round"/>
-    <circle cx="78" cy="186" r="14" fill="#d9a441" stroke="#a97c26" stroke-width="2.5"/>
-    <circle cx="78" cy="186" r="5" fill="#a97c26" opacity=".7"/>
+    <line x1="78" y1="186" x2="78" y2="238" stroke="#c98f5c" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="78" cy="186" r="14" fill="#f0c987" stroke="#c98f5c" stroke-width="2.5"/>
+    <circle cx="78" cy="186" r="5" fill="#c98f5c" opacity=".7"/>
   </g>
   <g>
-    <line x1="124" y1="330" x2="124" y2="258" stroke="#a97c26" stroke-width="5" stroke-linecap="round"/>
-    <circle cx="124" cy="330" r="14" fill="#d9a441" stroke="#a97c26" stroke-width="2.5"/>
-    <circle cx="124" cy="330" r="5" fill="#a97c26" opacity=".7"/>
+    <line x1="124" y1="330" x2="124" y2="258" stroke="#c98f5c" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="124" cy="330" r="14" fill="#f0c987" stroke="#c98f5c" stroke-width="2.5"/>
+    <circle cx="124" cy="330" r="5" fill="#c98f5c" opacity=".7"/>
   </g>
   <g>
-    <line x1="78" y1="186" x2="78" y2="278" stroke="#a97c26" stroke-width="5" stroke-linecap="round"/>
-    <circle cx="78" cy="186" r="14" fill="#d9a441" stroke="#a97c26" stroke-width="2.5"/>
-    <circle cx="78" cy="186" r="5" fill="#a97c26" opacity=".7"/>
+    <line x1="78" y1="186" x2="78" y2="278" stroke="#c98f5c" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="78" cy="186" r="14" fill="#f0c987" stroke="#c98f5c" stroke-width="2.5"/>
+    <circle cx="78" cy="186" r="5" fill="#c98f5c" opacity=".7"/>
   </g>
 
   <!-- neck -->
-  <rect x="174" y="220" width="10" height="76" rx="3" fill="#efe3cd" stroke="#483117" stroke-width="1.5"/>
+  <rect x="174" y="220" width="10" height="76" rx="3" fill="#efe3cd" stroke="#66533b" stroke-width="1.5"/>
   <rect x="182" y="224" width="558" height="68" fill="url(#w4)"/>
-  <path d="M182 232 Q 362 229, 542 234 T 720 232" stroke="#483117" stroke-width="1" fill="none" opacity=".28"/><path d="M182 240 Q 362 237, 542 242 T 720 240" stroke="#483117" stroke-width="1" fill="none" opacity=".28"/><path d="M182 248 Q 362 245, 542 250 T 720 248" stroke="#483117" stroke-width="1" fill="none" opacity=".28"/><path d="M182 256 Q 362 253, 542 258 T 720 256" stroke="#483117" stroke-width="1" fill="none" opacity=".28"/><path d="M182 264 Q 362 261, 542 266 T 720 264" stroke="#483117" stroke-width="1" fill="none" opacity=".28"/><path d="M182 272 Q 362 269, 542 274 T 720 272" stroke="#483117" stroke-width="1" fill="none" opacity=".28"/><path d="M182 280 Q 362 277, 542 282 T 720 280" stroke="#483117" stroke-width="1" fill="none" opacity=".28"/>
+  <path d="M182 232 Q 362 229, 542 234 T 720 232" stroke="#66533b" stroke-width="1" fill="none" opacity=".28"/><path d="M182 240 Q 362 237, 542 242 T 720 240" stroke="#66533b" stroke-width="1" fill="none" opacity=".28"/><path d="M182 248 Q 362 245, 542 250 T 720 248" stroke="#66533b" stroke-width="1" fill="none" opacity=".28"/><path d="M182 256 Q 362 253, 542 258 T 720 256" stroke="#66533b" stroke-width="1" fill="none" opacity=".28"/><path d="M182 264 Q 362 261, 542 266 T 720 264" stroke="#66533b" stroke-width="1" fill="none" opacity=".28"/><path d="M182 272 Q 362 269, 542 274 T 720 272" stroke="#66533b" stroke-width="1" fill="none" opacity=".28"/><path d="M182 280 Q 362 277, 542 282 T 720 280" stroke="#66533b" stroke-width="1" fill="none" opacity=".28"/>
   <line x1="213.4" y1="224" x2="213.4" y2="292" stroke="#e6d9c0" stroke-width="2.5" opacity=".85"/>
   <line x1="243.1" y1="224" x2="243.1" y2="292" stroke="#e6d9c0" stroke-width="2.5" opacity=".85"/>
   <line x1="271.1" y1="224" x2="271.1" y2="292" stroke="#e6d9c0" stroke-width="2.5" opacity=".85"/>
@@ -59,29 +65,30 @@
   <circle cx="427.7" cy="258" r="5" fill="#f3e7d2" opacity=".55"/>
 
   <!-- cigar box body -->
-  <rect x="700" y="108" width="452" height="304" rx="12" fill="url(#b4)" stroke="#131417" stroke-width="3"/>
-  <rect x="714" y="122" width="424" height="276" rx="8" fill="none" stroke="#d9a441" stroke-width="2" opacity=".45"/>
+  <rect x="700" y="108" width="452" height="304" rx="12" fill="url(#b4)" stroke="#6b518b" stroke-width="3"/>
+  <rect x="714" y="122" width="424" height="276" rx="8" fill="none" stroke="#f0c987" stroke-width="2" opacity=".45"/>
 
   <!-- lid label -->
   <rect x="870" y="182" width="200" height="152" rx="8" fill="#f2e6d2" opacity=".93"/>
-  <rect x="880" y="192" width="180" height="132" rx="5" fill="none" stroke="#131417" stroke-width="2"/>
-  <text x="970" y="236" font-family="Georgia, serif" font-size="17" fill="#131417" text-anchor="middle" letter-spacing="3">HOT SAUCE</text>
-  <text x="970" y="270" font-family="Georgia, serif" font-weight="bold" font-size="26" fill="#0d0e10" text-anchor="middle" letter-spacing="1">MIDNIGHT</text>
-  <text x="970" y="300" font-family="Georgia, serif" font-size="14" fill="#131417" text-anchor="middle" letter-spacing="2">No. 04</text>
+  <rect x="880" y="192" width="180" height="132" rx="5" fill="none" stroke="#6b518b" stroke-width="2"/>
+  <text x="970" y="232" font-family="Georgia, serif" font-size="17" fill="#6b518b" text-anchor="middle" letter-spacing="3">HOT SAUCE</text>
+  <text x="970" y="266" font-family="Georgia, serif" font-weight="bold" font-size="25" fill="#4a3860" text-anchor="middle" letter-spacing="1">LAVENDER</text>
+  <path d="M970 281 Q971.98 288.02, 979 290 Q971.98 291.98, 970 299 Q968.02 291.98, 961 290 Q968.02 288.02, 970 281 Z" fill="#e0428a" opacity="0.85"/>
+  <text x="970" y="316" font-family="Georgia, serif" font-size="14" fill="#6b518b" text-anchor="middle" letter-spacing="2">No. 04</text>
 
   <!-- sound holes -->
-  <circle cx="786" cy="174" r="17" fill="#131417"/>
-  <circle cx="786" cy="298" r="17" fill="#131417"/>
+  <circle cx="786" cy="174" r="17" fill="#6b518b"/>
+  <circle cx="786" cy="298" r="17" fill="#6b518b"/>
 
   <!-- humbucker, bridge, tailpiece -->
-  <rect x="762" y="214" width="44" height="88" rx="5" fill="#1b1b1f" stroke="#a97c26" stroke-width="2"/>
+  <rect x="762" y="214" width="44" height="88" rx="5" fill="#1b1b1f" stroke="#c98f5c" stroke-width="2"/>
   <circle cx="784" cy="238" r="3.5" fill="#cfd2d6"/>
   <circle cx="784" cy="258" r="3.5" fill="#cfd2d6"/>
   <circle cx="784" cy="278" r="3.5" fill="#cfd2d6"/>
-  <rect x="1000" y="206" width="16" height="104" rx="3" fill="#d9a441" stroke="#a97c26" stroke-width="2"/>
-  <rect x="1112" y="212" width="22" height="92" rx="4" fill="#d9a441" stroke="#a97c26" stroke-width="2"/>
-  <circle cx="740" cy="366" r="13" fill="#d9a441" stroke="#a97c26" stroke-width="2"/>
-  <circle cx="740" cy="154" r="13" fill="#d9a441" stroke="#a97c26" stroke-width="2"/>
+  <rect x="1000" y="206" width="16" height="104" rx="3" fill="#f0c987" stroke="#c98f5c" stroke-width="2"/>
+  <rect x="1112" y="212" width="22" height="92" rx="4" fill="#f0c987" stroke="#c98f5c" stroke-width="2"/>
+  <circle cx="740" cy="366" r="13" fill="#f0c987" stroke="#c98f5c" stroke-width="2"/>
+  <circle cx="740" cy="154" r="13" fill="#f0c987" stroke="#c98f5c" stroke-width="2"/>
 
   <!-- strings -->
   <line x1="112" y1="238" x2="1118" y2="238" stroke="#e9edf2" stroke-width="1.4" opacity=".9"/>

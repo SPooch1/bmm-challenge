@@ -14,17 +14,17 @@ const path = require('path');
 
 const OUT_DIR = path.join(__dirname, '..', 'assets', 'img');
 
-// One entry per gallery instrument.
+// One entry per gallery instrument. Pastel palette to match the light theme.
 const BUILDS = [
-  { id: 1, label: 'EMBER',     box: '#7d2d1f', wood: '#b57b3c', strings: 3 },
-  { id: 2, label: 'DELTA',     box: '#3f4a3a', wood: '#c99049', strings: 3 },
-  { id: 3, label: 'SCOVILLE',  box: '#a8341f', wood: '#8d5a2b', strings: 4 },
-  { id: 4, label: 'MIDNIGHT',  box: '#25272e', wood: '#a06c33', strings: 3 },
-  { id: 5, label: 'HABANERO',  box: '#b5621d', wood: '#7f5227', strings: 4 },
-  { id: 6, label: 'JUKE',      box: '#5c3a6e', wood: '#bb8340', strings: 3 },
-  { id: 7, label: 'SMOKEHOUSE',box: '#6b4322', wood: '#9c6a35', strings: 4 },
-  { id: 8, label: 'CAYENNE',   box: '#94202b', wood: '#b07c3e', strings: 3 },
-  { id: 9, label: 'TENSION',   box: '#2f4858', wood: '#c08a45', strings: 4 },
+  { id: 1, label: 'BLOSSOM',   box: '#ff6fae', wood: '#e0b078', strings: 3 },
+  { id: 2, label: 'COTTON',    box: '#ffb3d1', wood: '#e8c493', strings: 3 },
+  { id: 3, label: 'SPARKLE',   box: '#e0428a', wood: '#d9a86e', strings: 4 },
+  { id: 4, label: 'LAVENDER',  box: '#b98cf0', wood: '#e3b884', strings: 3 },
+  { id: 5, label: 'SHERBET',   box: '#ff9f7a', wood: '#dfae76', strings: 4 },
+  { id: 6, label: 'MERMAID',   box: '#7fd8c4', wood: '#e5bd85', strings: 3 },
+  { id: 7, label: 'BUTTERCUP', box: '#f7cf5c', wood: '#dcaa72', strings: 4 },
+  { id: 8, label: 'ROSEWATER', box: '#f48fb1', wood: '#e2b47f', strings: 3 },
+  { id: 9, label: 'UNICORN',   box: '#c77dff', wood: '#e7c08c', strings: 4 },
 ];
 
 /** Darken a #rrggbb hex colour by `amount` (0..1). */
@@ -50,14 +50,36 @@ function fretPositions(nutX, scaleLength, count) {
   return out;
 }
 
+/** A four-point sparkle star centred on (x, y). */
+function star(x, y, r, fill, opacity) {
+  return `<path d="M${x} ${y - r} Q${x + r * 0.22} ${y - r * 0.22}, ${x + r} ${y} Q${x + r * 0.22} ${y + r * 0.22}, ${x} ${y + r} Q${x - r * 0.22} ${y + r * 0.22}, ${x - r} ${y} Q${x - r * 0.22} ${y - r * 0.22}, ${x} ${y - r} Z" fill="${fill}" opacity="${opacity}"/>`;
+}
+
+/** Scattered background sparkles — varied per build so the cards aren't identical. */
+function sparkles(seed) {
+  const spots = [
+    [180, 96], [340, 62], [520, 108], [980, 62], [1080, 132],
+    [260, 430], [600, 452], [900, 448], [1120, 388],
+  ];
+  const tints = ['#ff6fae', '#b98cf0', '#7fd8c4', '#f7cf5c'];
+  return spots
+    .map((p, i) => {
+      if ((i + seed) % 3 === 0) return '';
+      const r = 9 + ((i * 5 + seed * 3) % 9);
+      return star(p[0], p[1], r, tints[(i + seed) % tints.length], 0.4);
+    })
+    .filter(Boolean)
+    .join('\n  ');
+}
+
 function guitarSvg(b) {
   const { label, box, wood, strings } = b;
   const woodDark = shade(wood, 0.35);
   const woodDeep = shade(wood, 0.55);
-  const boxDark = shade(box, 0.3);
-  const boxDeep = shade(box, 0.5);
-  const brass = '#d9a441';
-  const brassDark = '#a97c26';
+  const boxDark = shade(box, 0.18);
+  const boxDeep = shade(box, 0.42);
+  const brass = '#f0c987';   // rose gold, reads warm against the pastel boxes
+  const brassDark = '#c98f5c';
 
   // Geometry
   const nutX = 182;
@@ -101,13 +123,14 @@ function guitarSvg(b) {
       <stop offset="1" stop-color="${boxDeep}"/>
     </linearGradient>
     <radialGradient id="g${b.id}" cx=".5" cy=".5" r=".5">
-      <stop offset="0" stop-color="#ffb46b" stop-opacity=".16"/>
-      <stop offset="1" stop-color="#ffb46b" stop-opacity="0"/>
+      <stop offset="0" stop-color="#ff6fae" stop-opacity=".13"/>
+      <stop offset="1" stop-color="#ff6fae" stop-opacity="0"/>
     </radialGradient>
   </defs>
 
-  <ellipse cx="620" cy="470" rx="520" ry="26" fill="#000" opacity=".28"/>
+  <ellipse cx="620" cy="470" rx="520" ry="26" fill="#c9799f" opacity=".2"/>
   <rect width="1220" height="520" fill="url(#g${b.id})"/>
+  ${sparkles(b.id)}
 
   <!-- headstock -->
   <path d="M52 196 L176 214 L176 302 L52 322 Z" fill="url(#w${b.id})" stroke="${woodDeep}" stroke-width="2" stroke-linejoin="round"/>
@@ -136,9 +159,10 @@ function guitarSvg(b) {
   <!-- lid label -->
   <rect x="${boxL + 170}" y="${boxT + 74}" width="200" height="152" rx="8" fill="#f2e6d2" opacity=".93"/>
   <rect x="${boxL + 180}" y="${boxT + 84}" width="180" height="132" rx="5" fill="none" stroke="${boxDeep}" stroke-width="2"/>
-  <text x="${boxL + 270}" y="${boxT + 128}" font-family="Georgia, serif" font-size="17" fill="${boxDeep}" text-anchor="middle" letter-spacing="3">HOT SAUCE</text>
-  <text x="${boxL + 270}" y="${boxT + 162}" font-family="Georgia, serif" font-weight="bold" font-size="${label.length > 8 ? 20 : 26}" fill="${shade(box, 0.65)}" text-anchor="middle" letter-spacing="1">${label}</text>
-  <text x="${boxL + 270}" y="${boxT + 192}" font-family="Georgia, serif" font-size="14" fill="${boxDeep}" text-anchor="middle" letter-spacing="2">No. ${String(b.id).padStart(2, '0')}</text>
+  <text x="${boxL + 270}" y="${boxT + 124}" font-family="Georgia, serif" font-size="17" fill="${boxDeep}" text-anchor="middle" letter-spacing="3">HOT SAUCE</text>
+  <text x="${boxL + 270}" y="${boxT + 158}" font-family="Georgia, serif" font-weight="bold" font-size="${label.length > 8 ? 19 : 25}" fill="${shade(box, 0.6)}" text-anchor="middle" letter-spacing="1">${label}</text>
+  ${star(boxL + 270, boxT + 182, 9, '#e0428a', 0.85)}
+  <text x="${boxL + 270}" y="${boxT + 208}" font-family="Georgia, serif" font-size="14" fill="${boxDeep}" text-anchor="middle" letter-spacing="2">No. ${String(b.id).padStart(2, '0')}</text>
 
   <!-- sound holes -->
   <circle cx="${boxL + 86}" cy="${boxT + 66}" r="17" fill="${boxDeep}"/>

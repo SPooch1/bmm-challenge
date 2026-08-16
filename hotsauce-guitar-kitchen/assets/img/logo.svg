@@ -1,24 +1,33 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Hot Sauce Guitar Kitchen">
   <defs>
-    <linearGradient id="pep" x1="0" y1="0" x2=".4" y2="1">
-      <stop offset="0" stop-color="#e0492a"/>
-      <stop offset="1" stop-color="#a8151c"/>
+    <clipPath id="badge"><circle cx="60" cy="60" r="53"/></clipPath>
+    <linearGradient id="horn" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#f2b705"/>
+      <stop offset="1" stop-color="#ffe08a"/>
     </linearGradient>
   </defs>
-  <circle cx="60" cy="60" r="56" fill="#1c1512" stroke="#d9a441" stroke-width="3"/>
-  <circle cx="60" cy="60" r="48" fill="none" stroke="#d9a441" stroke-width="1" opacity=".45"/>
-  <!-- pepper body doubling as a guitar box -->
-  <path d="M60 34 c17 0 27 15 27 32 0 18-12 30-27 30 -15 0-27-12-27-30 0-17 10-32 27-32 Z" fill="url(#pep)"/>
-  <!-- headstock stem -->
-  <path d="M54 34 l0-16 12 0 0 16" fill="none" stroke="#4a7a35" stroke-width="6" stroke-linecap="round"/>
-  <circle cx="49" cy="22" r="4" fill="#d9a441"/>
-  <circle cx="71" cy="22" r="4" fill="#d9a441"/>
-  <!-- strings across the pepper -->
-  <line x1="52" y1="34" x2="52" y2="94" stroke="#f2e6d2" stroke-width="2" opacity=".85"/>
-  <line x1="60" y1="34" x2="60" y2="96" stroke="#f2e6d2" stroke-width="2.4" opacity=".85"/>
-  <line x1="68" y1="34" x2="68" y2="94" stroke="#f2e6d2" stroke-width="2.8" opacity=".85"/>
-  <!-- bridge -->
-  <rect x="46" y="76" width="28" height="6" rx="2" fill="#d9a441"/>
-  <!-- sound hole -->
-  <circle cx="60" cy="56" r="7" fill="#2a0f0c" opacity=".65"/>
+
+  <circle cx="60" cy="60" r="56" fill="#fff5fa" stroke="#ff6fae" stroke-width="3.5"/>
+
+  <g clip-path="url(#badge)">
+    <!-- rainbow mane sweeping behind the head -->
+    <path d="M56 44 C36 50 27 68 32 92" fill="none" stroke="#ff6fae" stroke-width="13" stroke-linecap="round"/>
+    <path d="M52 56 C33 63 26 78 31 100" fill="none" stroke="#b98cf0" stroke-width="11" stroke-linecap="round"/>
+    <path d="M50 68 C32 76 27 88 32 106" fill="none" stroke="#7fd8c4" stroke-width="9" stroke-linecap="round"/>
+
+    <!-- head -->
+    <path d="M42 94 C35 78 37 58 51 48 C60 41 72 42 78 51 C86 62 87 77 81 89 C74 100 51 103 42 94 Z" fill="#ffffff" stroke="#e8b9cf" stroke-width="2"/>
+    <!-- ear -->
+    <path d="M63 45 L67 30 L76 45 Z" fill="#ffffff" stroke="#e8b9cf" stroke-width="2" stroke-linejoin="round"/>
+    <!-- horn -->
+    <path d="M55 44 L60 9 L67 44 Z" fill="url(#horn)" stroke="#d99a04" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M57 36 L65 34 M58 28 L64 26 M59 21 L63 19" stroke="#d99a04" stroke-width="1.4" stroke-linecap="round"/>
+    <!-- face -->
+    <circle cx="68" cy="65" r="3.6" fill="#4a2f45"/>
+    <circle cx="80" cy="83" r="2.2" fill="#e8a4c2"/>
+    <path d="M74 92 C78 94 82 93 84 90" fill="none" stroke="#e8b9cf" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <!-- sparkle -->
+  <path d="M97 34 Q99 39, 104 41 Q99 43, 97 48 Q95 43, 90 41 Q95 39, 97 34 Z" fill="#f2b705"/>
 </svg>
