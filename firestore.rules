@@ -177,7 +177,7 @@ service cloud.firestore {
         && request.resource.data.role == 'participant'
         && !request.resource.data.keys().hasAny(['migrator', 'cohortManager'])
         && request.resource.data.get('privacyV', 2) == 2
-        // [FINAL]         && !request.resource.data.keys().hasAny(['savingsEntries', 'savingsRev'])
+        && !request.resource.data.keys().hasAny(['savingsEntries', 'savingsRev'])
         && (request.resource.data.get('companyId', null) == null
             || (request.resource.data.get('inviteCode', '') is string
                 && request.resource.data.get('inviteCode', '') != ''

@@ -107,7 +107,7 @@
         rules.push(() => op === 'create' && A.isOwner(userId) && Q.role === 'participant'
           && !hasAny(keys(Q), ['migrator', 'cohortManager'])
           && mget(Q, 'privacyV', 2) === 2
-          && (!FINAL || !hasAny(keys(Q), ['savingsEntries', 'savingsRev']))
+          && !hasAny(keys(Q), ['savingsEntries', 'savingsRev'])
           && (mget(Q, 'companyId', null) == null
             || (typeof mget(Q, 'inviteCode', '') === 'string' && mget(Q, 'inviteCode', '') !== ''
               && A.seatClaimed(Q.inviteCode, Q.companyId))));

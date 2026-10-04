@@ -315,6 +315,7 @@ test('[final] seat cap: join within cap, refused when full or without a seat cla
   c.update(db.collection('inviteCodes').doc('BIG'), { seatsUsed: FV.increment(1), maxSeats: 999 });
   assert.equal(await can(c.commit()), false, 'raise maxSeats');
   assert.equal(await can(join('jo', 'BIG', 'acme', { migrator: true })), false, 'sign up as migrator');
+  assert.equal(await can(join('jon', 'BIG', 'acme', { privacyV: 2, savingsEntries: [{ amount: 5 }] })), false, 'sign up with savings on the profile');
   assert.equal(await can(join('kim', 'BIG', 'acme')), true, 'normal join');
   // legacy code without seat fields: no cap, counter starts
   fake.put('inviteCodes/LEGACY', { companyId: 'acme', active: true });
