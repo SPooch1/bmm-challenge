@@ -254,25 +254,34 @@ test('[final] aggregates: participants can only move their own single contributi
   assert.equal(await can(db.collection('companies').doc('acme').collection('aggregates').doc('d3').set({ sum_d3: 0 }, { merge: true })), false, 'admin direct write');
   const agg = fake.read('companies/acme/aggregates/d3');
   assert.equal(agg.sum_d3, 6); assert.equal(agg.n_d3, 1);
-  // threshold: one or two ratings = unreadable raw counter; three = readable
+  // HR admins never read aggregates; the program owner (cohortManager) reads a
+  // counter only when every count in it is 0 or at least 3.
   const d3 = db.collection('companies').doc('acme').collection('aggregates').doc('d3');
-  assert.equal(await can(d3.get()), false, 'admin read refused with 1 rating');
+  fake.signInAs('scott');
+  assert.equal(await can(d3.get()), false, 'owner read refused with 1 rating');
   fake.put('users/cat', { role: 'participant', companyId: 'acme' });
   fake.signInAs('bob');
   await aggBatch(db, FV, 'bob', 'acme', 'd3', { d3: 3, op: 'op00b001' }, { sum_d3: inc(3), n_d3: inc(1), op: 'op00b001' });
-  fake.signInAs('hr');
-  assert.equal(await can(d3.get()), false, 'admin read refused with 2 ratings');
+  fake.signInAs('scott');
+  assert.equal(await can(d3.get()), false, 'owner read refused with 2 ratings');
   fake.signInAs('cat');
   await aggBatch(db, FV, 'cat', 'acme', 'd3', { d3: 9, op: 'op00c001' }, { sum_d3: inc(9), n_d3: inc(1), op: 'op00c001' });
+  fake.signInAs('scott');
+  assert.equal(await can(d3.get()), true, 'owner read with 3 ratings');
   fake.signInAs('hr');
-  assert.equal(await can(d3.get()), true, 'admin read with 3 ratings');
-  assert.equal(await can(db.collection('companies').doc('acme').collection('aggregates').doc('d9').get()), true, 'missing counter doc reads as not found');
+  assert.equal(await can(d3.get()), false, 'HR read refused even at 3 ratings');
+  assert.equal(await can(db.collection('companies').doc('acme').collection('aggregates').doc('savings').get()), false, 'HR savings total refused');
+  fake.signInAs('scott');
+  assert.equal(await can(db.collection('companies').doc('acme').collection('aggregates').doc('d9').get()), true, 'missing counter doc reads as not found (owner)');
   // survey bucket: every question must clear the threshold
   fake.put('companies/acme/aggregates/pre', { sum_stress: 21, n_stress: 3, sum_p_health: 5, n_p_health: 1 });
   assert.equal(await can(db.collection('companies').doc('acme').collection('aggregates').doc('pre').get()), false, 'one under-threshold question locks the doc');
   fake.put('companies/acme/aggregates/pre', { sum_stress: 21, n_stress: 3, sum_p_health: 15, n_p_health: 3 });
-  assert.equal(await can(db.collection('companies').doc('acme').collection('aggregates').doc('pre').get()), true, 'survey doc readable at 3');
+  assert.equal(await can(db.collection('companies').doc('acme').collection('aggregates').doc('pre').get()), true, 'survey doc readable by owner at 3');
+  fake.signInAs('hr');
+  assert.equal(await can(db.collection('companies').doc('acme').collection('aggregates').doc('pre').get()), false, 'HR survey averages refused');
   assert.equal(await can(db.collection('companies').doc('acme').collection('aggregates').get()), false, 'no list');
+  fake.signInAs('amy');
   // savings bound
   fake.signInAs('amy');
   assert.equal(await can(aggBatch(db, FV, 'amy', 'acme', 'savings', { cents: 100000001, op: 'op000016' }, { sum_cents: inc(100000001), n_cents: inc(1), op: 'op000016' })), false, 'savings over bound');
@@ -331,6 +340,12 @@ test('[final] seat cap: join within cap, refused when full or without a seat cla
   assert.equal(await can(db.collection('inviteCodes').doc('BIG').update({ maxSeats: 999 })), false, 'HR raises maxSeats');
   assert.equal(await can(db.collection('inviteCodes').doc('BIG').update({ seatsUsed: 0 })), false, 'HR resets seatsUsed');
   assert.equal(await can(db.collection('users').doc('hr').update({ cohortManager: true })), false, 'HR self-grants cohortManager');
+  assert.equal(await can(db.collection('inviteCodes').doc('BIG').update({ companyId: 'beta' })), false, 'HR moves a code');
+  assert.equal(await can(db.collection('inviteCodes').doc('BIG').update({ active: false, maxSeats: 99 })), false, 'HR deactivates + changes seats');
+  assert.equal(await can(db.collection('inviteCodes').doc('BIG').update({ active: false })), true, 'HR switches own code off');
+  assert.equal(await can(db.collection('inviteCodes').doc('BIG').update({ active: true })), false, 'HR switches a code back on');
+  assert.equal(await can(db.collection('inviteCodes').doc('BIG').delete()), false, 'HR deletes a code');
+  fake.put('inviteCodes/BIG', { companyId: 'acme', active: true, maxSeats: 50, seatsUsed: 2 });
   // program owner (cohortManager): own company only
   fake.signInAs('scott');
   assert.equal(await can(db.collection('inviteCodes').doc('NEW1').set({ companyId: 'beta', active: true })), false, 'owner mints for other company');

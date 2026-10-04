@@ -235,8 +235,8 @@ const scenarios = {
     await ctx.close();
   },
 
-  async dash(browser) {
-    const { ctx, page, errors } = await open(browser, '/dashboard.html?seed=dash&rules=final', { width: 1100, height: 1000 });
+  async dash(browser) { // program owner (Scott): sees the cohort wellness views
+    const { ctx, page, errors } = await open(browser, '/dashboard.html?seed=dash&rules=final&as=scott', { width: 1100, height: 1000 });
     await page.waitForSelector('#dashboard', { state: 'visible' });
     await sleep(1500);
     const stress = (await page.textContent('#m-avg-stress')).trim();
@@ -277,14 +277,6 @@ const scenarios = {
     await page.click('.tab-btn[data-tab="invite"]');
     const meta = await page.textContent('#cohort-meta');
     check('dash: invite shows seatsUsed / maxSeats', meta.includes('4 / 25 seats joined'), meta);
-    let dialogMsg = '';
-    page.once('dialog', d => { dialogMsg = d.message(); });
-    await page.click('#gen-code');
-    await sleep(600);
-    const codes = await page.evaluate(() => Object.keys(window.__fake.dump()).filter(k => k.startsWith('inviteCodes/')));
-    check('dash: HR cannot mint codes (told to contact the owner)', codes.length === 1 && dialogMsg.includes('program owner'), [codes, dialogMsg]);
-    const hrTry = await page.evaluate(async () => { try { await db.collection('inviteCodes').doc('ACME25').update({ maxSeats: 999 }); return 'WROTE'; } catch (e) { return e.code; } });
-    check('dash: HR devtools cannot raise maxSeats', hrTry === 'permission-denied', hrTry);
     // HR report
     await page.click('.tab-btn[data-tab="export"]');
     const [popup] = await Promise.all([ctx.waitForEvent('page'), page.click('#results-report')]);
@@ -294,6 +286,33 @@ const scenarios = {
     check('dash: HR report stress trend line', /Average stress \(Week 1 → Week 3\): (Week 1 avg )?\d/.test(rep), (rep.match(/Average stress[^\n]*/) || [])[0]);
     check('dash: HR report has no notes', !rep.includes('note for day'));
     check('dash: no page errors', errors.length === 0, errors);
+    await ctx.close();
+  },
+
+  async dashhr(browser) { // HR admin: engagement only
+    const { ctx, page, errors } = await open(browser, '/dashboard.html?seed=dash&rules=final', { width: 1100, height: 1000 });
+    await page.waitForSelector('#dashboard', { state: 'visible' });
+    await sleep(1200);
+    check('dashhr: roster shown', (await page.$$eval('#participant-rows tr', r => r.length)) === 4);
+    check('dashhr: avg stress card hidden', !(await page.isVisible('#m-avg-stress')));
+    check('dashhr: assessments tab hidden', !(await page.isVisible('.tab-btn[data-tab="assessments"]')));
+    const aggTry = await page.evaluate(async () => { const out = []; for (const b of ['d1', 'pre', 'savings']) { try { await db.collection('companies').doc('acme').collection('aggregates').doc(b).get(); out.push('READ'); } catch (e) { out.push(e.code); } } return out; });
+    check('dashhr: devtools aggregate reads refused', aggTry.every(x => x === 'permission-denied'), aggTry);
+    await page.click('.tab-btn[data-tab="invite"]');
+    let dialogMsg = '';
+    page.once('dialog', d => { dialogMsg = d.message(); });
+    await page.click('#gen-code');
+    await sleep(600);
+    const codes = await page.evaluate(() => Object.keys(window.__fake.dump()).filter(k => k.startsWith('inviteCodes/')));
+    check('dashhr: HR cannot mint codes (told to contact the owner)', codes.length === 1 && dialogMsg.includes('program owner'), [codes, dialogMsg]);
+    const hrTry = await page.evaluate(async () => { try { await db.collection('inviteCodes').doc('ACME25').update({ maxSeats: 999 }); return 'WROTE'; } catch (e) { return e.code; } });
+    check('dashhr: devtools cannot raise maxSeats', hrTry === 'permission-denied', hrTry);
+    await page.click('.tab-btn[data-tab="export"]');
+    const [popup] = await Promise.all([ctx.waitForEvent('page'), page.click('#results-report')]);
+    await sleep(800);
+    const rep = await popup.evaluate(() => document.body.innerText);
+    check('dashhr: HR report has participation, no stress/savings/survey averages', rep.includes('PARTICIPATED') && !/Average stress|SAVED \(COHORT\)|Cohort Averages/i.test(rep), rep.slice(0, 260));
+    check('dashhr: no page errors', errors.length === 0, errors);
     await ctx.close();
   },
 
@@ -312,7 +331,7 @@ const scenarios = {
 
   async dashsmall(browser) {
     // min group: only 2 people in the cohort -> averages hidden
-    const { ctx, page, errors } = await open(browser, '/dashboard.html?seed=dash&rules=final', { width: 1100, height: 900 });
+    const { ctx, page, errors } = await open(browser, '/dashboard.html?seed=dash&rules=final&as=scott', { width: 1100, height: 900 });
     await page.waitForSelector('#dashboard', { state: 'visible' });
     await page.evaluate(() => {
       const f = window.__fake;

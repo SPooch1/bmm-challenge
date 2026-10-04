@@ -156,7 +156,7 @@
       } else if (s.length === 2 && s[0] === 'companies') {
         rules.push(() => A.signedIn() && A.isCompanyAdmin(s[1]));
       } else if (s.length === 4 && s[0] === 'companies' && s[2] === 'aggregates') {
-        rules.push(() => op === 'get' && A.signedIn() && A.isCompanyAdmin(s[1]) && (R == null || readable(s[3], R)));
+        rules.push(() => op === 'get' && A.signedIn() && A.isCohortManager(s[1]) && (R == null || readable(s[3], R)));
         rules.push(() => op === 'create' && A.signedIn() && A.aggWriteOk(s[1], s[3], {}));
         rules.push(() => op === 'update' && A.signedIn() && A.aggWriteOk(s[1], s[3], R));
         rules.push(() => (read || write) && A.isMigrator());
@@ -167,6 +167,8 @@
         rules.push(() => op === 'create' && A.signedIn() && A.isCohortManager(Q.companyId));
         rules.push(() => op === 'update' && A.signedIn() && A.isCohortManager(R.companyId) && Q.companyId === R.companyId);
         rules.push(() => op === 'delete' && A.signedIn() && A.isCohortManager(R.companyId));
+        rules.push(() => op === 'update' && A.signedIn() && A.isCompanyAdmin(R.companyId)
+          && hasOnly(affectedKeys(Q, R), ['active']) && Q.active === false);
         rules.push(() => (read || op === 'update') && A.isMigrator());
         rules.push(() => op === 'update' && A.signedIn()
           && hasOnly(affectedKeys(Q, R), ['seatsUsed'])

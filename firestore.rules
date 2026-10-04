@@ -17,8 +17,10 @@ service cloud.firestore {
       let user = userData(request.auth.uid);
       return user.role == 'admin' && user.companyId == companyId;
     }
-    // Program owner (Scott): may mint and change invite codes. HR admins may not.
-    // Set cohortManager: true on the user doc in the console; users cannot set it.
+    // Program owner (Scott): the only account that reads the company aggregates
+    // (stress, survey and savings averages; Scott prepares the Day-21 summary) and
+    // mints/changes invite codes. HR admins never get either. Set
+    // cohortManager: true on Scott's user doc in the console; users cannot set it.
     function isCohortManager(companyId) {
       let user = userData(request.auth.uid);
       return user.role == 'admin' && user.get('cohortManager', false) == true
@@ -285,10 +287,12 @@ service cloud.firestore {
       allow read, write: if signedIn() && isCompanyAdmin(companyId);
     }
 
-    // Company aggregates: admins READ ONLY. Participants change them only by their
+    // Company aggregates: program owner READ ONLY; HR admins no access. Participants change them only by their
     // own ledger change (aggWriteOk). No deletes.
     match /companies/{companyId}/aggregates/{bucket} {
-      allow get: if signedIn() && isCompanyAdmin(companyId)
+      // Program owner only (HR admins have NO read here), and only when every
+      // count in the doc is 0 or at least 3.
+      allow get: if signedIn() && isCohortManager(companyId)
         && (resource == null || readable(bucket, resource.data));
       allow create: if signedIn() && aggWriteOk(companyId, bucket, {});
       allow update: if signedIn() && aggWriteOk(companyId, bucket, resource.data);
@@ -304,11 +308,14 @@ service cloud.firestore {
       allow get: if true;
       allow list: if signedIn() && isCompanyAdmin(resource.data.companyId);
       // Program owner only (cohortManager): mint and change codes. HR admins can
-      // list their own company's codes but never change seats.
+      // list their own company's codes and switch one OFF (active: false), nothing else.
       allow create: if signedIn() && isCohortManager(request.resource.data.companyId);
       allow update: if signedIn() && isCohortManager(resource.data.companyId)
         && request.resource.data.companyId == resource.data.companyId;
       allow delete: if signedIn() && isCohortManager(resource.data.companyId);
+      allow update: if signedIn() && isCompanyAdmin(resource.data.companyId)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['active'])
+        && request.resource.data.active == false;
       // >>> TRANSITIONAL
       // Migration backfills seatsUsed on codes minted before seat counting.
       allow read, update: if isMigrator();

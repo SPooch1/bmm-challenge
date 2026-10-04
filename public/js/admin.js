@@ -54,6 +54,14 @@
       }
 
       adminData = userDoc.data();
+      // HR admins see engagement only: hide the cohort wellness views, which the
+      // rules open to the program owner alone.
+      if (!isProgramOwner()) {
+        const stressCard = document.getElementById('m-avg-stress').closest('.metric-card');
+        if (stressCard) stressCard.style.display = 'none';
+        const assessTab = document.querySelector('.tab-btn[data-tab="assessments"]');
+        if (assessTab) assessTab.style.display = 'none';
+      }
       companyId = adminData.companyId;
       authScreen.style.display = 'none';
       dashboard.style.display = 'block';
@@ -116,8 +124,13 @@
   // docs (an under-threshold doc is unreadable and loads as empty here).
   const MIN_GROUP = Aggregates.MIN_GROUP;
 
+  // Program owner (Scott, cohortManager: true) prepares the Day-21 summary and is
+  // the only account the rules let read the aggregates. HR admins never load them.
+  function isProgramOwner() { return !!(adminData && adminData.cohortManager === true); }
+
   async function loadAggregates() {
     aggs = {};
+    if (!isProgramOwner()) return;
     const names = Object.keys(Aggregates.BUCKETS);
     const docs = await Promise.all(names.map(b =>
       db.collection('companies').doc(companyId).collection('aggregates').doc(b).get().catch(() => null)));
@@ -729,6 +742,7 @@
     // Cohort savings total (net of withdrawals) from the aggregate counter; hidden
     // until MIN_GROUP people have a balance.
     const savAgg = aggs.savings || {};
+    const owner = isProgramOwner();
     const totalSavedStr = Aggregates.countOf(savAgg, 'cents') >= MIN_GROUP ? '$' + ((savAgg.sum_cents || 0) / 100).toFixed(0) : '—';
 
     const wk1 = stressWindow(1, 7), wk3 = stressWindow(15, 21);
@@ -802,10 +816,10 @@
       <h1>Build More Margin — 21-Day Challenge Results</h1>
       <div class="sub">${escapeHtml(companyName)} · ${today}</div>
       <h2>Cohort Outcomes</h2>
-      <div class="row">${metric(joined, 'Enrolled')}${metric(participationRate + '%', 'Participated')}${metric(avgCompletion + '%', 'Avg Completion')}${metric(totalSavedStr, 'Saved (cohort)')}${metric(totalBreathing, 'Breathing Sessions')}</div>
-      <div style="margin-top:12px;font-size:0.85rem;color:#334155;">Average stress (Week 1 → Week 3): <strong>${stressTrend}</strong></div>
+      <div class="row">${metric(joined, 'Enrolled')}${metric(participationRate + '%', 'Participated')}${metric(avgCompletion + '%', 'Avg Completion')}${owner ? metric(totalSavedStr, 'Saved (cohort)') : ''}${metric(totalBreathing, 'Breathing Sessions')}</div>
+      ${owner ? `<div style="margin-top:12px;font-size:0.85rem;color:#334155;">Average stress (Week 1 → Week 3): <strong>${stressTrend}</strong></div>` : ''}
       ${postLine}
-      ${assessmentSection}
+      ${owner ? assessmentSection : ''}
       <h2>Participation by Person</h2>
       <table><thead><tr><th>Name</th><th style="text-align:center;">Day</th><th style="text-align:center;">Completion</th><th style="text-align:center;">Streak</th><th style="text-align:center;">Status</th></tr></thead><tbody>${rows}</tbody></table>
       <div class="note"><strong>Privacy:</strong> This report shows participation and aggregate outcomes only. Individual stress levels, savings amounts, and journal entries are private to each participant and are never shared with employers.</div>
