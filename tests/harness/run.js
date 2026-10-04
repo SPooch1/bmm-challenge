@@ -39,8 +39,8 @@ const scenarios = {
     const hist = await page.textContent('#log-history');
     check('legacy: progress history shows legacy stress', hist.includes('Stress: 8') && hist.includes('Stress: 4'), hist.slice(0, 120));
     // reconcile-on-load built the aggregates from legacy data
-    const d1 = await store(page, 'companies/acme/aggregates/days1');
-    check('legacy: reconcile built day aggregates', d1 && d1.sum_d0 === 8 && d1.n_d4 === 1, d1);
+    const a0 = await store(page, 'companies/acme/aggregates/d0'), a4 = await store(page, 'companies/acme/aggregates/d4');
+    check('legacy: reconcile built day aggregates', a0 && a0.sum_d0 === 8 && a4 && a4.n_d4 === 1, [a0, a4]);
     const pre = await store(page, 'companies/acme/aggregates/pre');
     check('legacy: reconcile built pre aggregates', pre && pre.sum_stress === 7 && pre.n_p_jobskills === 1, pre && pre.sum_stress);
     const sav = await store(page, 'companies/acme/aggregates/savings');
@@ -56,8 +56,8 @@ const scenarios = {
     const priv = await store(page, 'users/amy/dailyLogs/5/private/data');
     check('legacy: check-in wrote private subdoc', priv && priv.stress === 3 && priv.notes === 'harness note', priv);
     check('legacy: dual write kept legacy copy on shell', shell && shell.stress === 3 && shell.completed !== undefined, shell);
-    const d1b = await store(page, 'companies/acme/aggregates/days1');
-    check('legacy: check-in counted into days1', d1b && d1b.sum_d5 === 3 && d1b.n_d5 === 1, d1b && [d1b.sum_d5, d1b.n_d5]);
+    const d1b = await store(page, 'companies/acme/aggregates/d5');
+    check('legacy: check-in counted into d5', d1b && d1b.sum_d5 === 3 && d1b.n_d5 === 1, d1b && [d1b.sum_d5, d1b.n_d5]);
     check('legacy: no page errors', errors.length === 0, errors);
     await ctx.close();
   },
@@ -76,13 +76,13 @@ const scenarios = {
     check('company/final: check-in saved (dual refused, lean retry)', saved.includes('Saved'), saved);
     const shell = await store(page, 'users/amy/dailyLogs/5');
     check('company/final: shell has engagement only', shell && shell.stress === undefined && shell.notes === undefined && 'completed' in shell, shell);
-    const d1 = await store(page, 'companies/acme/aggregates/days1');
+    const d1 = await store(page, 'companies/acme/aggregates/d5');
     check('company/final: aggregate counted day 5', d1 && d1.sum_d5 === 6, d1);
     // edit the same day: delta only
     await page.fill('#checkin-stress', '2');
     await page.click('#checkin-submit');
     await sleep(800);
-    const d1b = await store(page, 'companies/acme/aggregates/days1');
+    const d1b = await store(page, 'companies/acme/aggregates/d5');
     check('company/final: edit moves aggregate by the delta', d1b.sum_d5 === 2 && d1b.n_d5 === 1, [d1b.sum_d5, d1b.n_d5]);
     // savings deposit
     await page.click('.nav-item[data-view="savings"]');
@@ -176,8 +176,8 @@ const scenarios = {
     }
     const pre = await store(page, 'companies/acme/aggregates/pre');
     check('margin95: daily reconcile replayed pre + post', pre && pre.n_stress === 1 && (await store(page, 'companies/acme/aggregates/post')).n_stress === 1);
-    const d3 = await store(page, 'companies/acme/aggregates/days3');
-    check('margin95: daily reconcile replayed days3', d3 && d3.sum_d21 === 5, d3 && d3.sum_d21);
+    const d3 = await store(page, 'companies/acme/aggregates/d21');
+    check('margin95: daily reconcile replayed d21', d3 && d3.sum_d21 === 5, d3 && d3.sum_d21);
     check('margin95: no page errors', errors.length === 0, errors);
     await ctx.close();
   },
@@ -240,8 +240,8 @@ const scenarios = {
     await page.waitForSelector('#dashboard', { state: 'visible' });
     await sleep(1500);
     const stress = (await page.textContent('#m-avg-stress')).trim();
-    const d1 = await store(page, 'companies/acme/aggregates/days1');
-    let s = 0, n = 0; for (let d = 0; d <= 7; d++) { s += d1['sum_d' + d] || 0; n += d1['n_d' + d] || 0; }
+    let s = 0, n = 0;
+    for (let d = 0; d <= 21; d++) { const a = await store(page, 'companies/acme/aggregates/d' + d); if (a) { s += a['sum_d' + d] || 0; n += a['n_d' + d] || 0; } }
     check('dash: avg stress = pooled aggregate', stress === (s / n).toFixed(1), [stress, (s / n).toFixed(1)]);
     check('dash: participants listed', (await page.textContent('#m-participants')).trim() === '4');
     const rows = await page.$$eval('#participant-rows tr', r => r.length);
@@ -255,7 +255,7 @@ const scenarios = {
     });
     check('dash: shell readable by admin has no private fields', !keysSeen.some(k => ['stress', 'sleep', 'steps', 'notes'].includes(k)), keysSeen);
     const leak = await page.evaluate(async () => {
-      const tries = ['users/amy/dailyLogs/1/private/data', 'users/amy/assessments/pre/private/data', 'users/amy/private/savings', 'users/amy/aggLedger/days1', 'users/amy/assessments/pre'];
+      const tries = ['users/amy/dailyLogs/1/private/data', 'users/amy/assessments/pre/private/data', 'users/amy/private/savings', 'users/amy/aggLedger/d1', 'users/amy/assessments/pre'];
       const out = {};
       for (const p of tries) { try { await db.doc(p).get(); out[p] = 'READ'; } catch (e) { out[p] = e.code; } }
       try { await db.collection('users').doc('amy').collection('dailyLogs').get(); out.list = 'READ'; } catch (e) { out.list = e.code; }
@@ -277,10 +277,14 @@ const scenarios = {
     await page.click('.tab-btn[data-tab="invite"]');
     const meta = await page.textContent('#cohort-meta');
     check('dash: invite shows seatsUsed / maxSeats', meta.includes('4 / 25 seats joined'), meta);
+    let dialogMsg = '';
+    page.once('dialog', d => { dialogMsg = d.message(); });
     await page.click('#gen-code');
     await sleep(600);
-    const codes = await page.evaluate(() => Object.entries(window.__fake.dump()).filter(([k]) => k.startsWith('inviteCodes/')).map(([k, v]) => [k, v.active, v.seatsUsed]));
-    check('dash: generate code works (list + deactivate + create)', codes.filter(c => c[1]).length === 1 && codes.find(c => c[1])[2] === 0, codes);
+    const codes = await page.evaluate(() => Object.keys(window.__fake.dump()).filter(k => k.startsWith('inviteCodes/')));
+    check('dash: HR cannot mint codes (told to contact the owner)', codes.length === 1 && dialogMsg.includes('program owner'), [codes, dialogMsg]);
+    const hrTry = await page.evaluate(async () => { try { await db.collection('inviteCodes').doc('ACME25').update({ maxSeats: 999 }); return 'WROTE'; } catch (e) { return e.code; } });
+    check('dash: HR devtools cannot raise maxSeats', hrTry === 'permission-denied', hrTry);
     // HR report
     await page.click('.tab-btn[data-tab="export"]');
     const [popup] = await Promise.all([ctx.waitForEvent('page'), page.click('#results-report')]);
@@ -290,6 +294,19 @@ const scenarios = {
     check('dash: HR report stress trend line', /Average stress \(Week 1 → Week 3\): (Week 1 avg )?\d/.test(rep), (rep.match(/Average stress[^\n]*/) || [])[0]);
     check('dash: HR report has no notes', !rep.includes('note for day'));
     check('dash: no page errors', errors.length === 0, errors);
+    await ctx.close();
+  },
+
+  async dashowner(browser) {
+    const { ctx, page, errors } = await open(browser, '/dashboard.html?seed=dash&rules=final&as=scott', { width: 1100, height: 900 });
+    await page.waitForSelector('#dashboard', { state: 'visible' });
+    await sleep(1200);
+    await page.click('.tab-btn[data-tab="invite"]');
+    await page.click('#gen-code');
+    await sleep(600);
+    const codes = await page.evaluate(() => Object.entries(window.__fake.dump()).filter(([k]) => k.startsWith('inviteCodes/')).map(([k, v]) => [k, v.active, v.seatsUsed]));
+    check('dashowner: owner generates a code (list + deactivate + create)', codes.filter(c => c[1]).length === 1 && codes.find(c => c[1])[2] === 0, codes);
+    check('dashowner: no page errors', errors.length === 0, errors);
     await ctx.close();
   },
 
@@ -306,7 +323,7 @@ const scenarios = {
     await page.click('.tab-btn[data-tab="assessments"]');
     await sleep(800);
     const at = await page.textContent('#assessment-results');
-    check('dashsmall: averages hidden under 3 responses', !at.includes('3.5') && at.includes('3 or more'), at.replace(/\s+/g, ' ').slice(0, 200));
+    check('dashsmall: averages hidden under 3 responses (rules refuse the raw doc)', !at.includes('3.5'), at.replace(/\s+/g, ' ').slice(0, 200));
     check('dashsmall: no page errors', errors.length === 0, errors);
     await ctx.close();
   }

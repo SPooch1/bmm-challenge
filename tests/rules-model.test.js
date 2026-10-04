@@ -52,7 +52,17 @@ test('rules bucket key lists match aggregates.js and the rules model', () => {
     const m = src.slice(i).match(/\[([^\]]*)\]/);
     return m[1].split(',').map(x => x.trim().replace(/'/g, '')).filter(Boolean);
   };
-  const conds = { days1: "bucket == 'days1'", days2: "bucket == 'days2'", days3: "bucket == 'days3'", pre: "(bucket == 'pre'", m3: "(bucket == 'm3'", savings: "bucket == 'savings'" };
+  // day buckets d0..d21: one key each, matched by isDay()
+  const isDayRe = RULES.match(/function isDay\(bucket\) \{ return bucket\.matches\('([^']+)'\); \}/);
+  assert.ok(isDayRe, 'isDay() present');
+  const re = new RegExp('^(?:' + isDayRe[1] + ')$');
+  for (let d = 0; d <= 21; d++) {
+    assert.deepEqual(Aggregates.BUCKETS['d' + d], ['d' + d]);
+    assert.ok(re.test('d' + d), 'isDay misses d' + d);
+    assert.deepEqual(RulesModel.BUCKET_KEYS['d' + d], ['d' + d]);
+  }
+  ['d22', 'd01', 'days1', 'd'].forEach(x => assert.ok(!re.test(x), 'isDay accepts ' + x));
+  const conds = { pre: "(bucket == 'pre'", m3: "(bucket == 'm3'", savings: "bucket == 'savings'" };
   Object.entries(conds).forEach(([b, cond]) => {
     assert.deepEqual(listAfter(bk, cond), Aggregates.BUCKETS[b], 'bucketKeys ' + b);
     assert.deepEqual(listAfter(ak, cond), Aggregates.BUCKETS[b].flatMap(k => ['sum_' + k, 'n_' + k]).concat(['op']), 'aggKeys ' + b);
@@ -61,10 +71,8 @@ test('rules bucket key lists match aggregates.js and the rules model', () => {
   assert.deepEqual(Aggregates.BUCKETS.post, Aggregates.BUCKETS.pre);
   assert.deepEqual(Aggregates.BUCKETS.m12, Aggregates.BUCKETS.m3);
   // each lockstep helper covers every key of its bucket
-  ['days1', 'days2', 'days3'].forEach(b => {
-    const fn = parseFn(b + 'Ok');
-    Aggregates.BUCKETS[b].forEach(k => assert.ok(fn.includes("'" + k + "'"), b + 'Ok misses ' + k));
-  });
+  const gate = parseFn('readable') + parseFn('pillarsEnough');
+  Aggregates.BUCKETS.pre.forEach(k => assert.ok(gate.includes("'" + k + "'"), 'readable misses ' + k));
   const full = parseFn('fullSurveyOk') + parseFn('pillarsOk');
   Aggregates.BUCKETS.pre.forEach(k => assert.ok(full.includes("'" + k + "'"), 'fullSurveyOk misses ' + k));
 });
@@ -85,7 +93,7 @@ function world(mode) {
   const db = firebase.firestore();
   const FV = firebase.firestore.FieldValue;
   fake.put('users/hr', { role: 'admin', companyId: 'acme', name: 'HR', email: 'hr@acme' });
-  fake.put('users/scott', { role: 'admin', companyId: 'acme', name: 'Scott', migrator: true });
+  fake.put('users/scott', { role: 'admin', companyId: 'acme', name: 'Scott', migrator: true, cohortManager: true });
   fake.put('users/hrB', { role: 'admin', companyId: 'beta', name: 'HR B' });
   fake.put('users/amy', { role: 'participant', companyId: 'acme', name: 'Amy', email: 'amy@acme', inviteCode: 'ACME01', challengeStartDate: '2026-09-20', breathingSessions: 3 });
   fake.put('users/bob', { role: 'participant', companyId: 'acme', name: 'Bob', inviteCode: 'ACME01' });
@@ -114,7 +122,7 @@ for (const mode of ['final', 'transitional']) {
     assert.equal(await can(u.collection('private').doc('savings').get()), false, 'savings');
     assert.equal(await can(u.collection('private').doc('margin').get()), false, 'margin');
     assert.equal(await can(u.collection('marginLogs').doc('2026-10-01').get()), false, 'marginLogs');
-    assert.equal(await can(u.collection('aggLedger').doc('days1').get()), false, 'ledger');
+    assert.equal(await can(u.collection('aggLedger').doc('d3').get()), false, 'ledger');
     // engagement is fine
     assert.equal(await can(u.collection('dailyLogs').doc('3').get()), true, 'shell get');
     assert.equal(await can(u.collection('engagement').doc('weekly').get()), true, 'engagement');
@@ -133,7 +141,7 @@ for (const mode of ['final', 'transitional']) {
     assert.equal(await can(u.get()), false);
     assert.equal(await can(u.collection('dailyLogs').doc('3').get()), false);
     assert.equal(await can(u.collection('dailyLogs').doc('3').collection('private').doc('data').get()), false);
-    assert.equal(await can(db.collection('companies').doc('acme').collection('aggregates').doc('days1').get()), false, 'participants do not read totals');
+    assert.equal(await can(db.collection('companies').doc('acme').collection('aggregates').doc('d3').get()), false, 'participants do not read totals');
   });
 }
 
@@ -148,12 +156,19 @@ test('[final] admin get is refused on a shell that still holds private fields; n
   assert.equal(await can(db.collection('users').doc('amy').collection('assessments').doc('pre').get()), false, 'survey shell');
 });
 
-test('[transitional] old dashboard reads still work; [final] they are cut', async () => {
-  for (const [mode, expect] of [['transitional', true], ['final', false]]) {
-    const { fake, db } = world(mode);
+test('HR never reads old-format shells, even under the transitional rules; only the migrator can', async () => {
+  for (const mode of ['transitional', 'final']) {
+    const { fake, db, FV } = world(mode);
+    fake.put('users/amy/dailyLogs/4', { completed: true, stress: 9, notes: 'old format', savedAt: FV.serverTimestamp() });
+    fake.put('users/amy/assessments/post', { responses: { stress: 2 }, completedAt: FV.serverTimestamp() });
+    const logs = db.collection('users').doc('amy').collection('dailyLogs');
     fake.signInAs('hr');
-    assert.equal(await can(db.collection('users').doc('amy').collection('dailyLogs').get()), expect, mode + ' list');
-    assert.equal(await can(db.collection('users').doc('amy').collection('assessments').doc('pre').get()), expect, mode + ' survey shell');
+    assert.equal(await can(logs.get()), false, mode + ' HR list');
+    assert.equal(await can(logs.doc('4').get()), false, mode + ' HR get old-format shell');
+    assert.equal(await can(logs.doc('3').get()), true, mode + ' HR get engagement shell');
+    assert.equal(await can(db.collection('users').doc('amy').collection('assessments').doc('post').get()), false, mode + ' HR survey shell');
+    fake.signInAs('scott');
+    assert.equal(await can(logs.get()), mode === 'transitional', mode + ' migrator list');
   }
 });
 
@@ -193,42 +208,60 @@ test('[final] aggregates: participants can only move their own single contributi
   const inc = FV.increment;
   fake.signInAs('amy');
   // legit first contribution: Day 3 stress 7
-  assert.equal(await can(aggBatch(db, FV, 'amy', 'acme', 'days1', { d3: 7, op: 'op000001' }, { sum_d3: inc(7), n_d3: inc(1), op: 'op000001' })), true, 'legit create');
+  assert.equal(await can(aggBatch(db, FV, 'amy', 'acme', 'd3', { d3: 7, op: 'op000001' }, { sum_d3: inc(7), n_d3: inc(1), op: 'op000001' })), true, 'legit create');
   // legit edit 7 -> 4
-  assert.equal(await can(aggBatch(db, FV, 'amy', 'acme', 'days1', { d3: 4, op: 'op000002' }, { sum_d3: inc(-3), op: 'op000002' })), true, 'legit edit');
+  assert.equal(await can(aggBatch(db, FV, 'amy', 'acme', 'd3', { d3: 4, op: 'op000002' }, { sum_d3: inc(-3), op: 'op000002' })), true, 'legit edit');
   // inflation: aggregate without ledger
-  assert.equal(await can(aggBatch(db, FV, 'amy', 'acme', 'days1', null, { sum_d3: inc(10), n_d3: inc(1), op: 'op000003' })), false, 'agg without ledger');
+  assert.equal(await can(aggBatch(db, FV, 'amy', 'acme', 'd3', null, { sum_d3: inc(10), n_d3: inc(1), op: 'op000003' })), false, 'agg without ledger');
   // inflation: ledger value out of range
-  assert.equal(await can(aggBatch(db, FV, 'amy', 'acme', 'days1', { d3: 50, op: 'op000004' }, { sum_d3: inc(46), op: 'op000004' })), false, 'out of range');
+  assert.equal(await can(aggBatch(db, FV, 'amy', 'acme', 'd3', { d3: 50, op: 'op000004' }, { sum_d3: inc(46), op: 'op000004' })), false, 'out of range');
   // inflation: agg moves more than ledger
-  assert.equal(await can(aggBatch(db, FV, 'amy', 'acme', 'days1', { d3: 5, op: 'op000005' }, { sum_d3: inc(9), op: 'op000005' })), false, 'mismatched delta');
+  assert.equal(await can(aggBatch(db, FV, 'amy', 'acme', 'd3', { d3: 5, op: 'op000005' }, { sum_d3: inc(9), op: 'op000005' })), false, 'mismatched delta');
   // inflation: count bump
-  assert.equal(await can(aggBatch(db, FV, 'amy', 'acme', 'days1', { d3: 5, op: 'op000006' }, { sum_d3: inc(1), n_d3: inc(5), op: 'op000006' })), false, 'count bump');
+  assert.equal(await can(aggBatch(db, FV, 'amy', 'acme', 'd3', { d3: 5, op: 'op000006' }, { sum_d3: inc(1), n_d3: inc(5), op: 'op000006' })), false, 'count bump');
   // wipe: set sum to 0 directly
-  assert.equal(await can(aggBatch(db, FV, 'amy', 'acme', 'days1', { d3: 0, op: 'op000007' }, { sum_d3: 0, n_d3: 0, op: 'op000007' })), true, 'removing own contribution (4 -> 0) is allowed');
+  assert.equal(await can(aggBatch(db, FV, 'amy', 'acme', 'd3', { d3: 0, op: 'op000007' }, { sum_d3: 0, n_d3: 0, op: 'op000007' })), true, 'removing own contribution (4 -> 0) is allowed');
   fake.signInAs('bob');
-  assert.equal(await can(aggBatch(db, FV, 'bob', 'acme', 'days1', { d3: 0, op: 'op000008' }, { sum_d3: inc(-4), op: 'op000008' })), false, 'cannot remove someone else');
+  assert.equal(await can(aggBatch(db, FV, 'bob', 'acme', 'd3', { d3: 0, op: 'op000008' }, { sum_d3: inc(-4), op: 'op000008' })), false, 'cannot remove someone else');
   // ledger alone (reset own ledger to re-add later)
   fake.signInAs('amy');
-  await aggBatch(db, FV, 'amy', 'acme', 'days1', { d3: 6, op: 'op000009' }, { sum_d3: inc(6), n_d3: inc(1), op: 'op000009' });
-  assert.equal(await can(aggBatch(db, FV, 'amy', 'acme', 'days1', { d3: 0, op: 'op000010' }, null)), false, 'ledger alone');
-  assert.equal(await can(db.collection('users').doc('amy').collection('aggLedger').doc('days1').delete()), false, 'ledger delete');
-  assert.equal(await can(db.collection('companies').doc('acme').collection('aggregates').doc('days1').delete()), false, 'agg delete');
+  await aggBatch(db, FV, 'amy', 'acme', 'd3', { d3: 6, op: 'op000009' }, { sum_d3: inc(6), n_d3: inc(1), op: 'op000009' });
+  assert.equal(await can(aggBatch(db, FV, 'amy', 'acme', 'd3', { d3: 0, op: 'op000010' }, null)), false, 'ledger alone');
+  assert.equal(await can(db.collection('users').doc('amy').collection('aggLedger').doc('d3').delete()), false, 'ledger delete');
+  assert.equal(await can(db.collection('companies').doc('acme').collection('aggregates').doc('d3').delete()), false, 'agg delete');
   // unknown field / wrong bucket key
-  assert.equal(await can(aggBatch(db, FV, 'amy', 'acme', 'days1', { d9: 5, op: 'op000011' }, { sum_d9: inc(5), n_d9: inc(1), op: 'op000011' })), false, 'key from another bucket');
-  assert.equal(await can(aggBatch(db, FV, 'amy', 'acme', 'days1', { d2: 5, op: 'op000012' }, { sum_d2: inc(5), n_d2: inc(1), junk: 'x', op: 'op000012' })), false, 'junk field');
+  assert.equal(await can(aggBatch(db, FV, 'amy', 'acme', 'd3', { d9: 5, op: 'op000011' }, { sum_d9: inc(5), n_d9: inc(1), op: 'op000011' })), false, 'key from another bucket');
+  assert.equal(await can(aggBatch(db, FV, 'amy', 'acme', 'd2', { d2: 5, op: 'op000012' }, { sum_d2: inc(5), n_d2: inc(1), junk: 'x', op: 'op000012' })), false, 'junk field');
   // other company
-  assert.equal(await can(aggBatch(db, FV, 'amy', 'beta', 'days1', { d2: 5, op: 'op000013' }, { sum_d2: inc(5), n_d2: inc(1), op: 'op000013' })), false, 'other company');
+  assert.equal(await can(aggBatch(db, FV, 'amy', 'beta', 'd2', { d2: 5, op: 'op000013' }, { sum_d2: inc(5), n_d2: inc(1), op: 'op000013' })), false, 'other company');
   // individual (no company)
   fake.signInAs('ivy');
-  assert.equal(await can(aggBatch(db, FV, 'ivy', 'acme', 'days1', { d2: 5, op: 'op000014' }, { sum_d2: inc(5), n_d2: inc(1), op: 'op000014' })), false, 'individual');
+  assert.equal(await can(aggBatch(db, FV, 'ivy', 'acme', 'd2', { d2: 5, op: 'op000014' }, { sum_d2: inc(5), n_d2: inc(1), op: 'op000014' })), false, 'individual');
   // admin cannot write, even "as a participant"
   fake.signInAs('hr');
-  assert.equal(await can(aggBatch(db, FV, 'hr', 'acme', 'days1', { d2: 5, op: 'op000015' }, { sum_d2: inc(5), n_d2: inc(1), op: 'op000015' })), false, 'admin write');
-  assert.equal(await can(db.collection('companies').doc('acme').collection('aggregates').doc('days1').set({ sum_d3: 0 }, { merge: true })), false, 'admin direct write');
-  assert.equal(await can(db.collection('companies').doc('acme').collection('aggregates').doc('days1').get()), true, 'admin read');
-  const agg = fake.read('companies/acme/aggregates/days1');
+  assert.equal(await can(aggBatch(db, FV, 'hr', 'acme', 'd2', { d2: 5, op: 'op000015' }, { sum_d2: inc(5), n_d2: inc(1), op: 'op000015' })), false, 'admin write');
+  assert.equal(await can(db.collection('companies').doc('acme').collection('aggregates').doc('d3').set({ sum_d3: 0 }, { merge: true })), false, 'admin direct write');
+  const agg = fake.read('companies/acme/aggregates/d3');
   assert.equal(agg.sum_d3, 6); assert.equal(agg.n_d3, 1);
+  // threshold: one or two ratings = unreadable raw counter; three = readable
+  const d3 = db.collection('companies').doc('acme').collection('aggregates').doc('d3');
+  assert.equal(await can(d3.get()), false, 'admin read refused with 1 rating');
+  fake.put('users/cat', { role: 'participant', companyId: 'acme' });
+  fake.signInAs('bob');
+  await aggBatch(db, FV, 'bob', 'acme', 'd3', { d3: 3, op: 'op00b001' }, { sum_d3: inc(3), n_d3: inc(1), op: 'op00b001' });
+  fake.signInAs('hr');
+  assert.equal(await can(d3.get()), false, 'admin read refused with 2 ratings');
+  fake.signInAs('cat');
+  await aggBatch(db, FV, 'cat', 'acme', 'd3', { d3: 9, op: 'op00c001' }, { sum_d3: inc(9), n_d3: inc(1), op: 'op00c001' });
+  fake.signInAs('hr');
+  assert.equal(await can(d3.get()), true, 'admin read with 3 ratings');
+  assert.equal(await can(db.collection('companies').doc('acme').collection('aggregates').doc('d9').get()), true, 'missing counter doc reads as not found');
+  // survey bucket: every question must clear the threshold
+  fake.put('companies/acme/aggregates/pre', { sum_stress: 21, n_stress: 3, sum_p_health: 5, n_p_health: 1 });
+  assert.equal(await can(db.collection('companies').doc('acme').collection('aggregates').doc('pre').get()), false, 'one under-threshold question locks the doc');
+  fake.put('companies/acme/aggregates/pre', { sum_stress: 21, n_stress: 3, sum_p_health: 15, n_p_health: 3 });
+  assert.equal(await can(db.collection('companies').doc('acme').collection('aggregates').doc('pre').get()), true, 'survey doc readable at 3');
+  assert.equal(await can(db.collection('companies').doc('acme').collection('aggregates').get()), false, 'no list');
   // savings bound
   fake.signInAs('amy');
   assert.equal(await can(aggBatch(db, FV, 'amy', 'acme', 'savings', { cents: 100000001, op: 'op000016' }, { sum_cents: inc(100000001), n_cents: inc(1), op: 'op000016' })), false, 'savings over bound');
@@ -279,11 +312,17 @@ test('[final] seat cap: join within cap, refused when full or without a seat cla
   // individuals still sign up freely
   fake.signInAs('max');
   assert.equal(await can(db.collection('users').doc('max').set({ role: 'participant', companyId: null })), true, 'individual');
-  // admins: list + manage own company's codes only
+  // HR admins: list own company's codes, never mint or change seats
   fake.signInAs('hr');
-  assert.equal(await can(db.collection('inviteCodes').where('companyId', '==', 'acme').where('active', '==', true).get()), true, 'admin list own');
-  assert.equal(await can(db.collection('inviteCodes').doc('NEW1').set({ companyId: 'beta', active: true })), false, 'admin mints for other company');
-  assert.equal(await can(db.collection('inviteCodes').doc('NEW2').set({ companyId: 'acme', active: true, maxSeats: 25, seatsUsed: 0 })), true, 'admin mints own');
+  assert.equal(await can(db.collection('inviteCodes').where('companyId', '==', 'acme').where('active', '==', true).get()), true, 'HR lists own codes');
+  assert.equal(await can(db.collection('inviteCodes').doc('NEW0').set({ companyId: 'acme', active: true, maxSeats: 999, seatsUsed: 0 })), false, 'HR mints a code');
+  assert.equal(await can(db.collection('inviteCodes').doc('BIG').update({ maxSeats: 999 })), false, 'HR raises maxSeats');
+  assert.equal(await can(db.collection('inviteCodes').doc('BIG').update({ seatsUsed: 0 })), false, 'HR resets seatsUsed');
+  assert.equal(await can(db.collection('users').doc('hr').update({ cohortManager: true })), false, 'HR self-grants cohortManager');
+  // program owner (cohortManager): own company only
+  fake.signInAs('scott');
+  assert.equal(await can(db.collection('inviteCodes').doc('NEW1').set({ companyId: 'beta', active: true })), false, 'owner mints for other company');
+  assert.equal(await can(db.collection('inviteCodes').doc('NEW2').set({ companyId: 'acme', active: true, maxSeats: 25, seatsUsed: 0 })), true, 'owner mints own');
   fake.signInAs('hrB');
   assert.equal(await can(db.collection('inviteCodes').doc('NEW2').update({ active: false })), false, 'other admin deactivates');
   fake.signOut();
@@ -345,16 +384,19 @@ test('aggregate reconcile: idempotent, edits move by the delta, failures go pend
   app.fake.put('users/bob', { role: 'participant', companyId: 'acme' });
   app.fake.signInAs('amy');
   const A = app.Aggregates;
-  assert.equal(await A.reconcile('amy', 'acme', 'days1', { d3: 7 }), true);
-  assert.equal(await A.reconcile('amy', 'acme', 'days1', { d3: 7 }), true, 'no-op');
-  assert.equal(await A.reconcile('amy', 'acme', 'days1', { d3: 4, d5: 9 }), true);
+  assert.equal(await A.reconcile('amy', 'acme', 'd3', { d3: 7 }), true);
+  assert.equal(await A.reconcile('amy', 'acme', 'd3', { d3: 7 }), true, 'no-op');
+  assert.equal(await A.reconcile('amy', 'acme', 'd3', { d3: 4 }), true);
+  assert.equal(await A.reconcile('amy', 'acme', 'd5', { d5: 9 }), true);
   app.fake.signInAs('bob');
-  assert.equal(await A.reconcile('bob', 'acme', 'days1', { d3: 2 }), true);
-  let agg = app.fake.read('companies/acme/aggregates/days1');
-  assert.equal(agg.sum_d3, 6); assert.equal(agg.n_d3, 2); assert.equal(agg.sum_d5, 9); assert.equal(agg.n_d5, 1);
+  assert.equal(await A.reconcile('bob', 'acme', 'd3', { d3: 2 }), true);
+  let agg = app.fake.read('companies/acme/aggregates/d3');
+  assert.equal(agg.sum_d3, 6); assert.equal(agg.n_d3, 2);
+  const d5 = app.fake.read('companies/acme/aggregates/d5');
+  assert.equal(d5.sum_d5, 9); assert.equal(d5.n_d5, 1);
   // clearing a value removes the count
-  assert.equal(await A.reconcile('bob', 'acme', 'days1', { d3: 0 }), true);
-  agg = app.fake.read('companies/acme/aggregates/days1');
+  assert.equal(await A.reconcile('bob', 'acme', 'd3', { d3: 0 }), true);
+  agg = app.fake.read('companies/acme/aggregates/d3');
   assert.equal(agg.sum_d3, 4); assert.equal(agg.n_d3, 1);
   // a failing write (signed out) goes pending, retry heals
   app.fake.signOut();
@@ -373,7 +415,7 @@ test('aggregate reconcile: idempotent, edits move by the delta, failures go pend
   assert.equal(app.fake.read('companies/acme/aggregates/savings').sum_cents, 1234);
   // averages on the dashboard side
   assert.equal(A.avgOf(pre, 'stress'), 5);
-  assert.equal(A.stressOver({ days1: app.fake.read('companies/acme/aggregates/days1') }, 0, 7).avg, (4 + 9) / 2);
+  assert.equal(A.stressOver({ d3: app.fake.read('companies/acme/aggregates/d3'), d5: app.fake.read('companies/acme/aggregates/d5') }, 0, 7).avg, (4 + 9) / 2);
 });
 
 function seedLegacy(fake, FV) {
@@ -416,29 +458,29 @@ test('migration: dry run writes nothing; run copies + replays; rerun does not do
   assert.equal(r1.dailyCopied, 12); assert.equal(r1.surveysCopied, 4); assert.equal(r1.savingsCopied, 4);
   assert.equal(app.fake.read('users/amy/dailyLogs/0/private/data').notes, 'amy day 0');
   assert.equal(app.fake.read('users/amy/dailyLogs/0').notes, 'amy day 0', 'no strip yet');
-  const days = app.fake.read('companies/acme/aggregates/days1');
-  assert.equal(days.sum_d0, 7 + 4 + 9); assert.equal(days.n_d0, 3);
-  assert.equal(days.sum_d1, 6 + 9); assert.equal(days.n_d1, 2);
+  const day0 = app.fake.read('companies/acme/aggregates/d0'), day1 = app.fake.read('companies/acme/aggregates/d1');
+  assert.equal(day0.sum_d0, 7 + 4 + 9); assert.equal(day0.n_d0, 3);
+  assert.equal(day1.sum_d1, 6 + 9); assert.equal(day1.n_d1, 2);
   const pre = app.fake.read('companies/acme/aggregates/pre');
   assert.equal(pre.sum_stress, 8 + 6 + 9); assert.equal(pre.n_stress, 3);
   assert.equal(app.fake.read('companies/acme/aggregates/savings').sum_cents, 8000 + 6050);
   assert.equal(app.fake.read('companies/acme/aggregates/savings').n_cents, 2);
-  assert.equal(app.fake.read('users/ivy/aggLedger/days1'), null, 'individuals are not aggregated');
+  assert.equal(app.fake.read('users/ivy/aggLedger/d0'), null, 'individuals are not aggregated');
 
   // a participant edits after migration (dual-write app), then the rerun
   app.fake.signInAs('amy');
   await app.Privacy.saveDailyLog('amy', 1, { completed: true, stress: 2, sleep: 5, steps: 0, notes: 'edited', breathing: false, meal: false, action: false });
-  await app.Aggregates.reconcile('amy', 'acme', 'days1', { d1: 2 });
+  await app.Aggregates.reconcile('amy', 'acme', 'd1', { d1: 2 });
   app.fake.signInAs('scott');
   const r2 = await mig.run({ mode: 'run' });
   assert.equal(r2.errors.length, 0, r2.errors.join('; '));
-  const days2 = app.fake.read('companies/acme/aggregates/days1');
-  assert.equal(days2.sum_d0, 20, 'rerun does not double count');
-  assert.equal(days2.sum_d1, 2 + 9, 'edit counted once');
+  assert.equal(app.fake.read('companies/acme/aggregates/d0').sum_d0, 20, 'rerun does not double count');
+  assert.equal(app.fake.read('companies/acme/aggregates/d1').sum_d1, 2 + 9, 'edit counted once');
   assert.equal(app.fake.read('users/amy/dailyLogs/1/private/data').notes, 'edited', 'newer private kept');
 
   // final pass
   const r3 = await mig.run({ mode: 'run', strip: true });
+  assert.deepEqual(r3.seatBackfills, [], 'no legacy codes in this seed');
   assert.equal(r3.errors.length, 0, r3.errors.join('; '));
   const v = await mig.verify();
   assert.deepEqual(v.legacyDailyShells, []); assert.deepEqual(v.legacySurveyShells, []); assert.deepEqual(v.legacyUserDocs, []);
@@ -459,6 +501,19 @@ test('migration: dry run writes nothing; run copies + replays; rerun does not do
   // scott is just an admin now
   app.fake.signInAs('scott');
   assert.equal(await can(app.db.collection('users').doc('amy').collection('private').doc('savings').get()), false);
+});
+
+test('migration backfills seatsUsed on a pre-seat-count code', async () => {
+  const app = loadApp('transitional');
+  seedLegacy(app.fake, app.firebase.firestore.FieldValue);
+  app.fake.put('inviteCodes/ACME01', { companyId: 'acme', active: true, maxSeats: 25 });
+  app.fake.signInAs('scott');
+  const mig = createMigrator({ db: app.db, firebase: app.firebase, Aggregates: app.Aggregates, Privacy: app.Privacy });
+  const dry = await mig.run({ mode: 'dry' });
+  assert.deepEqual(dry.seatBackfills, ['ACME01 seatsUsed=3']);
+  assert.equal(app.fake.read('inviteCodes/ACME01').seatsUsed, undefined, 'dry run writes nothing');
+  await mig.run({ mode: 'run' });
+  assert.equal(app.fake.read('inviteCodes/ACME01').seatsUsed, 3);
 });
 
 test('migration keeps the latest savings when an older app edited the user-doc copy', async () => {

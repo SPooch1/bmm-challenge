@@ -16,28 +16,26 @@ const Aggregates = (() => {
   const FULL_Q = ['stress', 'sleep', 'financial', 'energy', 'overwhelm', 'savings', 'exercise', 'breathing',
     'p_health', 'p_wealth', 'p_finwell', 'p_retsave', 'p_jobskills'];
   const PILLAR_Q = ['p_health', 'p_wealth', 'p_finwell', 'p_retsave', 'p_jobskills'];
-  const range = (a, b) => { const out = []; for (let d = a; d <= b; d++) out.push('d' + d); return out; };
-  // Daily stress is split in three buckets so each rules check stays small.
-  const BUCKETS = {
-    days1: range(0, 7),
-    days2: range(8, 14),
-    days3: range(15, 21),
+  // Daily stress: one bucket per challenge day (d0..d21), so the rules can refuse
+  // an admin read of any day with fewer than 3 ratings (MIN_GROUP).
+  const BUCKETS = {};
+  for (let d = 0; d <= 21; d++) BUCKETS['d' + d] = ['d' + d];
+  Object.assign(BUCKETS, {
     pre: FULL_Q,
     post: FULL_Q,
     m3: PILLAR_Q,
     m6: PILLAR_Q,
     m12: PILLAR_Q,
     savings: ['cents']
-  };
+  });
   const SURVEY_BUCKETS = ['pre', 'post', 'm3', 'm6', 'm12'];
-  const DAY_BUCKETS = ['days1', 'days2', 'days3'];
+  const DAY_BUCKETS = Object.keys(BUCKETS).filter(b => /^d\d+$/.test(b));
+  // Same number as the rules' admin-read threshold.
+  const MIN_GROUP = 3;
   const MAX_CENTS = 100000000; // $1M; rules use the same bound
   const maxFor = key => (key === 'cents' ? MAX_CENTS : 10);
 
-  function dayBucket(day) {
-    const d = Number(day);
-    return d <= 7 ? 'days1' : d <= 14 ? 'days2' : 'days3';
-  }
+  function dayBucket(day) { return 'd' + Number(day); }
 
   // Integer in range, or 0 (= not counted). Scale answers below 1 are not answers.
   function clean(key, v) {
@@ -171,7 +169,7 @@ const Aggregates = (() => {
     return n > 0 ? agg['sum_' + key] / n : null;
   };
   const countOf = (agg, key) => (agg && agg['n_' + key]) || 0;
-  // Pooled stress average over challenge days lo..hi from the three day buckets.
+  // Pooled stress average over challenge days lo..hi from the day buckets.
   function stressOver(aggs, lo, hi) {
     let sum = 0, n = 0;
     for (let d = lo; d <= hi; d++) {
@@ -189,7 +187,7 @@ const Aggregates = (() => {
   }
 
   return {
-    BUCKETS, SURVEY_BUCKETS, DAY_BUCKETS, MAX_CENTS, dayBucket, clean,
+    BUCKETS, SURVEY_BUCKETS, DAY_BUCKETS, MAX_CENTS, MIN_GROUP, dayBucket, clean,
     dailyDesired, surveyDesired, savingsDesired,
     reconcile, record, reconcileOnLoad, getPending, markPending,
     avgOf, countOf, stressOver, responsesIn

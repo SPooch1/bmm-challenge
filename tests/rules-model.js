@@ -13,11 +13,14 @@
   const FULL_Q = ['stress', 'sleep', 'financial', 'energy', 'overwhelm', 'savings', 'exercise', 'breathing',
     'p_health', 'p_wealth', 'p_finwell', 'p_retsave', 'p_jobskills'];
   const PILLAR_Q = ['p_health', 'p_wealth', 'p_finwell', 'p_retsave', 'p_jobskills'];
-  const days = (a, b) => { const o = []; for (let d = a; d <= b; d++) o.push('d' + d); return o; };
-  const BUCKET_KEYS = {
-    days1: days(0, 7), days2: days(8, 14), days3: days(15, 21),
+  const BUCKET_KEYS = {};
+  for (let d = 0; d <= 21; d++) BUCKET_KEYS['d' + d] = ['d' + d];
+  Object.assign(BUCKET_KEYS, {
     pre: FULL_Q, post: FULL_Q, m3: PILLAR_Q, m6: PILLAR_Q, m12: PILLAR_Q, savings: ['cents']
-  };
+  });
+  const MIN_GROUP = 3;
+  const enough = (m, k) => { const n = mget(m, 'n_' + k, 0); return n === 0 || n >= MIN_GROUP; };
+  const readable = (b, m) => !!BUCKET_KEYS[b] && BUCKET_KEYS[b].every(k => enough(m, k));
   const bucketKeys = b => BUCKET_KEYS[b] || [];
   const aggKeys = b => (BUCKET_KEYS[b] ? BUCKET_KEYS[b].flatMap(k => ['sum_' + k, 'n_' + k]).concat(['op']) : []);
 
@@ -44,6 +47,7 @@
       const userData = id => ctx.get('users/' + id);
       const isCompanyAdmin = cid => { const u = userData(uid()); return u.role === 'admin' && u.companyId === cid; };
       const isAdminOf = userId => { const cid = mget(userData(userId), 'companyId', null); return signedIn() && cid != null && isCompanyAdmin(cid); };
+      const isCohortManager = cid => { const u = userData(uid()); return u.role === 'admin' && mget(u, 'cohortManager', false) === true && u.companyId === cid; };
       const isMigrator = () => !FINAL && signedIn() && mget(userData(uid()), 'migrator', false) === true;
 
       function seatClaimed(code, companyId) {
@@ -84,7 +88,7 @@
           && mget(ctx.getAfter(ap), 'op', '') === op
           && (!ctx.exists(ap) || mget(ctx.get(ap), 'op', '') !== op);
       }
-      return { signedIn, uid, isOwner, isCompanyAdmin, isAdminOf, isMigrator, seatClaimed, aggWriteOk, ledgerWriteOk, userData };
+      return { isCohortManager, signedIn, uid, isOwner, isCompanyAdmin, isAdminOf, isMigrator, seatClaimed, aggWriteOk, ledgerWriteOk, userData };
     }
 
     // Returns true when some `allow` grants op on path. op: get|list|create|update|delete
@@ -101,13 +105,13 @@
         rules.push(() => read && A.isOwner(userId));
         rules.push(() => read && A.signedIn() && R.companyId != null && A.isCompanyAdmin(R.companyId));
         rules.push(() => op === 'create' && A.isOwner(userId) && Q.role === 'participant'
-          && !hasAny(keys(Q), ['migrator'])
+          && !hasAny(keys(Q), ['migrator', 'cohortManager'])
           && (!FINAL || !hasAny(keys(Q), ['savingsEntries', 'savingsRev']))
           && (mget(Q, 'companyId', null) == null
             || (typeof mget(Q, 'inviteCode', '') === 'string' && mget(Q, 'inviteCode', '') !== ''
               && A.seatClaimed(Q.inviteCode, Q.companyId))));
         rules.push(() => op === 'update' && A.isOwner(userId)
-          && !hasAny(affectedKeys(Q, R), ['role', 'companyId', 'inviteCode', 'migrator'])
+          && !hasAny(affectedKeys(Q, R), ['role', 'companyId', 'inviteCode', 'migrator', 'cohortManager'])
           && (!FINAL || !hasAny(keys(Q), ['savingsEntries', 'savingsRev'])));
         rules.push(() => (read || op === 'update') && A.isMigrator());
       } else if (s.length === 4 && s[0] === 'users' && s[2] === 'dailyLogs') {
@@ -116,7 +120,7 @@
         if (!FINAL) {
           rules.push(() => (op === 'create' || op === 'update') && A.isOwner(userId)
             && hasOnly(keys(Q), DAILY_SHELL.concat(DAILY_LEGACY)));
-          rules.push(() => read && A.isAdminOf(userId));
+          rules.push(() => op === 'get' && (R == null || hasOnly(keys(R), DAILY_SHELL)) && A.isAdminOf(userId));
           rules.push(() => (read || op === 'update') && A.isMigrator());
         } else {
           rules.push(() => (op === 'create' || op === 'update') && A.isOwner(userId) && hasOnly(keys(Q), DAILY_SHELL));
@@ -131,7 +135,6 @@
         rules.push(() => (read || op === 'delete') && A.isOwner(userId));
         if (!FINAL) {
           rules.push(() => (op === 'create' || op === 'update') && A.isOwner(userId) && hasOnly(keys(Q), ['completedAt', 'responses']));
-          rules.push(() => read && A.isAdminOf(userId));
           rules.push(() => (read || op === 'update') && A.isMigrator());
         } else {
           rules.push(() => (op === 'create' || op === 'update') && A.isOwner(userId) && hasOnly(keys(Q), ['completedAt']));
@@ -151,7 +154,7 @@
       } else if (s.length === 2 && s[0] === 'companies') {
         rules.push(() => A.signedIn() && A.isCompanyAdmin(s[1]));
       } else if (s.length === 4 && s[0] === 'companies' && s[2] === 'aggregates') {
-        rules.push(() => read && A.signedIn() && A.isCompanyAdmin(s[1]));
+        rules.push(() => op === 'get' && A.signedIn() && A.isCompanyAdmin(s[1]) && (R == null || readable(s[3], R)));
         rules.push(() => op === 'create' && A.signedIn() && A.aggWriteOk(s[1], s[3], {}));
         rules.push(() => op === 'update' && A.signedIn() && A.aggWriteOk(s[1], s[3], R));
         rules.push(() => (read || write) && A.isMigrator());
@@ -159,9 +162,10 @@
         const code = s[1];
         rules.push(() => op === 'get');
         rules.push(() => op === 'list' && A.signedIn() && A.isCompanyAdmin(R.companyId));
-        rules.push(() => op === 'create' && A.signedIn() && A.isCompanyAdmin(Q.companyId));
-        rules.push(() => op === 'update' && A.signedIn() && A.isCompanyAdmin(R.companyId) && Q.companyId === R.companyId);
-        rules.push(() => op === 'delete' && A.signedIn() && A.isCompanyAdmin(R.companyId));
+        rules.push(() => op === 'create' && A.signedIn() && A.isCohortManager(Q.companyId));
+        rules.push(() => op === 'update' && A.signedIn() && A.isCohortManager(R.companyId) && Q.companyId === R.companyId);
+        rules.push(() => op === 'delete' && A.signedIn() && A.isCohortManager(R.companyId));
+        rules.push(() => (read || op === 'update') && A.isMigrator());
         rules.push(() => op === 'update' && A.signedIn()
           && hasOnly(affectedKeys(Q, R), ['seatsUsed'])
           && R.active === true
@@ -176,7 +180,7 @@
     return { allow, mode };
   }
 
-  const api = { createRules, BUCKET_KEYS, aggKeys, DAILY_SHELL, DAILY_LEGACY };
+  const api = { createRules, MIN_GROUP, BUCKET_KEYS, aggKeys, DAILY_SHELL, DAILY_LEGACY };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.RulesModel = api;
 })(typeof window !== 'undefined' ? window : globalThis);

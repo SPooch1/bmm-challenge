@@ -112,17 +112,17 @@
     case 'dash': { // HR admin, 4 participants with split data + consistent aggregates
       companyBase();
       fake.put('users/hr', { role: 'admin', companyId: 'acme', name: 'HR Admin', email: 'hr@test.com' });
+      fake.put('users/scott', { role: 'admin', companyId: 'acme', name: 'Scott', email: 'scott@test.com', cohortManager: true });
       const ppl = [['amy', 7, 2], ['bob', 5, 0], ['cat', 8, 1], ['dan', 4, 3]];
       ppl.forEach(([uid, base, skip], i) => {
         const ds = days(5, d => logDay(d, Math.max(1, base - (d % 3)))).filter(x => x[0] !== skip);
         const pre = Object.assign({}, FULL, { stress: base, financial: 2 + i });
         person(uid, { user: { companyId: 'acme', inviteCode: 'ACME25', challengeStartDate: ymd(-5), breathingSessions: i + 1 }, days: ds, surveys: { pre }, savings: [{ amount: 100 * (i + 1), iso: ymd(-1), date: 'x' }] });
-        const led = {}; ds.forEach(([d, , p]) => { led['d' + d] = p.stress; });
-        countIn(uid, 'acme', 'days1', led);
+        ds.forEach(([d, , p]) => countIn(uid, 'acme', 'd' + d, { ['d' + d]: p.stress }));
         countIn(uid, 'acme', 'pre', pre);
         countIn(uid, 'acme', 'savings', { cents: 10000 * (i + 1) });
       });
-      fake.signInAs('hr');
+      fake.signInAs(params.get('as') || 'hr');
       break;
     }
     default:

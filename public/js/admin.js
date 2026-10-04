@@ -112,8 +112,9 @@
   // current; per-person wellness data is owner-only in the rules.
   let aggs = {};
   // Averages over fewer people than this are hidden, so a tiny group cannot reveal
-  // one person's answer.
-  const MIN_GROUP = 3;
+  // one person's answer. The rules enforce the same threshold on the raw counter
+  // docs (an under-threshold doc is unreadable and loads as empty here).
+  const MIN_GROUP = Aggregates.MIN_GROUP;
 
   async function loadAggregates() {
     aggs = {};
@@ -442,6 +443,12 @@
   }
 
   document.getElementById('gen-code').addEventListener('click', async () => {
+    // Only the program owner's account (cohortManager) may mint or change codes;
+    // the rules enforce it, this just says so instead of failing silently.
+    if (adminData && adminData.cohortManager !== true) {
+      alert('Cohort codes are set up by the program owner. Contact Scott to change seats or dates.');
+      return;
+    }
     // Deactivate existing codes for this company
     const existing = await db.collection('inviteCodes')
       .where('companyId', '==', companyId)

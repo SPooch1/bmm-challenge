@@ -142,7 +142,7 @@
         mode: opts.mode, strip: !!opts.strip, users: 0,
         dailyCopied: 0, dailyToStrip: 0, surveysCopied: 0, surveysToStrip: 0,
         savingsCopied: 0, userDocsToStrip: 0, stripped: 0,
-        aggBucketsToReplay: 0, aggBucketsReplayed: 0, errors: [], notes: [], backup: {}
+        aggBucketsToReplay: 0, aggBucketsReplayed: 0, seatBackfills: [], errors: [], notes: [], backup: {}
       };
       const users = await db.collection('users').get();
       for (const snap of users.docs) {
@@ -152,6 +152,24 @@
         } catch (e) {
           report.errors.push(snap.id + ': ' + (e && e.message ? e.message : e));
         }
+      }
+      // Seat cap backfill: a code minted before seat counting has no seatsUsed,
+      // so the people already in its cohort would not count. Set it to the
+      // company's participant headcount (only when the company has one such code).
+      try {
+        const heads = {};
+        users.docs.forEach(d => { const u = d.data() || {}; if (u.role === 'participant' && u.companyId) heads[u.companyId] = (heads[u.companyId] || 0) + 1; });
+        const codes = await db.collection('inviteCodes').get();
+        const legacy = codes.docs.filter(d => { const c = d.data() || {}; return c.active === true && c.companyId && typeof c.seatsUsed !== 'number'; });
+        const byCo = {};
+        legacy.forEach(d => { const cid = d.data().companyId; (byCo[cid] = byCo[cid] || []).push(d); });
+        for (const cid of Object.keys(byCo)) {
+          if (byCo[cid].length !== 1) { report.notes.push(cid + ': ' + byCo[cid].length + ' active codes without seatsUsed; set them by hand'); continue; }
+          report.seatBackfills.push(byCo[cid][0].id + ' seatsUsed=' + (heads[cid] || 0));
+          if (opts.mode === 'run') await byCo[cid][0].ref.update({ seatsUsed: heads[cid] || 0 });
+        }
+      } catch (e) {
+        report.errors.push('seat backfill: ' + (e && e.message ? e.message : e));
       }
       return report;
     }
