@@ -4,12 +4,8 @@ const Progress = (() => {
   // opts (Keep Your Margin mode): { marginMode, elapsed, series, pomFunded, breathTotal, resets }
   async function loadProgress(uid, currentDay, opts) {
     opts = opts || {};
-    const snapshot = await db.collection('users').doc(uid).collection('dailyLogs')
-      .orderBy(firebase.firestore.FieldPath.documentId())
-      .get();
-
-    const logs = {};
-    snapshot.forEach(doc => { logs[doc.id] = doc.data(); });
+    // Engagement shells merged with the owner-only private subdocs (privacy.js)
+    const logs = await Privacy.loadDailyLogs(uid);
 
     // Keep Your Margin: build the date-keyed series once the challenge logs are in hand
     if (opts.seriesFor) opts.series = opts.seriesFor(logs);

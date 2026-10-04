@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BMM Privacy Migration</title>
+  <style>
+    body { font-family: -apple-system, Segoe UI, Inter, sans-serif; max-width: 760px; margin: 32px auto; padding: 0 16px; color: #0F172A; }
+    h1 { font-size: 1.3rem; } .box { border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; margin: 12px 0; }
+    button { padding: 8px 14px; margin: 4px 4px 4px 0; border-radius: 8px; border: 1px solid #0F172A; background: #fff; cursor: pointer; }
+    button.primary { background: #0F172A; color: #fff; } input { padding: 6px 8px; margin: 4px 0; width: 100%; box-sizing: border-box; }
+    pre { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; overflow: auto; font-size: 0.78rem; max-height: 420px; }
+    .warn { color: #b91c1c; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <h1>BMM privacy migration (one-time)</h1>
+  <p>Local tool. Serve the repo root with <code>python3 -m http.server 8000</code> and open
+    <code>http://localhost:8000/tools/migrate.html</code>. Needs the TRANSITIONAL rules live and
+    <code>migrator: true</code> on your user doc (Firestore console). Order: CLAUDE.md, "Privacy split deploy order".</p>
+
+  <div class="box" id="signin-box">
+    <input type="email" id="email" placeholder="Admin email" autocomplete="email">
+    <input type="password" id="password" placeholder="Password" autocomplete="current-password">
+    <button class="primary" id="signin">Sign in</button>
+    <div id="who"></div>
+  </div>
+
+  <div class="box">
+    <button id="dry">1. Dry run (read only)</button>
+    <button id="backup" disabled>2. Download backup JSON</button>
+    <button class="primary" id="run" disabled>3. Copy + replay aggregates</button>
+    <button id="strip" disabled>4. Copy + replay + STRIP old fields (final pass)</button>
+    <button id="verify">Verify</button>
+    <p class="warn">Step 4 deletes the old copies from the shells and user docs. Run it only after the
+      app is on dual-write OFF (deploy step 3). The backup holds private data: delete it once the final rules are live.</p>
+  </div>
+  <pre id="out">Sign in first.</pre>
+
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="../public/js/firebase-config.js"></script>
+  <script src="../public/js/privacy.js"></script>
+  <script src="../public/js/aggregates.js"></script>
+  <script src="migrate-core.js"></script>
+  <script>
+    (function () {
+      const out = document.getElementById('out');
+      const show = o => { out.textContent = typeof o === 'string' ? o : JSON.stringify(o, null, 2); };
+      const lines = [];
+      const migrator = createMigrator({ db, firebase, Aggregates, Privacy, log: m => { lines.push(m); out.textContent = lines.slice(-30).join('\n'); } });
+      let lastBackup = null;
+      let backedUp = false;
+
+      document.getElementById('signin').onclick = async () => {
+        try {
+          await auth.signInWithEmailAndPassword(document.getElementById('email').value.trim(), document.getElementById('password').value);
+        } catch (e) { show('Sign-in failed: ' + e.message); }
+      };
+      auth.onAuthStateChanged(async user => {
+        if (!user) return;
+        const me = await db.collection('users').doc(user.uid).get();
+        const ok = me.exists && me.data().migrator === true;
+        document.getElementById('who').textContent = user.email + (ok ? ' (migrator)' : ' (NOT a migrator: set migrator: true on this user doc in the console)');
+        show(ok ? 'Ready. Start with the dry run.' : 'This account cannot run the migration.');
+      });
+
+      const summary = r => { const c = Object.assign({}, r); delete c.backup; return c; };
+
+      document.getElementById('dry').onclick = async () => {
+        lines.length = 0;
+        const r = await migrator.run({ mode: 'dry' });
+        lastBackup = r.backup;
+        document.getElementById('backup').disabled = false;
+        show(summary(r));
+      };
+      document.getElementById('backup').onclick = () => {
+        if (!lastBackup) return;
+        const blob = new Blob([JSON.stringify({ at: new Date().toISOString(), users: lastBackup }, null, 1)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'bmm-privacy-migration-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+        a.click();
+        backedUp = true;
+        document.getElementById('run').disabled = false;
+        document.getElementById('strip').disabled = false;
+      };
+      async function go(strip) {
+        if (!backedUp) { show('Download the backup first.'); return; }
+        if (strip && !confirm('Strip the old private fields from every shell and user doc? (Backup downloaded, app on dual-write OFF?)')) return;
+        lines.length = 0;
+        const r = await migrator.run({ mode: 'run', strip });
+        show(summary(r));
+      }
+      document.getElementById('run').onclick = () => go(false);
+      document.getElementById('strip').onclick = () => go(true);
+      document.getElementById('verify').onclick = async () => { lines.length = 0; show(await migrator.verify()); };
+    })();
+  </script>
+</body>
+</html>

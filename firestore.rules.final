@@ -1,0 +1,266 @@
+rules_version = '2';
+// Privacy field split + aggregates + seat cap (2026-10-04).
+// THIS FILE = the FINAL rules (deploy step 5), generated from firestore.rules by
+// tools/make-final-rules.js. Do not edit by hand.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isOwner(userId) { return signedIn() && request.auth.uid == userId; }
+    function userData(uid) { return get(/databases/$(database)/documents/users/$(uid)).data; }
+
+    // Is the caller an admin for this company?
+    function isCompanyAdmin(companyId) {
+      let user = userData(request.auth.uid);
+      return user.role == 'admin' && user.companyId == companyId;
+    }
+    // Is the caller an admin of this user's company?
+    function isAdminOf(userId) {
+      let cid = userData(userId).get('companyId', null);
+      return signedIn() && cid != null && isCompanyAdmin(cid);
+    }
+
+
+    // Fields an admin may see on a daily shell / survey shell.
+    function dailyShellFields() { return ['completed', 'action', 'breathing', 'meal', 'savedAt']; }
+
+    // ---- Seat cap: claiming one seat on an invite code ----
+    // The user doc (with inviteCode) and seatsUsed + 1 must be written in the same
+    // batch; the inviteCodes rule below refuses seatsUsed past maxSeats.
+    function seatClaimed(code, companyId) {
+      let path = /databases/$(database)/documents/inviteCodes/$(code);
+      let before = get(path).data;
+      return before.companyId == companyId
+        && before.active == true
+        && getAfter(path).data.get('seatsUsed', 0) == before.get('seatsUsed', 0) + 1;
+    }
+
+    // ---- Aggregates ----
+    // Ledger keys per bucket (must match Aggregates.BUCKETS in public/js/aggregates.js;
+    // tests/rules-model.test.js checks this).
+    function bucketKeys(bucket) {
+      return bucket == 'days1' ? ['d0', 'd1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7']
+        : bucket == 'days2' ? ['d8', 'd9', 'd10', 'd11', 'd12', 'd13', 'd14']
+        : bucket == 'days3' ? ['d15', 'd16', 'd17', 'd18', 'd19', 'd20', 'd21']
+        : (bucket == 'pre' || bucket == 'post') ? ['stress', 'sleep', 'financial', 'energy', 'overwhelm', 'savings', 'exercise', 'breathing', 'p_health', 'p_wealth', 'p_finwell', 'p_retsave', 'p_jobskills']
+        : (bucket == 'm3' || bucket == 'm6' || bucket == 'm12') ? ['p_health', 'p_wealth', 'p_finwell', 'p_retsave', 'p_jobskills']
+        : bucket == 'savings' ? ['cents']
+        : [];
+    }
+    // Aggregate fields per bucket: sum_<key> and n_<key>, plus op.
+    function aggKeys(bucket) {
+      return bucket == 'days1' ? ['sum_d0', 'n_d0', 'sum_d1', 'n_d1', 'sum_d2', 'n_d2', 'sum_d3', 'n_d3', 'sum_d4', 'n_d4', 'sum_d5', 'n_d5', 'sum_d6', 'n_d6', 'sum_d7', 'n_d7', 'op']
+        : bucket == 'days2' ? ['sum_d8', 'n_d8', 'sum_d9', 'n_d9', 'sum_d10', 'n_d10', 'sum_d11', 'n_d11', 'sum_d12', 'n_d12', 'sum_d13', 'n_d13', 'sum_d14', 'n_d14', 'op']
+        : bucket == 'days3' ? ['sum_d15', 'n_d15', 'sum_d16', 'n_d16', 'sum_d17', 'n_d17', 'sum_d18', 'n_d18', 'sum_d19', 'n_d19', 'sum_d20', 'n_d20', 'sum_d21', 'n_d21', 'op']
+        : (bucket == 'pre' || bucket == 'post') ? ['sum_stress', 'n_stress', 'sum_sleep', 'n_sleep', 'sum_financial', 'n_financial', 'sum_energy', 'n_energy', 'sum_overwhelm', 'n_overwhelm', 'sum_savings', 'n_savings', 'sum_exercise', 'n_exercise', 'sum_breathing', 'n_breathing', 'sum_p_health', 'n_p_health', 'sum_p_wealth', 'n_p_wealth', 'sum_p_finwell', 'n_p_finwell', 'sum_p_retsave', 'n_p_retsave', 'sum_p_jobskills', 'n_p_jobskills', 'op']
+        : (bucket == 'm3' || bucket == 'm6' || bucket == 'm12') ? ['sum_p_health', 'n_p_health', 'sum_p_wealth', 'n_p_wealth', 'sum_p_finwell', 'n_p_finwell', 'sum_p_retsave', 'n_p_retsave', 'sum_p_jobskills', 'n_p_jobskills', 'op']
+        : bucket == 'savings' ? ['sum_cents', 'n_cents', 'op']
+        : [];
+    }
+
+    // One key: the ledger value is an int in range, and the aggregate's sum and
+    // count moved by exactly the ledger's change. aB/aA = aggregate before/after,
+    // lB/lA = this person's ledger before/after.
+    function step(aB, aA, lB, lA, k) {
+      let v = lA.get(k, 0);
+      let was = lB.get(k, 0);
+      let max = k == 'cents' ? 100000000 : 10;
+      return v is int && v >= 0 && v <= max
+        && aA.get('sum_' + k, 0) - aB.get('sum_' + k, 0) == v - was
+        && aA.get('n_' + k, 0) - aB.get('n_' + k, 0) == (v > 0 ? 1 : 0) - (was > 0 ? 1 : 0);
+    }
+    function days1Ok(aB, aA, lB, lA) {
+      return step(aB, aA, lB, lA, 'd0') && step(aB, aA, lB, lA, 'd1') && step(aB, aA, lB, lA, 'd2')
+        && step(aB, aA, lB, lA, 'd3') && step(aB, aA, lB, lA, 'd4') && step(aB, aA, lB, lA, 'd5')
+        && step(aB, aA, lB, lA, 'd6') && step(aB, aA, lB, lA, 'd7');
+    }
+    function days2Ok(aB, aA, lB, lA) {
+      return step(aB, aA, lB, lA, 'd8') && step(aB, aA, lB, lA, 'd9') && step(aB, aA, lB, lA, 'd10')
+        && step(aB, aA, lB, lA, 'd11') && step(aB, aA, lB, lA, 'd12') && step(aB, aA, lB, lA, 'd13')
+        && step(aB, aA, lB, lA, 'd14');
+    }
+    function days3Ok(aB, aA, lB, lA) {
+      return step(aB, aA, lB, lA, 'd15') && step(aB, aA, lB, lA, 'd16') && step(aB, aA, lB, lA, 'd17')
+        && step(aB, aA, lB, lA, 'd18') && step(aB, aA, lB, lA, 'd19') && step(aB, aA, lB, lA, 'd20')
+        && step(aB, aA, lB, lA, 'd21');
+    }
+    function pillarsOk(aB, aA, lB, lA) {
+      return step(aB, aA, lB, lA, 'p_health') && step(aB, aA, lB, lA, 'p_wealth')
+        && step(aB, aA, lB, lA, 'p_finwell') && step(aB, aA, lB, lA, 'p_retsave')
+        && step(aB, aA, lB, lA, 'p_jobskills');
+    }
+    function fullSurveyOk(aB, aA, lB, lA) {
+      return step(aB, aA, lB, lA, 'stress') && step(aB, aA, lB, lA, 'sleep')
+        && step(aB, aA, lB, lA, 'financial') && step(aB, aA, lB, lA, 'energy')
+        && step(aB, aA, lB, lA, 'overwhelm') && step(aB, aA, lB, lA, 'savings')
+        && step(aB, aA, lB, lA, 'exercise') && step(aB, aA, lB, lA, 'breathing')
+        && pillarsOk(aB, aA, lB, lA);
+    }
+    function lockstep(bucket, aB, aA, lB, lA) {
+      return bucket == 'days1' ? days1Ok(aB, aA, lB, lA)
+        : bucket == 'days2' ? days2Ok(aB, aA, lB, lA)
+        : bucket == 'days3' ? days3Ok(aB, aA, lB, lA)
+        : (bucket == 'pre' || bucket == 'post') ? fullSurveyOk(aB, aA, lB, lA)
+        : (bucket == 'm3' || bucket == 'm6' || bucket == 'm12') ? pillarsOk(aB, aA, lB, lA)
+        : bucket == 'savings' ? step(aB, aA, lB, lA, 'cents')
+        : false;
+    }
+
+    // A participant's aggregate write (admins never write): only into their own company, only known
+    // fields, and the caller's own ledger for this bucket must be written in the
+    // same batch (same op id) with every key in lockstep.
+    function aggWriteOk(companyId, bucket, aB) {
+      let ledgerPath = /databases/$(database)/documents/users/$(request.auth.uid)/aggLedger/$(bucket);
+      let lB = exists(ledgerPath) ? get(ledgerPath).data : {};
+      let lA = getAfter(ledgerPath).data;
+      let aA = request.resource.data;
+      let me = userData(request.auth.uid);
+      return me.role == 'participant'
+        && me.get('companyId', null) == companyId
+        && aA.keys().hasOnly(aggKeys(bucket))
+        && aA.get('op', '') is string
+        && lA.get('op', '') == aA.get('op', '')
+        && lockstep(bucket, aB, aA, lB, lA);
+    }
+
+    // A ledger write: own company only, known keys, and the company aggregate
+    // must carry this op id after the batch and not before it (= the aggregate was
+    // written in the same batch, where aggWriteOk checks the lockstep).
+    function ledgerWriteOk(userId, bucket) {
+      let me = userData(userId);
+      let cid = me.get('companyId', null);
+      let aggPath = /databases/$(database)/documents/companies/$(cid)/aggregates/$(bucket);
+      let op = request.resource.data.get('op', '');
+      return me.role == 'participant'
+        && cid is string
+        && request.resource.data.keys().hasOnly(bucketKeys(bucket).concat(['op']))
+        && op is string && op.size() >= 8
+        && getAfter(aggPath).data.get('op', '') == op
+        && (!exists(aggPath) || get(aggPath).data.get('op', '') != op);
+    }
+
+    // ---- Users ----
+    match /users/{userId} {
+      // Anyone can read their own doc
+      allow read: if isOwner(userId);
+
+      // Admins can read the profiles (name, email, start date, breathing count) of
+      // employees in their company. No wellness data lives on this doc.
+      allow read: if signedIn()
+        && resource.data.companyId != null
+        && isCompanyAdmin(resource.data.companyId);
+
+      // Create: own uid, role participant, no protected fields. Joining a company
+      // requires claiming a seat on an active invite code for that company in the
+      // same batch (seat cap).
+      allow create: if isOwner(userId)
+        && request.resource.data.role == 'participant'
+        && !request.resource.data.keys().hasAny(['migrator'])
+        && !request.resource.data.keys().hasAny(['savingsEntries', 'savingsRev'])
+        && (request.resource.data.get('companyId', null) == null
+            || (request.resource.data.get('inviteCode', '') is string
+                && request.resource.data.get('inviteCode', '') != ''
+                && seatClaimed(request.resource.data.inviteCode, request.resource.data.companyId)));
+
+      // Update: can't change role, company, invite code or the migrator flag.
+      allow update: if isOwner(userId)
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'companyId', 'inviteCode', 'migrator'])
+        && !request.resource.data.keys().hasAny(['savingsEntries', 'savingsRev'])
+        ;
+
+    }
+
+    // Daily log SHELL: engagement only (completed, action, breathing, meal, savedAt).
+    // The admin read is a get, and only on a shell holding nothing but those fields.
+    match /users/{userId}/dailyLogs/{day} {
+      allow read, delete: if isOwner(userId);
+      allow create, update: if isOwner(userId)
+        && request.resource.data.keys().hasOnly(dailyShellFields());
+      allow get: if (resource == null || resource.data.keys().hasOnly(dailyShellFields()))
+        && isAdminOf(userId);
+
+      // stress, sleep, steps, notes: OWNER ONLY. No admin branch, on purpose.
+      match /private/{doc} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // Survey SHELL: completedAt only. Admins have no access in the final rules
+    // (cohort averages come from the aggregates).
+    match /users/{userId}/assessments/{type} {
+      allow read, delete: if isOwner(userId);
+      allow create, update: if isOwner(userId)
+        && request.resource.data.keys().hasOnly(['completedAt']);
+
+      // Raw survey responses: OWNER ONLY. No admin branch, on purpose.
+      match /private/{doc} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // OWNER ONLY. No admin branch on purpose: Keep Your Margin settings (health
+    // action, Peace of Mind number, resets, weekly checks) and private/savings
+    // (the Peace of Mind Account entries).
+    match /users/{userId}/private/{doc} {
+      allow read, write: if isOwner(userId);
+    }
+    match /users/{userId}/marginLogs/{date} {
+      allow read, write: if isOwner(userId);
+    }
+    match /users/{userId}/breathSessions/{sessionId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Engagement summary (dates only: active days, action days, breathing days
+    // per week). Owner writes; company admin may read, same as dailyLogs. This is
+    // the post-Day-21 "still active" measure on the cohort dashboard.
+    match /users/{userId}/engagement/{doc} {
+      allow read, write: if isOwner(userId);
+      allow read: if isAdminOf(userId);
+    }
+
+    // What this person has counted into the company aggregates. OWNER ONLY (it
+    // mirrors their own answers). Never deletable: a deleted ledger would let the
+    // same contribution be counted twice.
+    match /users/{userId}/aggLedger/{bucket} {
+      allow read: if isOwner(userId);
+      allow create, update: if isOwner(userId) && ledgerWriteOk(userId, bucket);
+    }
+
+    // Companies: admin of that company
+    match /companies/{companyId} {
+      allow read, write: if signedIn() && isCompanyAdmin(companyId);
+    }
+
+    // Company aggregates: admins READ ONLY. Participants change them only by their
+    // own ledger change (aggWriteOk). No deletes.
+    match /companies/{companyId}/aggregates/{bucket} {
+      allow read: if signedIn() && isCompanyAdmin(companyId);
+      allow create: if signedIn() && aggWriteOk(companyId, bucket, {});
+      allow update: if signedIn() && aggWriteOk(companyId, bucket, resource.data);
+    }
+
+    // Invite codes: PUBLIC get (validated at sign-up before the user is authenticated).
+    // Nobody can enumerate codes; a company admin may list their own company's codes
+    // (the dashboard query filters on companyId).
+    match /inviteCodes/{code} {
+      allow get: if true;
+      allow list: if signedIn() && isCompanyAdmin(resource.data.companyId);
+      // Admin: manage codes for their own company only.
+      allow create: if signedIn() && isCompanyAdmin(request.resource.data.companyId);
+      allow update: if signedIn() && isCompanyAdmin(resource.data.companyId)
+        && request.resource.data.companyId == resource.data.companyId;
+      allow delete: if signedIn() && isCompanyAdmin(resource.data.companyId);
+      // Participant: claim one seat while creating their own user doc in the same
+      // batch. Only seatsUsed changes, by exactly +1, never past maxSeats.
+      allow update: if signedIn()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['seatsUsed'])
+        && resource.data.active == true
+        && request.resource.data.seatsUsed == resource.data.get('seatsUsed', 0) + 1
+        && (resource.data.get('maxSeats', null) == null
+            || request.resource.data.seatsUsed <= resource.data.maxSeats)
+        && !exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('inviteCode', '') == code;
+    }
+  }
+}

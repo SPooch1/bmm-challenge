@@ -1,10 +1,12 @@
-const CACHE_NAME = 'bmm-challenge-v12';
+const CACHE_NAME = 'bmm-challenge-v13';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/dashboard.html',
   '/css/app.css',
   '/js/firebase-config.js',
+  '/js/privacy.js',
+  '/js/aggregates.js',
   '/js/auth.js',
   '/js/challenge.js',
   '/js/margin.js',

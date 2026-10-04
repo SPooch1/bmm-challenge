@@ -107,6 +107,31 @@
   // Participant data
   let participants = [];
 
+  // Cohort aggregates (companies/{companyId}/aggregates/{bucket}): the ONLY source
+  // of stress, survey and savings numbers on this dashboard. Participants keep them
+  // current; per-person wellness data is owner-only in the rules.
+  let aggs = {};
+  // Averages over fewer people than this are hidden, so a tiny group cannot reveal
+  // one person's answer.
+  const MIN_GROUP = 3;
+
+  async function loadAggregates() {
+    aggs = {};
+    const names = Object.keys(Aggregates.BUCKETS);
+    const docs = await Promise.all(names.map(b =>
+      db.collection('companies').doc(companyId).collection('aggregates').doc(b).get().catch(() => null)));
+    names.forEach((b, i) => { aggs[b] = docs[i] && docs[i].exists ? docs[i].data() : {}; });
+  }
+
+  // Pooled stress average over challenge days lo..hi. The busiest day's count is a
+  // lower bound on the distinct people behind it (one rating per person per day).
+  function stressWindow(lo, hi) {
+    const r = Aggregates.stressOver(aggs, lo, hi);
+    let people = 0;
+    for (let d = lo; d <= hi; d++) people = Math.max(people, Aggregates.countOf(aggs[Aggregates.dayBucket(d)], 'd' + d));
+    return people >= MIN_GROUP ? r.avg : null;
+  }
+
   async function loadParticipants() {
     const snapshot = await db.collection('users')
       .where('companyId', '==', companyId)
@@ -122,6 +147,7 @@
       promises.push(loadParticipantLogs(data));
     });
 
+    promises.push(loadAggregates().catch(err => console.warn('Could not load aggregates:', err)));
     await Promise.all(promises);
     renderMetrics();
     renderTable();
@@ -130,13 +156,22 @@
 
   async function loadParticipantLogs(participant) {
     const userRef = db.collection('users').doc(participant.id);
-    const [logs, engDoc] = await Promise.all([
-      userRef.collection('dailyLogs').get(),
+    // Engagement shells only, one get per challenge day (Day 0-21). The rules
+    // allow an admin get only on a shell that holds engagement fields, so there is
+    // no collection query here. Only the engagement fields are kept.
+    const dayIds = [];
+    for (let d = 0; d <= 21; d++) dayIds.push(String(d));
+    const [shells, engDoc] = await Promise.all([
+      Promise.all(dayIds.map(id => userRef.collection('dailyLogs').doc(id).get().catch(() => null))),
       // Post-Day-21 engagement summary (dates only). Missing doc = no activity yet.
       userRef.collection('engagement').doc('weekly').get().catch(() => null)
     ]);
     participant.logs = {};
-    logs.forEach(doc => { participant.logs[doc.id] = doc.data(); });
+    shells.forEach((doc, i) => {
+      if (!doc || !doc.exists) return;
+      const l = doc.data() || {};
+      participant.logs[dayIds[i]] = { completed: !!l.completed, breathing: !!l.breathing, meal: !!l.meal, action: l.action === true };
+    });
     participant.engagementWeeks = (engDoc && engDoc.exists && engDoc.data() && engDoc.data().weeks) || {};
 
     // Calculate stats
@@ -210,18 +245,10 @@
       return todayLog && todayLog.completed;
     }).length;
 
-    // Average stress across participants who actually logged stress — counting
-    // no-data participants as 0 understated the average (and disagreed with the
-    // HR report's pooled calculation).
-    const perPersonStress = participants
-      .map(p => {
-        const stressVals = Object.values(p.logs).map(l => l.stress).filter(Boolean);
-        return stressVals.length > 0 ? stressVals.reduce((a, b) => a + b, 0) / stressVals.length : null;
-      })
-      .filter(v => v != null);
-    const avgStress = perPersonStress.length > 0
-      ? (perPersonStress.reduce((a, b) => a + b, 0) / perPersonStress.length).toFixed(1)
-      : '—';
+    // Average stress = pooled cohort average over every check-in with a stress
+    // rating (Days 0-21), from the aggregate counters. Hidden under MIN_GROUP people.
+    const pooled = stressWindow(0, 21);
+    const avgStress = pooled != null ? pooled.toFixed(1) : '—';
 
     const avgCompletion = total > 0
       ? Math.round(participants.reduce((sum, p) => sum + p.completionPct, 0) / total)
@@ -390,7 +417,9 @@
     document.getElementById('join-link').value = JOIN_BASE + code;
     const seats = data && data.maxSeats ? data.maxSeats : null;
     const start = data && data.challengeStartDate ? data.challengeStartDate : null;
-    const used = participants.length;
+    // Seats claimed on THIS code (counted at sign-up, enforced by the rules);
+    // codes minted before seat counting fall back to the company headcount.
+    const used = data && typeof data.seatsUsed === 'number' ? data.seatsUsed : participants.length;
     const parts = [];
     if (start) parts.push('Starts ' + start);
     parts.push(seats ? (used + ' / ' + seats + ' seats joined') : (used + ' joined'));
@@ -432,9 +461,10 @@
       active: true,
       challengeStartDate,
       maxSeats,
+      seatsUsed: 0,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
-    renderInvite(code, { challengeStartDate, maxSeats });
+    renderInvite(code, { challengeStartDate, maxSeats, seatsUsed: 0 });
   });
 
   document.getElementById('copy-link').addEventListener('click', () => {
@@ -564,28 +594,13 @@
     { id: 'p_jobskills', label: 'Pillar — Job Skills' }
   ];
 
-  const avgResponse = (arr, id) => {
-    const vals = arr.map(r => r && r[id]).filter(v => typeof v === 'number');
-    return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+  // Cohort average for one question of one survey, from the aggregate counters.
+  // Hidden (null) under MIN_GROUP responses.
+  const avgResponse = (type, id) => {
+    const agg = aggs[type];
+    return Aggregates.countOf(agg, id) >= MIN_GROUP ? Aggregates.avgOf(agg, id) : null;
   };
-
-  // Collect assessment responses only — names are deliberately NOT retained
-  // (aggregate-only privacy rule). Returns { pre: [...], post: [...], ... }.
-  async function fetchAssessmentResponses(types) {
-    const sink = {};
-    types.forEach(t => { sink[t] = []; });
-    for (const p of participants) {
-      try {
-        const docs = await Promise.all(
-          types.map(t => db.collection('users').doc(p.id).collection('assessments').doc(t).get())
-        );
-        types.forEach((t, i) => {
-          if (docs[i].exists) sink[t].push(docs[i].data().responses);
-        });
-      } catch (e) { /* skip if no access */ }
-    }
-    return sink;
-  }
+  const responsesFor = type => Aggregates.responsesIn(aggs[type], type);
 
   // Assessments — COHORT AGGREGATE ONLY. Individual responses are never shown
   // (employee anonymity); only the group's pre->post trend per area.
@@ -593,10 +608,11 @@
     const container = document.getElementById('assessment-results');
     const QUESTIONS = ASSESSMENT_QUESTIONS;
 
-    const sink = await fetchAssessmentResponses(['pre', 'post', 'm3', 'm6', 'm12']);
-    const pres = sink.pre, posts = sink.post, m3s = sink.m3, m6s = sink.m6, m12s = sink.m12;
+    await loadAggregates().catch(() => {});
+    const nPre = responsesFor('pre'), nPost = responsesFor('post');
+    const nM3 = responsesFor('m3'), nM6 = responsesFor('m6'), nM12 = responsesFor('m12');
 
-    if (pres.length === 0) {
+    if (nPre === 0) {
       container.innerHTML = '<p style="color:var(--slate);font-size:0.8rem;">No assessment data yet.</p>';
       return;
     }
@@ -606,8 +622,8 @@
     let html = '<p style="color:var(--slate);font-size:0.85rem;margin-bottom:12px;">Cohort averages (scale 1–10). Individual responses are private to each participant — only the group trend is shown.</p>';
     html += '<table class="participant-table"><thead><tr><th>Area</th><th style="text-align:center;">Start (avg)</th><th style="text-align:center;">End (avg)</th><th style="text-align:center;">Change</th></tr></thead><tbody>';
     QUESTIONS.forEach(q => {
-      const pre = avg(pres, q.id);
-      const post = posts.length ? avg(posts, q.id) : null;
+      const pre = avg('pre', q.id);
+      const post = nPost ? avg('post', q.id) : null;
       const preStr = pre != null ? pre.toFixed(1) : '-';
       let postStr = '-', changeStr = '<span style="color:var(--text-light);">post-survey pending</span>';
       if (pre != null && post != null) {
@@ -621,10 +637,10 @@
       html += `<tr><td>${q.label}</td><td style="text-align:center;color:var(--slate);">${preStr}</td><td style="text-align:center;font-weight:600;">${postStr}</td><td style="text-align:center;">${changeStr}</td></tr>`;
     });
     html += '</tbody></table>';
-    html += `<p style="color:var(--slate);font-size:0.72rem;margin-top:8px;">Based on ${pres.length} start / ${posts.length} end responses. Green = improvement (lower stress &amp; overwhelm, higher everything else).</p>`;
+    html += `<p style="color:var(--slate);font-size:0.72rem;margin-top:8px;">Based on ${nPre} start / ${nPost} end responses. Green = improvement (lower stress &amp; overwhelm, higher everything else). Averages show once ${MIN_GROUP} or more people have answered.</p>`;
 
     // Readiness Pillars over time — the 12-Month Roadmap view (only once milestone data exists).
-    if (m3s.length || m6s.length || m12s.length) {
+    if (nM3 || nM6 || nM12) {
       const PILLARS = [
         { id: 'p_health', label: 'Health' },
         { id: 'p_wealth', label: 'Wealth' },
@@ -638,13 +654,13 @@
       html += '<table class="participant-table"><thead><tr><th>Pillar</th><th style="text-align:center;">Baseline</th><th style="text-align:center;">M3</th><th style="text-align:center;">M6</th><th style="text-align:center;">M12</th></tr></thead><tbody>';
       PILLARS.forEach(p => {
         html += `<tr><td>${p.label}</td>
-          <td style="text-align:center;color:var(--slate);">${cell(avg(pres, p.id))}</td>
-          <td style="text-align:center;">${cell(avg(m3s, p.id))}</td>
-          <td style="text-align:center;">${cell(avg(m6s, p.id))}</td>
-          <td style="text-align:center;font-weight:600;">${cell(avg(m12s, p.id))}</td></tr>`;
+          <td style="text-align:center;color:var(--slate);">${cell(avg('pre', p.id))}</td>
+          <td style="text-align:center;">${cell(avg('m3', p.id))}</td>
+          <td style="text-align:center;">${cell(avg('m6', p.id))}</td>
+          <td style="text-align:center;font-weight:600;">${cell(avg('m12', p.id))}</td></tr>`;
       });
       html += '</tbody></table>';
-      html += `<p style="color:var(--slate);font-size:0.72rem;margin-top:8px;">Milestone responses: ${m3s.length} (M3) / ${m6s.length} (M6) / ${m12s.length} (M12). Aggregate only.</p>`;
+      html += `<p style="color:var(--slate);font-size:0.72rem;margin-top:8px;">Milestone responses: ${nM3} (M3) / ${nM6} (M6) / ${nM12} (M12). Aggregate only.</p>`;
     }
 
     container.innerHTML = html;
@@ -698,14 +714,13 @@
     const participationRate = Math.round((participated / joined) * 100);
     const avgCompletion = Math.round(participants.reduce((s, p) => s + p.completionPct, 0) / joined);
     const totalBreathing = participants.reduce((s, p) => s + (p.breathingSessions || 0), 0);
-    const totalSaved = participants.reduce((s, p) => s + (p.savingsEntries || []).reduce((a, x) => a + (x.amount || 0), 0), 0);
+    await loadAggregates().catch(() => {});
+    // Cohort savings total (net of withdrawals) from the aggregate counter; hidden
+    // until MIN_GROUP people have a balance.
+    const savAgg = aggs.savings || {};
+    const totalSavedStr = Aggregates.countOf(savAgg, 'cents') >= MIN_GROUP ? '$' + ((savAgg.sum_cents || 0) / 100).toFixed(0) : '—';
 
-    function avgStress(lo, hi) {
-      const vals = [];
-      participants.forEach(p => { for (let d = lo; d <= hi; d++) { const l = p.logs[String(d)]; if (l && l.stress) vals.push(l.stress); } });
-      return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
-    }
-    const wk1 = avgStress(1, 7), wk3 = avgStress(15, 21);
+    const wk1 = stressWindow(1, 7), wk3 = stressWindow(15, 21);
     let stressTrend = '—';
     if (wk1 != null && wk3 != null) {
       const delta = wk1 - wk3;
@@ -728,12 +743,12 @@
 
     // Aggregate pre->post assessment table — cohort AVERAGES only, no individuals
     // (same privacy rule as the Assessments tab, which computes the same numbers).
-    const { pre: pres, post: assessPosts } = await fetchAssessmentResponses(['pre', 'post']);
+    const nPre = responsesFor('pre'), nPost = responsesFor('post');
     let assessmentSection = '';
-    if (pres.length > 0) {
+    if (nPre > 0) {
       const assessRows = ASSESSMENT_QUESTIONS.map(q => {
-        const pre = avgResponse(pres, q.id);
-        const post = assessPosts.length ? avgResponse(assessPosts, q.id) : null;
+        const pre = avgResponse('pre', q.id);
+        const post = nPost ? avgResponse('post', q.id) : null;
         if (pre == null && post == null) return '';
         const preStr = pre != null ? pre.toFixed(1) : '—';
         let postStr = '—', changeStr = '<span style="color:#94A3B8;">pending</span>';
@@ -752,7 +767,7 @@
       }).join('');
       assessmentSection = `<h2>Wellness Assessment — Cohort Averages (Start vs. End)</h2>
         <table><thead><tr><th>Area</th><th style="text-align:center;">Start (avg)</th><th style="text-align:center;">End (avg)</th><th style="text-align:center;">Change</th></tr></thead><tbody>${assessRows}</tbody></table>
-        <div style="font-size:0.72rem;color:#94A3B8;margin-top:6px;">Based on ${pres.length} start / ${assessPosts.length} end responses (scale 1&ndash;10). Improvement = lower stress &amp; overwhelm, higher everything else. Group averages only &mdash; individual responses are never shown.</div>`;
+        <div style="font-size:0.72rem;color:#94A3B8;margin-top:6px;">Based on ${nPre} start / ${nPost} end responses (scale 1&ndash;10). Averages show once ${MIN_GROUP} or more people have answered. Improvement = lower stress &amp; overwhelm, higher everything else. Group averages only &mdash; individual responses are never shown.</div>`;
     }
 
     const rows = participants.slice().sort((a, b) => b.completionPct - a.completionPct).map(p => `
@@ -776,7 +791,7 @@
       <h1>Build More Margin — 21-Day Challenge Results</h1>
       <div class="sub">${escapeHtml(companyName)} · ${today}</div>
       <h2>Cohort Outcomes</h2>
-      <div class="row">${metric(joined, 'Enrolled')}${metric(participationRate + '%', 'Participated')}${metric(avgCompletion + '%', 'Avg Completion')}${metric('$' + totalSaved.toFixed(0), 'Saved (cohort)')}${metric(totalBreathing, 'Breathing Sessions')}</div>
+      <div class="row">${metric(joined, 'Enrolled')}${metric(participationRate + '%', 'Participated')}${metric(avgCompletion + '%', 'Avg Completion')}${metric(totalSavedStr, 'Saved (cohort)')}${metric(totalBreathing, 'Breathing Sessions')}</div>
       <div style="margin-top:12px;font-size:0.85rem;color:#334155;">Average stress (Week 1 → Week 3): <strong>${stressTrend}</strong></div>
       ${postLine}
       ${assessmentSection}

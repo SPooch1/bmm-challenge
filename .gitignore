@@ -6,3 +6,5 @@ firebase-debug.log
 package.json
 package-lock.json
 .gstack/
+tests/harness/www/
+tests/harness/shots/

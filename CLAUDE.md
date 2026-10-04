@@ -9,7 +9,7 @@
 - **Bump the cache-version constant in `public/sw.js` whenever you change assets** — stale service-worker cache is the #1 "my change didn't show up" cause.
 
 ## Hard rules (add a line here each time the agent does something it shouldn't again)
-- **Read `Basecamp/docs/bmm/BMM_COHORT_ENROLLMENT_SPEC.md` before touching anything enrollment-related.**
+- **Read `Basecamp/assets/bmm/app-specs/BMM_COHORT_ENROLLMENT_SPEC.md` before touching anything enrollment-related.**
 - **Privacy-by-design is non-negotiable:** individual wellness data (stress, savings, journal notes, assessment scores) is aggregate-only. Never surface a named participant's wellness data to HR/admin. Per-name *engagement* (check-ins/streaks) is fine; the underlying numbers are not.
 - Corporate model: Scott mints a company invite code → employees self-enroll via `?code=XXX`. **No PII handoff** between HR and the app.
 - Per-client setup = a `companies/{id}` doc + Scott's user gets `role:admin` + `companyId` (Firestore console).
@@ -28,7 +28,30 @@
 - **Engagement summary (admin-readable, dates only):** `users/{uid}/engagement/weekly` = `{ weeks: { <Monday YYYY-MM-DD>: { days, actionDays, breathDays } } }`, written fire-and-forget on every margin check-in and saved breathing session (`Margin.recordActivity`). Dashboard "After Day 21" card + HR report line = share of graduates active 3+ days/week over their last 4 COMPLETE post-Day-21 weeks, plus a week-1..12 retention curve. Never put stress, notes, or dollars in this doc.
 - ✅ **DEPLOYED 2026-09-30** (hosting + rules, sw v12; live days.json/margin.js/challenge.js/index.html/sw.js curl-md5 = source). Firebase CLI login had expired; re-auth works non-interactively via `script -q <file> firebase login --reauth` (prints the Google URL; open it in Chrome, Scott clicks Allow).
 - **Weekly check (2026-09-30, sw v12):** card on the margin home under "This week" (the book's Part Three five-minute check). Stored owner-only in `private/margin.weeklyChecks.{Monday YYYY-MM-DD}` = {protect, adjust, savedOn}; merge-write of the one week only. Shows last week's "protect" item; quotes the Day 20 one page from `dailyLogs['20'].notes` when present. No rules change. Day 19 is now "reset plan" in all copy (was Reset Protocol).
-- Local test harness (in-memory Firestore + seeded scenarios `?seed=day2|day17|day21|margin30|margin30noaction|margin95|company`) lives in the session scratchpad, not the repo. Emulator needs Java, which is not installed.
+- Local test harness: now in the repo, see "Testing" below. Emulator needs Java, which is not installed.
+
+## Privacy field split + aggregates + seat cap: BUILT 2026-10-04 (branch `privacy-split`), NOT DEPLOYED
+**No HR/employer dashboard login until deploy step 5 below is done.** Build notes: `Basecamp/assets/bmm/app-specs/BMM_PRIVACY_SPLIT_BUILD_NOTES_2026-10-04.md`.
+- **Admin-readable (engagement only):** user doc (name, email, start date, breathingSessions, inviteCode), `dailyLogs/{day}` SHELL = completed, action, breathing, meal, savedAt; `engagement/weekly`; `companies/{id}/aggregates/{bucket}`.
+- **Owner-only (no admin branch, on purpose):** `dailyLogs/{day}/private/data` (stress, sleep, steps, notes), `assessments/{type}/private/data` (responses; the shell keeps completedAt only, admins cannot read survey shells at all), `private/savings` (Peace of Mind entries, moved off the user doc), `aggLedger/{bucket}`, plus the Day 22+ paths above. All reads/writes go through `public/js/privacy.js`, which merges shell + private so pre-split data still shows.
+- **Final rules let an admin `get` a daily shell only when it holds engagement fields alone, and never `list` it** (admin.js does 22 gets per person; billed the same as a query). Never add a wellness field to a shell, the user doc or `engagement/weekly`.
+- **Aggregates (`public/js/aggregates.js`):** buckets days1 (d0-7), days2 (d8-14), days3 (d15-21) = stress per challenge day; pre, post (13 questions), m3/m6/m12 (5 pillars); savings (cents, net). Fields `sum_<key>`, `n_<key>`. Participant writes ledger + aggregate in ONE transaction; rules require the aggregate to move by exactly the ledger change with ledger values in range (1-10, cents 0..$1M), participants only, own company only, no deletes. Reconcile is idempotent (desired from private data minus ledger); failures mark the bucket pending in localStorage and retry on next load; every bucket is re-checked once a day. Bucket key lists live in THREE places (aggregates.js, firestore.rules `bucketKeys`/`aggKeys`/`*Ok`, tests/rules-model.js); `node --test tests/rules-model.test.js` fails if they drift.
+- **Dashboard + HR report read only aggregates** for stress, survey averages and savings. Averages hidden under 3 people (`MIN_GROUP`). Avg stress is now the pooled average of all ratings (was average of per-person averages).
+- **Seat cap:** sign-up writes the user doc (with `inviteCode`) and `inviteCodes/{code}.seatsUsed + 1` in one batch; rules refuse past `maxSeats`, refuse a company user doc without that seat claim, and only allow +1 by a brand-new user. Full = "This cohort is full. Please contact your HR contact about joining." (no login is left behind). Admins can now LIST their own company's codes (the Invite tab query had been denied since 2026-08-22). New codes start `seatsUsed: 0`; old codes without it have no cap and start counting.
+- **Rules are two files:** `firestore.rules` = TRANSITIONAL (dual-write shapes + migrator branch, marked blocks); `firestore.rules.final` is GENERATED by `node tools/make-final-rules.js`. Edit only `firestore.rules`, then regenerate.
+
+### Privacy split deploy order (needs the Firebase CLI; do not skip or reorder)
+0. Firestore console: on Scott's own `users/{uid}` doc add `migrator: true` (boolean). `node --test tests/rules-model.test.js` passes.
+1. `firebase deploy --only firestore:rules` (transitional), THEN `firebase deploy --only hosting` (app with `LEGACY_DUAL_WRITE = true`, sw v13). Rules first: the new app writes paths the old rules deny. Dual-write window starts: old shapes still written, so a hosting rollback keeps working.
+2. Copy + replay: from the repo root `python3 -m http.server 8000`, open `http://localhost:8000/tools/migrate.html`, sign in as Scott, Dry run, Download backup, "Copy + replay aggregates", Verify (aggMismatches empty). If a cohort is mid-flight, the window can stay open a few days here.
+3. Set `LEGACY_DUAL_WRITE = false` in `public/js/privacy.js`, bump `sw.js` to v14, `firebase deploy --only hosting`.
+4. migrate.html again: Download backup, "Copy + replay + STRIP", Verify: legacy lists and aggMismatches all empty.
+5. `node tools/make-final-rules.js --check`, then `cp firestore.rules.final firestore.rules` and `firebase deploy --only firestore:rules`. Remove `migrator` from Scott's user doc. Delete the backup JSON (it holds private data). Only now may an HR admin get a login (`users/{uid}`: role admin + companyId, console).
+
+## Testing (no emulator: no Java)
+- `node --test tests/rules-model.test.js`: rules key lists vs app, final rules current, who-can-read/write matrix on a JS model of the rules (`tests/rules-model.js`, transcribed allow-by-allow; update it with every rules change), app write/read paths, aggregates, seat cap, migration end to end on `tests/fake-firebase.js`.
+- Browser harness: `bash tests/harness/build.sh`, `(cd tests/harness/www && python3 -m http.server 8765)`, `node tests/harness/run.js [scenario]`. Scenarios (`?seed=` + `&rules=final|transitional`): legacy, company, day21, margin30, margin95, signup, dash, dashsmall. The fake enforces the rules model, so a denied read/write fails the scenario.
+- The JS model is a transcription: real-rules syntax and limits are only checked by Firebase when the rules deploy (a compile error fails the deploy and leaves the live rules unchanged).
 
 ## Naming canon (must match across app, site, ebook)
 - **"Peace of Mind Account"** (not "emergency fund" / other variants).
@@ -40,4 +63,4 @@
 ## QA
 - Scott does his own incognito + button-click QA. Don't suggest verification steps after a deploy.
 
-- ✅ **DEPLOYED 2026-08-22** (hosting + rules): sw v10 live; inviteCodes = get-only (list 403, verified live). This release: late-joiner baseline fix, streak/stress/completion%/timezone math aligned, leaderboard removed (future fix = aggregate participation doc), HR report gained the pre→post cohort-averages table. Privacy field-split still OPEN — design: `Basecamp/docs/bmm/BMM_PRIVACY_FIELD_SPLIT_DESIGN_2026-08-21.md`; no HR logins until built.
+- ✅ **DEPLOYED 2026-08-22** (hosting + rules): sw v10 live; inviteCodes = get-only (list 403, verified live). This release: late-joiner baseline fix, streak/stress/completion%/timezone math aligned, leaderboard removed (future fix = aggregate participation doc), HR report gained the pre→post cohort-averages table. Privacy field-split: BUILT 2026-10-04, not deployed (see the section above); no HR logins until deploy step 5.

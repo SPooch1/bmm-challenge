@@ -354,6 +354,17 @@ function showToast(message) {
       resets: (Margin.getSettings().resets || []).length
     });
     const progressData = await Progress.loadProgress(userData.id, day, progressOpts());
+
+    // Cohort accounts: retry any aggregate update that failed earlier and re-check
+    // the counted totals once a day (aggregates.js). Fresh reads, fire-and-forget.
+    if (userData.companyId) {
+      let freshLogs = null;
+      Aggregates.reconcileOnLoad(userData, {
+        daily: async () => (freshLogs = freshLogs || await Privacy.loadDailyLogs(userData.id)),
+        survey: type => Survey.getSurvey(userData.id, type),
+        savingsTotal: () => PeaceOfMind.getTotal()
+      }).catch(err => console.warn('aggregate check skipped', err));
+    }
     currentProgressOpts = progressOpts;
     currentChallengeDay = day;
     currentStartDate = startDate;

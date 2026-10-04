@@ -635,11 +635,11 @@ const Margin = (() => {
     const userRef = db.collection('users').doc(uid);
     // Fresh reads: the post-survey may have been completed this session, and the
     // logs may have changed since the page loaded.
-    const [postDoc, logSnap] = await Promise.all([
-      userRef.collection('assessments').doc('post').get(),
+    const [postFresh, logSnap] = await Promise.all([
+      Privacy.loadAssessment(uid, 'post'),
       userRef.collection('dailyLogs').get()
     ]);
-    const post = postDoc.exists ? postDoc.data() : postSurvey;
+    const post = postFresh || postSurvey;
     const run = {
       start: userData.challengeStartDate,
       end: todayKey(),
@@ -654,7 +654,13 @@ const Margin = (() => {
     const keys = {};
     Object.keys(dailyLogs || {}).forEach(k => { keys[k] = 1; });
     logSnap.forEach(d => { keys[d.id] = 1; });
-    Object.keys(keys).forEach(k => batch.delete(userRef.collection('dailyLogs').doc(k)));
+    // Each day's owner-only private subdoc goes with its shell (subcollections are
+    // not deleted with their parent doc).
+    Object.keys(keys).forEach(k => {
+      batch.delete(Privacy.dailyPrivateRef(uid, k));
+      batch.delete(userRef.collection('dailyLogs').doc(k));
+    });
+    batch.delete(Privacy.assessPrivateRef(uid, 'post'));
     batch.delete(userRef.collection('assessments').doc('post'));
     batch.update(userRef, { challengeStartDate: todayKey() });
     await batch.commit();

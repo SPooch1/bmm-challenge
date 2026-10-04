@@ -24,8 +24,8 @@ const PeaceOfMind = (() => {
     opts = opts || {};
     marginMode = !!opts.marginMode;
     target = opts.target || 0;
-    const doc = await db.collection('users').doc(uid).get();
-    entries = (doc.exists && doc.data() && doc.data().savingsEntries) || [];
+    // Owner-only users/{uid}/private/savings (falls back to the pre-split user-doc array)
+    entries = await Privacy.loadSavings(uid);
     render();
   }
 
@@ -196,6 +196,13 @@ const PeaceOfMind = (() => {
     setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.5s'; setTimeout(() => el.remove(), 500); }, 3200);
   }
 
+  // Save the entries privately, then move the cohort savings total by this
+  // person's change (fire-and-forget; never blocks the save).
+  async function persist() {
+    await Privacy.saveSavings(uid, entries);
+    Aggregates.record('savings', Aggregates.savingsDesired(getTotal()));
+  }
+
   async function addEntry(sign) {
     const val = parseFloat(inputEl.value);
     if (!val || val <= 0) return;
@@ -209,7 +216,7 @@ const PeaceOfMind = (() => {
       date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
       iso: Margin.todayKey()
     });
-    await db.collection('users').doc(uid).update({ savingsEntries: entries });
+    await persist();
     inputEl.value = '';
     render();
     const newTotal = getTotal();
@@ -227,7 +234,7 @@ const PeaceOfMind = (() => {
       return;
     }
     entries.splice(idx, 1);
-    await db.collection('users').doc(uid).update({ savingsEntries: entries });
+    await persist();
     render();
   }
 

@@ -19,6 +19,12 @@ const Auth = (() => {
   let isSignUp = false;
   let currentUser = null;
   let userData = null;
+  // While a sign-up is writing the user doc (and claiming a cohort seat), the
+  // auth listener waits for it instead of creating a default doc of its own.
+  let signupPending = null;
+
+  const SEATS_FULL_MSG = 'This cohort is full. Please contact your HR contact about joining.';
+  const seatsFull = d => d && typeof d.maxSeats === 'number' && d.maxSeats > 0 && (d.seatsUsed || 0) >= d.maxSeats;
 
   function showError(msg) {
     errorEl.textContent = msg;
@@ -57,7 +63,7 @@ const Auth = (() => {
     try {
       if (isSignUp) {
         const name = nameInput.value.trim();
-        const inviteCode = inviteInput.value.trim();
+        const inviteCode = inviteInput.value.trim().toUpperCase();
         if (!name) { showError('Please enter your name.'); submitBtn.disabled = false; return; }
 
         // Check invite code if provided
@@ -70,19 +76,52 @@ const Auth = (() => {
             submitBtn.disabled = false;
             return;
           }
+          if (seatsFull(codeDoc.data())) {
+            showError(SEATS_FULL_MSG);
+            submitBtn.disabled = false;
+            return;
+          }
           companyId = codeDoc.data().companyId;
           cohortStart = codeDoc.data().challengeStartDate || null; // synchronized cohort start
         }
 
-        const cred = await auth.createUserWithEmailAndPassword(email, password);
-        await db.collection('users').doc(cred.user.uid).set({
-          email,
-          name,
-          role: 'participant',
-          companyId,
-          challengeStartDate: cohortStart || new Date().toISOString().split('T')[0],
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        let finishSignup;
+        signupPending = new Promise(resolve => { finishSignup = resolve; });
+        try {
+          const cred = await auth.createUserWithEmailAndPassword(email, password);
+          const profile = {
+            email,
+            name,
+            role: 'participant',
+            companyId,
+            challengeStartDate: cohortStart || new Date().toISOString().split('T')[0],
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          };
+          if (!inviteCode) {
+            await db.collection('users').doc(cred.user.uid).set(profile);
+          } else {
+            // Seat cap: the user doc and the seat count move together in one batch.
+            // The rules refuse the batch when seatsUsed would pass maxSeats.
+            profile.inviteCode = inviteCode;
+            const batch = db.batch();
+            batch.set(db.collection('users').doc(cred.user.uid), profile);
+            batch.update(db.collection('inviteCodes').doc(inviteCode), { seatsUsed: firebase.firestore.FieldValue.increment(1) });
+            try {
+              await batch.commit();
+            } catch (seatErr) {
+              // Most likely the last seat went while this form was open. Remove the
+              // half-made login so the person can try again once a seat opens.
+              await cred.user.delete().catch(() => auth.signOut());
+              const fresh = await db.collection('inviteCodes').doc(inviteCode).get().catch(() => null);
+              showError(fresh && fresh.exists && seatsFull(fresh.data()) ? SEATS_FULL_MSG : 'Could not join with that invite code. Please try again.');
+              submitBtn.disabled = false;
+              return;
+            }
+          }
+        } finally {
+          finishSignup();
+          signupPending = null;
+        }
       } else {
         await auth.signInWithEmailAndPassword(email, password);
       }
@@ -125,6 +164,11 @@ const Auth = (() => {
       const loadingScreen = document.getElementById('loading-screen');
       if (loadingScreen) loadingScreen.style.display = 'none';
 
+      if (user && signupPending) {
+        await signupPending;
+        // A refused seat claim deletes the new login: nothing to load.
+        if (!auth.currentUser || auth.currentUser.uid !== user.uid) return;
+      }
       currentUser = user;
       if (user) {
         await loadUserData(user);

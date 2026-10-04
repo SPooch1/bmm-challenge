@@ -65,16 +65,15 @@ const Survey = (() => {
     return responses;
   }
 
+  // Responses live in the owner-only subdoc; the admin-readable shell keeps only
+  // completedAt. The cohort averages are updated after, fire-and-forget.
   async function saveSurvey(uid, type, responses) {
-    await db.collection('users').doc(uid).collection('assessments').doc(type).set({
-      responses,
-      completedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
+    await Privacy.saveAssessment(uid, type, responses);
+    Aggregates.record(type, Aggregates.surveyDesired(type, { responses }));
   }
 
   async function getSurvey(uid, type) {
-    const doc = await db.collection('users').doc(uid).collection('assessments').doc(type).get();
-    return doc.exists ? doc.data() : null;
+    return Privacy.loadAssessment(uid, type);
   }
 
   async function showSurvey(uid, type, container, onComplete) {

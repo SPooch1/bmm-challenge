@@ -19,9 +19,9 @@ const Checkin = (() => {
   }
 
   async function loadCheckin(uid, day) {
-    const doc = await db.collection('users').doc(uid).collection('dailyLogs').doc(String(day)).get();
-    if (doc.exists) {
-      const data = doc.data();
+    // Shell (engagement) + owner-only private subdoc, merged (privacy.js)
+    const data = await Privacy.loadDailyLog(uid, day);
+    if (data) {
       document.getElementById('checkin-action').checked = data.action || false;
       document.getElementById('checkin-completed').checked = data.completed || false;
       document.getElementById('checkin-stress').value = data.stress || 5;
@@ -60,11 +60,14 @@ const Checkin = (() => {
       steps: parseInt(document.getElementById('checkin-steps').value) || 0,
       breathing: document.getElementById('checkin-breathing').checked,
       meal: document.getElementById('checkin-meal').checked,
-      notes: document.getElementById('checkin-notes').value.trim(),
-      savedAt: firebase.firestore.FieldValue.serverTimestamp()
+      notes: document.getElementById('checkin-notes').value.trim()
     };
 
-    await db.collection('users').doc(uid).collection('dailyLogs').doc(String(day)).set(data, { merge: true });
+    // Engagement fields go to the admin-readable shell; stress, sleep, steps and
+    // notes go to the owner-only subdoc. The cohort stress total is updated after,
+    // fire-and-forget: it can never block or fail the check-in itself.
+    await Privacy.saveDailyLog(uid, day, data);
+    Aggregates.record(Aggregates.dayBucket(day), { ['d' + day]: data.stress });
 
     savedMsg.style.display = 'block';
     submitBtn.textContent = 'Update Check-in';
