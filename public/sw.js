@@ -10,6 +10,7 @@ const STATIC_ASSETS = [
   '/js/auth.js',
   '/js/challenge.js',
   '/js/margin.js',
+  '/js/roadmap.js',
   '/js/checkin.js',
   '/js/progress.js',
   '/js/breathing-timer.js',

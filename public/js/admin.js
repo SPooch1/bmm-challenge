@@ -61,6 +61,8 @@
         if (stressCard) stressCard.style.display = 'none';
         const assessTab = document.querySelector('.tab-btn[data-tab="assessments"]');
         if (assessTab) assessTab.style.display = 'none';
+        const roadmapRow = document.getElementById('cohort-roadmap-row');
+        if (roadmapRow) roadmapRow.style.display = 'none';
       }
       companyId = adminData.companyId;
       authScreen.style.display = 'none';
@@ -430,8 +432,11 @@
   // Invite codes / cohort setup
   const JOIN_BASE = 'https://challenge.buildmoremargin.com/?code=';
 
+  let activeCode = null;
   function renderInvite(code, data) {
+    activeCode = code;
     document.getElementById('invite-code').textContent = code;
+    document.getElementById('cohort-roadmap').checked = !!(data && data.roadmap === true);
     document.getElementById('join-link').value = JOIN_BASE + code;
     const seats = data && data.maxSeats ? data.maxSeats : null;
     const start = data && data.challengeStartDate ? data.challengeStartDate : null;
@@ -480,15 +485,31 @@
     const code = generateCode();
     const challengeStartDate = document.getElementById('cohort-start').value || null;
     const maxSeats = parseInt(document.getElementById('cohort-seats').value) || 25;
+    const roadmap = document.getElementById('cohort-roadmap').checked;
     await db.collection('inviteCodes').doc(code).set({
       companyId,
       active: true,
       challengeStartDate,
       maxSeats,
       seatsUsed: 0,
+      roadmap,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
-    renderInvite(code, { challengeStartDate, maxSeats, seatsUsed: 0 });
+    renderInvite(code, { challengeStartDate, maxSeats, seatsUsed: 0, roadmap });
+  });
+
+  // Employee Roadmap on/off for the active code (program owner only; the rules
+  // refuse it for HR admins, whose dashboard hides the switch).
+  document.getElementById('cohort-roadmap').addEventListener('change', async e => {
+    if (!activeCode || !isProgramOwner()) return;
+    const on = e.target.checked;
+    try {
+      await db.collection('inviteCodes').doc(activeCode).update({ roadmap: on });
+    } catch (err) {
+      console.error('roadmap toggle failed', err);
+      e.target.checked = !on;
+      alert('Could not change the Employee Roadmap setting. Try again.');
+    }
   });
 
   document.getElementById('copy-link').addEventListener('click', () => {

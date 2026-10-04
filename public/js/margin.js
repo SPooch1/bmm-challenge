@@ -86,6 +86,16 @@ const Margin = (() => {
     settings = Object.assign({}, settings, { weeklyChecks: all });
   }
 
+  // Employee Roadmap "Mark this step done": private/margin.roadmap.{n} = { doneAt },
+  // merge-write of the one module only; undo deletes that entry.
+  async function saveRoadmapStep(n, done) {
+    const val = done ? { doneAt: todayKey() } : firebase.firestore.FieldValue.delete();
+    await settingsRef().set({ roadmap: { [n]: val }, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+    const all = Object.assign({}, settings.roadmap || {});
+    if (done) all[n] = { doneAt: todayKey() }; else delete all[n];
+    settings = Object.assign({}, settings, { roadmap: all });
+  }
+
   async function saveLog(key, data) {
     logs[key] = Object.assign({}, logs[key] || {}, data);
     await db.collection('users').doc(uid).collection('marginLogs').doc(key)
@@ -384,6 +394,8 @@ const Margin = (() => {
         <button type="button" class="btn btn-primary btn-full" id="margin-milestone-btn">Start the ${dueMilestone.label} check-in</button>
       </div>` : ''}
 
+      <div id="roadmap-slot"></div>
+
       <div class="card">
         <h3>This week</h3>
         <div class="week-table">
@@ -415,6 +427,9 @@ const Margin = (() => {
         <p style="font-size:0.85rem;color:var(--slate);margin-top:6px;">Every video and exercise stays here. Use the arrows to move between days.</p>
       </div>
     `;
+
+    // The Employee Roadmap card (roadmap.js; renders nothing unless the code has it on)
+    if (typeof Roadmap !== 'undefined') Roadmap.render(document.getElementById('roadmap-slot'), elapsed);
 
     // wire up
     const goBreathe = document.getElementById('margin-go-breathe');
@@ -674,6 +689,6 @@ const Margin = (() => {
   return {
     init, load, getSettings, getLogs, saveSettings, saveLog, buildSeries, actionStreak, windowStats,
     renderCapture, renderHome, refreshHome, renderRestartCard, dateKey, addDays, dateForDay, todayKey, shortDate, fmtMoney,
-    weekKey, recordActivity
+    weekKey, recordActivity, saveRoadmapStep
   };
 })();

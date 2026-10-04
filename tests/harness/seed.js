@@ -104,6 +104,15 @@
       person('mia', { user: { companyId: 'acme', inviteCode: 'ACME25', challengeStartDate: ymd(-95) }, days: days(21, d => logDay(d, 5)), surveys: { pre: FULL, post: FULL }, margin: { pomTarget: 1500, healthAction: 'Stretch', healthActionSetAt: ymd(-78) } });
       fake.signInAs('mia');
       break;
+    case 'rm': { // company participant at ?day=N with the code's roadmap ?rm=1|0
+      const day = parseInt(params.get('day') || '30');
+      companyBase();
+      const c = fake.read('inviteCodes/ACME25'); c.roadmap = params.get('rm') === '1'; fake.store.set('inviteCodes/ACME25', c);
+      person('rae', { user: { companyId: 'acme', inviteCode: 'ACME25', challengeStartDate: ymd(-day) }, days: days(21, d => logDay(d, 5)), surveys: { pre: FULL, post: FULL },
+        margin: { pomTarget: 2000, healthAction: 'Walk', healthActionSetAt: ymd(-day + 18), roadmap: day >= 85 ? { 2: { doneAt: ymd(-40) } } : {} } });
+      fake.signInAs('rae');
+      break;
+    }
     case 'signup': // nobody signed in; one full code, one open code
       companyBase();
       fake.put('inviteCodes/FULL01', { companyId: 'acme', active: true, maxSeats: 2, seatsUsed: 2, challengeStartDate: ymd(-1) });

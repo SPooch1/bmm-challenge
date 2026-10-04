@@ -344,12 +344,18 @@ test('[final] seat cap: join within cap, refused when full or without a seat cla
   assert.equal(await can(db.collection('inviteCodes').doc('BIG').update({ active: false, maxSeats: 99 })), false, 'HR deactivates + changes seats');
   assert.equal(await can(db.collection('inviteCodes').doc('BIG').update({ active: false })), true, 'HR switches own code off');
   assert.equal(await can(db.collection('inviteCodes').doc('BIG').update({ active: true })), false, 'HR switches a code back on');
+  assert.equal(await can(db.collection('inviteCodes').doc('BIG').update({ roadmap: true })), false, 'HR turns the Roadmap on');
+  assert.equal(await can(db.collection('inviteCodes').doc('BIG').update({ active: false, roadmap: false })), false, 'HR deactivates + changes Roadmap');
   assert.equal(await can(db.collection('inviteCodes').doc('BIG').delete()), false, 'HR deletes a code');
   fake.put('inviteCodes/BIG', { companyId: 'acme', active: true, maxSeats: 50, seatsUsed: 2 });
   // program owner (cohortManager): own company only
   fake.signInAs('scott');
   assert.equal(await can(db.collection('inviteCodes').doc('NEW1').set({ companyId: 'beta', active: true })), false, 'owner mints for other company');
-  assert.equal(await can(db.collection('inviteCodes').doc('NEW2').set({ companyId: 'acme', active: true, maxSeats: 25, seatsUsed: 0 })), true, 'owner mints own');
+  assert.equal(await can(db.collection('inviteCodes').doc('NEW2').set({ companyId: 'acme', active: true, maxSeats: 25, seatsUsed: 0, roadmap: false })), true, 'owner mints own');
+  assert.equal(await can(db.collection('inviteCodes').doc('NEW2').update({ roadmap: true })), true, 'owner turns the Roadmap on');
+  assert.equal(fake.read('inviteCodes/NEW2').roadmap, true);
+  fake.signInAs('amy');
+  assert.equal(await can(db.collection('inviteCodes').doc('NEW2').update({ roadmap: false })), false, 'participant changes the Roadmap');
   fake.signInAs('hrB');
   assert.equal(await can(db.collection('inviteCodes').doc('NEW2').update({ active: false })), false, 'other admin deactivates');
   fake.signOut();
@@ -558,4 +564,41 @@ test('migration keeps the latest savings when an older app edited the user-doc c
   await mig.run({ mode: 'run', strip: true });
   assert.deepEqual(app.fake.read('users/amy/private/savings').entries.map(e => e.amount), [1, 2], 'user doc newer');
   assert.deepEqual(app.fake.read('users/bob/private/savings').entries.map(e => e.amount), [5, 6], 'private newer');
+});
+
+test('Employee Roadmap: unlock cadence, phases, config', () => {
+  const ctx = { Margin: {}, db: null, showToast() {}, console };
+  vm.createContext(ctx);
+  vm.runInContext(fs.readFileSync(path.join(ROOT, 'public/js/roadmap.js'), 'utf8'), ctx, { filename: 'roadmap.js' });
+  const R = vm.runInContext('Roadmap', ctx);
+  assert.equal(R.unlockDay(2), 22); assert.equal(R.unlockDay(3), 52); assert.equal(R.unlockDay(12), 322);
+  assert.equal(R.currentModule(21), 1);
+  assert.equal(R.currentModule(22), 2); assert.equal(R.currentModule(51), 2); assert.equal(R.currentModule(52), 3);
+  assert.equal(R.currentModule(85), 4); assert.equal(R.currentModule(321), 11); assert.equal(R.currentModule(400), 12);
+  assert.equal(R.phaseOf(1), 'Get Grounded'); assert.equal(R.phaseOf(4), 'Take Control');
+  assert.equal(R.phaseOf(9), 'Grow & Protect'); assert.equal(R.phaseOf(12), 'Finish Strong');
+  const mods = JSON.parse(JSON.stringify(R.CONFIG.modules));
+  assert.equal(mods.length, 12);
+  assert.equal(R.CONFIG.baseUrl, 'https://bmm-deliverables-a.s3.amazonaws.com/employee-roadmap/');
+  // filenames = the refreshed PDFs, never the old Margin_Roadmap_* keys
+  const outDir = path.join(process.env.HOME, 'Basecamp/assets/bmm/employee-roadmap-modules/out');
+  const built = fs.existsSync(outDir) ? fs.readdirSync(outDir).filter(f => f.endsWith('.pdf')).sort() : null;
+  mods.forEach((m, i) => {
+    assert.equal(m.n, i + 1);
+    assert.match(m.file, new RegExp('^Employee_Roadmap_Module_' + String(i + 1).padStart(2, '0') + '_[A-Za-z_]+\\.pdf$'));
+    assert.ok(!/Margin_Roadmap/.test(m.file));
+    assert.ok(!/[\u2013\u2014]/.test(m.title + m.step), 'no em/en dashes');
+  });
+  if (built) assert.deepEqual(mods.map(m => m.file).sort(), built, 'config filenames match out/');
+  // action steps and titles match the module sources (META block)
+  const srcDir = path.join(process.env.HOME, 'Basecamp/assets/bmm/employee-roadmap-modules/modules');
+  if (fs.existsSync(srcDir)) {
+    fs.readdirSync(srcDir).filter(f => f.endsWith('.html')).forEach(f => {
+      const meta = JSON.parse(fs.readFileSync(path.join(srcDir, f), 'utf8').match(/<!--META\s*([\s\S]*?)-->/)[1]);
+      const m = mods[meta.num - 1];
+      assert.equal(m.step, meta.milestone, 'step ' + meta.num);
+      assert.equal(m.title, meta.name, 'title ' + meta.num);
+      assert.equal(R.phaseOf(meta.num), meta.phase, 'phase ' + meta.num);
+    });
+  }
 });

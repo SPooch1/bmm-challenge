@@ -121,6 +121,8 @@ function showToast(message) {
 
     // Owner-only settings (Peace of Mind number, health action, resets) + Day 22+ logs
     const marginSettings = await Margin.load(userData.id);
+    // Employee Roadmap (Months 2-12): on only when the invite code has roadmap: true
+    if (marginMode) await Roadmap.load(userData);
 
     // Check if pre-assessment needed. Never day-gate the baseline: cohort members
     // inherit the cohort's start date, so a late joiner can land on day 2+ and must

@@ -264,8 +264,9 @@ service cloud.firestore {
     match /inviteCodes/{code} {
       allow get: if true;
       allow list: if signedIn() && isCompanyAdmin(resource.data.companyId);
-      // Program owner only (cohortManager): mint and change codes. HR admins can
-      // list their own company's codes and switch one OFF (active: false), nothing else.
+      // Program owner only (cohortManager): mint and change codes, including
+      // maxSeats, challengeStartDate and roadmap (Employee Roadmap on/off). HR admins
+      // can list their own company's codes and switch one OFF (active: false), nothing else.
       allow create: if signedIn() && isCohortManager(request.resource.data.companyId);
       allow update: if signedIn() && isCohortManager(resource.data.companyId)
         && request.resource.data.companyId == resource.data.companyId;

@@ -289,6 +289,54 @@ const scenarios = {
     await ctx.close();
   },
 
+  async roadmapoff(browser) {
+    for (const url of ['/?seed=rm&day=30&rm=0&rules=final', '/?seed=margin30&rules=final']) {
+      const { ctx, page, errors } = await open(browser, url);
+      await page.waitForSelector('#margin-home', { state: 'visible' });
+      await sleep(900);
+      check('roadmapoff: no Roadmap card (' + (url.includes('rm=0') ? 'code has it off' : 'individual') + ')', !(await page.$('#roadmap-card')));
+      check('roadmapoff: no page errors', errors.length === 0, errors);
+      await ctx.close();
+    }
+  },
+
+  async roadmap22(browser) {
+    const { ctx, page, errors } = await open(browser, '/?seed=rm&day=22&rm=1&rules=final');
+    await page.waitForSelector('#roadmap-card', { state: 'visible' });
+    const txt = (await page.textContent('#roadmap-card')).replace(/\s+/g, ' ');
+    check('roadmap22: Month 2 of 12, Get Grounded, Module 2', txt.includes('Month 2 of 12 · Get Grounded') && txt.includes('Module 2: Picture It'), txt.slice(0, 160));
+    check('roadmap22: action step from the module', txt.includes("I've logged into my 401(k) account and imagined how I want life to look when I reach age 70."));
+    const href = await page.getAttribute('#roadmap-open', 'href');
+    check('roadmap22: link = new S3 key, new tab', href === 'https://bmm-deliverables-a.s3.amazonaws.com/employee-roadmap/Employee_Roadmap_Module_02_Picture_It.pdf' && (await page.getAttribute('#roadmap-open', 'target')) === '_blank', href);
+    const expectNext = await page.evaluate(() => Margin.shortDate(Margin.addDays(Auth.getUser().challengeStartDate, 52)));
+    check('roadmap22: next unlock = Day 52', txt.includes('Next module: ' + expectNext), [expectNext, txt.slice(-120)]);
+    check('roadmap22: earlier months = Month 1 only', (await page.$$eval('.rm-earlier li', l => l.map(x => x.textContent.trim()))).join('|') === 'Month 1: Storm Proof');
+    await page.click('#roadmap-done');
+    await sleep(500);
+    let m = await store(page, 'users/rae/private/margin');
+    check('roadmap22: step marked done (owner-only private/margin)', m.roadmap && m.roadmap['2'] && !!m.roadmap['2'].doneAt, m.roadmap);
+    check('roadmap22: button shows done', (await page.textContent('#roadmap-done')).includes('Step marked done'));
+    await page.click('#roadmap-done');
+    await sleep(500);
+    m = await store(page, 'users/rae/private/margin');
+    check('roadmap22: undo removes the mark', !m.roadmap || !m.roadmap['2'], m.roadmap);
+    await page.screenshot({ path: SHOTS + '/roadmap22.png', fullPage: true });
+    check('roadmap22: no page errors', errors.length === 0, errors);
+    await ctx.close();
+  },
+
+  async roadmap85(browser) {
+    const { ctx, page, errors } = await open(browser, '/?seed=rm&day=85&rm=1&rules=final');
+    await page.waitForSelector('#roadmap-card', { state: 'visible' });
+    const txt = (await page.textContent('#roadmap-card')).replace(/\s+/g, ' ');
+    check('roadmap85: Month 4 of 12, Take Control, Destroy Debt', txt.includes('Month 4 of 12 · Take Control') && txt.includes('Module 4: Destroy Debt'), txt.slice(0, 160));
+    const items = await page.$$eval('.rm-earlier li', l => l.map(x => x.textContent.trim()));
+    check('roadmap85: earlier months 1-3, Month 2 marked done', items.length === 3 && items[1].includes('Month 2: Picture It') && items[1].includes('✓') && !items[0].includes('✓'), items);
+    check('roadmap85: earlier links point at modules 1-3', (await page.$$eval('.rm-earlier a', a => a.map(x => x.getAttribute('href').split('/').pop()))).join(',') === 'Employee_Roadmap_Module_01_Storm_Proof.pdf,Employee_Roadmap_Module_02_Picture_It.pdf,Employee_Roadmap_Module_03_Know_Your_Numbers.pdf');
+    check('roadmap85: no page errors', errors.length === 0, errors);
+    await ctx.close();
+  },
+
   async dashhr(browser) { // HR admin: engagement only
     const { ctx, page, errors } = await open(browser, '/dashboard.html?seed=dash&rules=final', { width: 1100, height: 1000 });
     await page.waitForSelector('#dashboard', { state: 'visible' });
@@ -307,6 +355,9 @@ const scenarios = {
     check('dashhr: HR cannot mint codes (told to contact the owner)', codes.length === 1 && dialogMsg.includes('program owner'), [codes, dialogMsg]);
     const hrTry = await page.evaluate(async () => { try { await db.collection('inviteCodes').doc('ACME25').update({ maxSeats: 999 }); return 'WROTE'; } catch (e) { return e.code; } });
     check('dashhr: devtools cannot raise maxSeats', hrTry === 'permission-denied', hrTry);
+    check('dashhr: Roadmap switch hidden', !(await page.isVisible('#cohort-roadmap')));
+    const hrRm = await page.evaluate(async () => { try { await db.collection('inviteCodes').doc('ACME25').update({ roadmap: true }); return 'WROTE'; } catch (e) { return e.code; } });
+    check('dashhr: devtools cannot turn the Roadmap on', hrRm === 'permission-denied', hrRm);
     await page.click('.tab-btn[data-tab="export"]');
     const [popup] = await Promise.all([ctx.waitForEvent('page'), page.click('#results-report')]);
     await sleep(800);
@@ -324,6 +375,14 @@ const scenarios = {
     await page.click('#gen-code');
     await sleep(600);
     const codes = await page.evaluate(() => Object.entries(window.__fake.dump()).filter(([k]) => k.startsWith('inviteCodes/')).map(([k, v]) => [k, v.active, v.seatsUsed]));
+    await page.check('#cohort-roadmap');
+    await sleep(500);
+    const live = await page.evaluate(() => Object.values(window.__fake.dump()).filter(v => v && v.active === true && 'seatsUsed' in v));
+    check('dashowner: owner turns the Roadmap on for the active code', live.length === 1 && live[0].roadmap === true, live);
+    await page.uncheck('#cohort-roadmap');
+    await sleep(500);
+    const live2 = await page.evaluate(() => Object.values(window.__fake.dump()).filter(v => v && v.active === true && 'seatsUsed' in v));
+    check('dashowner: and off again', live2[0].roadmap === false, live2);
     check('dashowner: owner generates a code (list + deactivate + create)', codes.filter(c => c[1]).length === 1 && codes.find(c => c[1])[2] === 0, codes);
     check('dashowner: no page errors', errors.length === 0, errors);
     await ctx.close();

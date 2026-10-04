@@ -892,3 +892,16 @@ body.dark .milestone-card { background: rgba(245,158,11,0.12); }
 .wc-last { font-size: 0.85rem; color: var(--slate); margin-top: 6px; }
 .wc-steps { margin: 10px 0 12px 18px; padding: 0; font-size: 0.9rem; }
 .wc-steps li { margin-bottom: 10px; }
+
+/* Employee Roadmap card (Keep Your Margin home) */
+.roadmap-card { border-left: 4px solid var(--amber); }
+.roadmap-card .rm-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--slate); }
+.roadmap-card .rm-step-label { font-size: 0.75rem; font-weight: 700; color: var(--amber-dark, #B45309); margin-top: 10px; }
+.roadmap-card .rm-step { font-size: 0.95rem; font-weight: 600; margin: 4px 0 12px; }
+.roadmap-card .rm-next { font-size: 0.8rem; color: var(--slate); text-align: center; margin-top: 10px; }
+.roadmap-card .rm-earlier { margin-top: 10px; font-size: 0.85rem; }
+.roadmap-card .rm-earlier summary { cursor: pointer; color: var(--slate); }
+.roadmap-card .rm-earlier ul { margin: 8px 0 0 18px; padding: 0; }
+.roadmap-card .rm-earlier li { margin-bottom: 6px; }
+.roadmap-card .rm-done-mark { color: var(--green); font-weight: 700; }
+.roadmap-card a.btn { text-decoration: none; text-align: center; display: block; }
