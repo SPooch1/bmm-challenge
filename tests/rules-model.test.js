@@ -95,8 +95,8 @@ function world(mode) {
   fake.put('users/hr', { role: 'admin', companyId: 'acme', name: 'HR', email: 'hr@acme' });
   fake.put('users/scott', { role: 'admin', companyId: 'acme', name: 'Scott', migrator: true, cohortManager: true });
   fake.put('users/hrB', { role: 'admin', companyId: 'beta', name: 'HR B' });
-  fake.put('users/amy', { role: 'participant', companyId: 'acme', name: 'Amy', email: 'amy@acme', inviteCode: 'ACME01', challengeStartDate: '2026-09-20', breathingSessions: 3 });
-  fake.put('users/bob', { role: 'participant', companyId: 'acme', name: 'Bob', inviteCode: 'ACME01' });
+  fake.put('users/amy', { role: 'participant', companyId: 'acme', name: 'Amy', email: 'amy@acme', inviteCode: 'ACME01', challengeStartDate: '2026-09-20', breathingSessions: 3, privacyV: 2 });
+  fake.put('users/bob', { role: 'participant', companyId: 'acme', name: 'Bob', inviteCode: 'ACME01', privacyV: 2 });
   fake.put('users/ivy', { role: 'participant', companyId: null, name: 'Ivy' });
   fake.put('companies/acme', { name: 'Acme' });
   fake.put('inviteCodes/ACME01', { companyId: 'acme', active: true, maxSeats: 3, seatsUsed: 2 });
@@ -127,7 +127,11 @@ for (const mode of ['final', 'transitional']) {
     assert.equal(await can(u.collection('dailyLogs').doc('3').get()), true, 'shell get');
     assert.equal(await can(u.collection('engagement').doc('weekly').get()), true, 'engagement');
     assert.equal(await can(u.get()), true, 'profile');
-    assert.equal(await can(db.collection('users').where('companyId', '==', 'acme').where('role', '==', 'participant').get()), true, 'roster');
+    assert.equal(await can(db.collection('users').where('companyId', '==', 'acme').where('role', '==', 'participant').where('privacyV', '==', 2).get()), true, 'roster (clean docs)');
+    // a not-yet-migrated doc holding savingsEntries is never readable by HR
+    fake.put('users/old', { role: 'participant', companyId: 'acme', name: 'Old', savingsEntries: [{ amount: 900 }] });
+    assert.equal(await can(db.collection('users').doc('old').get()), false, 'unmarked legacy profile');
+    assert.equal(await can(db.collection('users').where('companyId', '==', 'acme').where('role', '==', 'participant').get()), false, 'roster without the privacyV filter');
     // other company's admin sees nothing
     fake.signInAs('hrB');
     assert.equal(await can(u.collection('dailyLogs').doc('3').get()), false, 'other company shell');
@@ -184,6 +188,8 @@ test('[final] shell writes are engagement-only; user doc cannot carry savings or
   assert.equal(await can(u.update({ migrator: true })), false, 'self-grant migrator');
   assert.equal(await can(u.update({ inviteCode: 'X' })), false, 'change invite code');
   assert.equal(await can(u.update({ breathingSessions: 4 })), true, 'normal update');
+  assert.equal(await can(db.collection('users').doc('bob').update({ privacyV: 3 })), false, 'other user');
+  assert.equal(await can(u.update({ privacyV: 1 })), false, 'change own privacyV');
 });
 
 test('[transitional] dual-write shapes accepted', async () => {
@@ -191,7 +197,12 @@ test('[transitional] dual-write shapes accepted', async () => {
   fake.signInAs('amy');
   const u = db.collection('users').doc('amy');
   assert.equal(await can(u.collection('dailyLogs').doc('5').set({ completed: true, stress: 4, notes: 'n', sleep: 3, steps: 1, savedAt: 1 })), true);
-  assert.equal(await can(u.update({ savingsEntries: [], savingsRev: 1 })), true);
+  assert.equal(await can(u.update({ savingsEntries: [], savingsRev: 1 })), false, 'clean doc cannot take savings back');
+  fake.put('users/old', { role: 'participant', companyId: 'acme', savingsEntries: [] });
+  fake.signInAs('old');
+  assert.equal(await can(db.collection('users').doc('old').update({ savingsEntries: [{ amount: 1 }], savingsRev: 1 })), true, 'pre-split doc dual write');
+  assert.equal(await can(db.collection('users').doc('old').update({ privacyV: 2 })), false, 'self-mark clean');
+  fake.signInAs('amy');
   assert.equal(await can(u.collection('dailyLogs').doc('5').set({ junk: 1 })), false, 'unknown field');
 });
 
@@ -484,6 +495,8 @@ test('migration: dry run writes nothing; run copies + replays; rerun does not do
   assert.equal(r3.errors.length, 0, r3.errors.join('; '));
   const v = await mig.verify();
   assert.deepEqual(v.legacyDailyShells, []); assert.deepEqual(v.legacySurveyShells, []); assert.deepEqual(v.legacyUserDocs, []);
+  assert.deepEqual(v.unmarkedUserDocs, []);
+  assert.equal(app.fake.read('users/amy').privacyV, 2);
   assert.deepEqual(v.aggMismatches, []);
   assert.deepEqual(Object.keys(app.fake.read('users/amy/dailyLogs/0')).sort(), ['breathing', 'completed', 'meal', 'savedAt']);
   assert.equal(app.fake.read('users/amy').savingsEntries, undefined);
@@ -496,6 +509,7 @@ test('migration: dry run writes nothing; run copies + replays; rerun does not do
   assert.equal((await app.Privacy.loadAssessment('amy', 'pre')).responses.financial, 3);
   assert.deepEqual((await app.Privacy.loadSavings('amy')).map(e => e.amount), [100, -20]);
   app.fake.signInAs('hr');
+  assert.equal(await can(app.db.collection('users').where('companyId', '==', 'acme').where('role', '==', 'participant').where('privacyV', '==', 2).get()), true, 'HR roster after migration');
   assert.equal(await can(app.db.collection('users').doc('amy').collection('dailyLogs').doc('0').get()), true);
   assert.equal(await can(app.db.collection('users').doc('amy').collection('dailyLogs').doc('0').collection('private').doc('data').get()), false);
   // scott is just an admin now

@@ -161,9 +161,13 @@ service cloud.firestore {
       allow read: if isOwner(userId);
 
       // Admins can read the profiles (name, email, start date, breathing count) of
-      // employees in their company. No wellness data lives on this doc.
+      // employees in their company, but only docs marked privacyV == 2 (created
+      // after the split, or stripped by the migration), so a doc that still holds
+      // the old savingsEntries is never readable by an admin. The roster query
+      // must filter on privacyV == 2 (rules are not filters).
       allow read: if signedIn()
         && resource.data.companyId != null
+        && resource.data.privacyV == 2
         && isCompanyAdmin(resource.data.companyId);
 
       // Create: own uid, role participant, no protected fields. Joining a company
@@ -172,6 +176,7 @@ service cloud.firestore {
       allow create: if isOwner(userId)
         && request.resource.data.role == 'participant'
         && !request.resource.data.keys().hasAny(['migrator', 'cohortManager'])
+        && request.resource.data.get('privacyV', 2) == 2
         // [FINAL]         && !request.resource.data.keys().hasAny(['savingsEntries', 'savingsRev'])
         && (request.resource.data.get('companyId', null) == null
             || (request.resource.data.get('inviteCode', '') is string
@@ -180,7 +185,9 @@ service cloud.firestore {
 
       // Update: can't change role, company, invite code or the migrator/cohortManager flags.
       allow update: if isOwner(userId)
-        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'companyId', 'inviteCode', 'migrator', 'cohortManager'])
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'companyId', 'inviteCode', 'migrator', 'cohortManager', 'privacyV'])
+        // a doc marked clean (admin-readable) can never take the old savings fields again
+        && !(resource.data.get('privacyV', 0) == 2 && request.resource.data.keys().hasAny(['savingsEntries', 'savingsRev']))
         // [FINAL]         && !request.resource.data.keys().hasAny(['savingsEntries', 'savingsRev'])
         ;
 

@@ -99,11 +99,14 @@
         } else if (differs) {
           report.notes.push(uid + ': private savings kept (newer than the user-doc copy)');
         }
-        const del = { savingsEntries: FV.delete() };
+        const del = { savingsEntries: FV.delete(), privacyV: 2 };
         if (u.savingsRev !== undefined) del.savingsRev = FV.delete();
         strip.push([userRef, del]); report.userDocsToStrip++;
-      } else if (u.savingsRev !== undefined) {
-        strip.push([userRef, { savingsRev: FV.delete() }]);
+      } else if (u.savingsRev !== undefined || u.privacyV !== 2) {
+        // Mark the doc clean (admin-readable) in the final pass
+        const patch = { privacyV: 2 };
+        if (u.savingsRev !== undefined) patch.savingsRev = FV.delete();
+        strip.push([userRef, patch]);
       }
 
       if (!dry && copyOps) await copy.commit();
@@ -177,12 +180,13 @@
     // Verify: what an admin could still read, and whether each company's
     // aggregates equal the sum of its participants' ledgers.
     async function verify() {
-      const out = { legacyDailyShells: [], legacySurveyShells: [], legacyUserDocs: [], aggMismatches: [], companies: {} };
+      const out = { legacyDailyShells: [], legacySurveyShells: [], legacyUserDocs: [], unmarkedUserDocs: [], aggMismatches: [], companies: {} };
       const users = await db.collection('users').get();
       const sums = {}; // cid -> bucket -> field -> value
       for (const snap of users.docs) {
         const uid = snap.id, u = snap.data() || {};
         if (u.savingsEntries !== undefined) out.legacyUserDocs.push(uid);
+        if (u.role === 'participant' && u.companyId && u.privacyV !== 2) out.unmarkedUserDocs.push(uid);
         const shells = await db.collection('users').doc(uid).collection('dailyLogs').get();
         shells.forEach(d => { if (DAILY_PRIVATE.some(f => d.data()[f] !== undefined)) out.legacyDailyShells.push(uid + '/' + d.id); });
         const as = await db.collection('users').doc(uid).collection('assessments').get();

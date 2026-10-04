@@ -31,7 +31,7 @@
 
   const FULL = { stress: 7, sleep: 4, financial: 3, energy: 4, overwhelm: 7, savings: 2, exercise: 3, breathing: 2, p_health: 5, p_wealth: 4, p_finwell: 4, p_retsave: 3, p_jobskills: 6 };
   function person(uid, o) {
-    fake.put('users/' + uid, Object.assign({ role: 'participant', companyId: null, name: uid[0].toUpperCase() + uid.slice(1) + ' Test', email: uid + '@test.com', createdAt: ts() }, o.user));
+    fake.put('users/' + uid, Object.assign({ role: 'participant', companyId: null, privacyV: o.legacy ? undefined : 2, name: uid[0].toUpperCase() + uid.slice(1) + ' Test', email: uid + '@test.com', createdAt: ts() }, o.user));
     fake.account(uid + '@test.com', 'secret1', uid);
     (o.days || []).forEach(([d, shell, priv]) => {
       if (o.legacy) fake.put('users/' + uid + '/dailyLogs/' + d, Object.assign({ savedAt: ts() }, shell, priv));

@@ -134,10 +134,14 @@
   }
 
   async function loadParticipants() {
-    const snapshot = await db.collection('users')
+    // privacyV == 2 = the doc holds no wellness data; the rules only let an admin
+    // read such docs, so the query must ask for exactly those. The migrator
+    // account (Scott, during the migration window) sees every doc.
+    let q = db.collection('users')
       .where('companyId', '==', companyId)
-      .where('role', '==', 'participant')
-      .get();
+      .where('role', '==', 'participant');
+    if (!(adminData && adminData.migrator === true)) q = q.where('privacyV', '==', 2);
+    const snapshot = await q.get();
 
     participants = [];
     const promises = [];

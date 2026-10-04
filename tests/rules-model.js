@@ -103,15 +103,17 @@
       if (s.length === 2 && s[0] === 'users') {
         const userId = s[1];
         rules.push(() => read && A.isOwner(userId));
-        rules.push(() => read && A.signedIn() && R.companyId != null && A.isCompanyAdmin(R.companyId));
+        rules.push(() => read && A.signedIn() && R.companyId != null && R.privacyV === 2 && A.isCompanyAdmin(R.companyId));
         rules.push(() => op === 'create' && A.isOwner(userId) && Q.role === 'participant'
           && !hasAny(keys(Q), ['migrator', 'cohortManager'])
+          && mget(Q, 'privacyV', 2) === 2
           && (!FINAL || !hasAny(keys(Q), ['savingsEntries', 'savingsRev']))
           && (mget(Q, 'companyId', null) == null
             || (typeof mget(Q, 'inviteCode', '') === 'string' && mget(Q, 'inviteCode', '') !== ''
               && A.seatClaimed(Q.inviteCode, Q.companyId))));
         rules.push(() => op === 'update' && A.isOwner(userId)
-          && !hasAny(affectedKeys(Q, R), ['role', 'companyId', 'inviteCode', 'migrator', 'cohortManager'])
+          && !hasAny(affectedKeys(Q, R), ['role', 'companyId', 'inviteCode', 'migrator', 'cohortManager', 'privacyV'])
+          && !(mget(R, 'privacyV', 0) === 2 && hasAny(keys(Q), ['savingsEntries', 'savingsRev']))
           && (!FINAL || !hasAny(keys(Q), ['savingsEntries', 'savingsRev'])));
         rules.push(() => (read || op === 'update') && A.isMigrator());
       } else if (s.length === 4 && s[0] === 'users' && s[2] === 'dailyLogs') {

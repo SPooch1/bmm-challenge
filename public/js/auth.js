@@ -94,6 +94,7 @@ const Auth = (() => {
             name,
             role: 'participant',
             companyId,
+            privacyV: 2, // post-split doc shape: admin-readable profile, no wellness data
             challengeStartDate: cohortStart || new Date().toISOString().split('T')[0],
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
           };
@@ -150,6 +151,7 @@ const Auth = (() => {
         name: user.displayName || '',
         role: 'participant',
         companyId: null,
+        privacyV: 2,
         challengeStartDate: new Date().toISOString().split('T')[0],
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
