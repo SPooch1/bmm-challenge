@@ -811,7 +811,7 @@
           <td style="text-align:center;">${postStr}</td>
           <td style="text-align:center;">${changeStr}</td></tr>`;
       }).join('');
-      assessmentSection = `<h2>Wellness Assessment — Cohort Averages (Start vs. End)</h2>
+      assessmentSection = `<h2>Wellness Assessment: Cohort Averages (Start vs. End)</h2>
         <table><thead><tr><th>Area</th><th style="text-align:center;">Start (avg)</th><th style="text-align:center;">End (avg)</th><th style="text-align:center;">Change</th></tr></thead><tbody>${assessRows}</tbody></table>
         <div style="font-size:0.72rem;color:#94A3B8;margin-top:6px;">Based on ${nPre} start / ${nPost} end responses (scale 1&ndash;10). Averages show once ${MIN_GROUP} or more people have answered. Improvement = lower stress &amp; overwhelm, higher everything else. Group averages only &mdash; individual responses are never shown.</div>`;
     }
@@ -827,14 +827,14 @@
       <div style="font-size:1.6rem;font-weight:800;color:#0F172A;letter-spacing:-0.02em;">${val}</div>
       <div style="font-size:0.7rem;color:#475569;text-transform:uppercase;letter-spacing:0.04em;margin-top:4px;">${label}</div></div>`;
 
-    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>BMM Results — ${escapeHtml(companyName)}</title>
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Bend Your Baseline: Day-21 Summary for ${escapeHtml(companyName)}</title>
       <style>*{box-sizing:border-box;}body{font-family:-apple-system,Segoe UI,Inter,sans-serif;color:#0F172A;max-width:760px;margin:0 auto;padding:40px 28px;}
       h1{font-size:1.5rem;letter-spacing:-0.02em;margin:0 0 4px;}.sub{color:#475569;font-size:0.9rem;margin-bottom:24px;}
       h2{font-size:0.9rem;text-transform:uppercase;letter-spacing:0.05em;color:#0EA5E9;margin:28px 0 12px;}
       table{width:100%;border-collapse:collapse;font-size:0.85rem;}th{text-align:left;color:#475569;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.05em;border-bottom:2px solid #e2e8f0;padding:8px 10px;}
       td{padding:8px 10px;border-bottom:1px solid #eef2f6;}.row{display:flex;gap:12px;flex-wrap:wrap;}
       .note{font-size:0.72rem;color:#94A3B8;margin-top:28px;border-top:1px solid #e2e8f0;padding-top:12px;line-height:1.5;}@media print{body{padding:0;}}</style></head><body>
-      <h1>Build More Margin — 21-Day Challenge Results</h1>
+      <h1>Bend Your Baseline: Day-21 Summary</h1>
       <div class="sub">${escapeHtml(companyName)} · ${today}</div>
       <h2>Cohort Outcomes</h2>
       <div class="row">${metric(joined, 'Enrolled')}${metric(participationRate + '%', 'Participated')}${metric(avgCompletion + '%', 'Avg Completion')}${owner ? metric(totalSavedStr, 'Saved (cohort)') : ''}${metric(totalBreathing, 'Breathing Sessions')}</div>
