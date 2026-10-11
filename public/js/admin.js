@@ -8,6 +8,13 @@
   let adminData = null;
   let companyId = null;
 
+  // ---- Demo mode: dashboard.html?demo=1 ----
+  // A clearly labeled sample company with made-up data so Scott can show the HR
+  // dashboard and the Day-21 summary on a sales call without real employee data.
+  // No sign-in, no Firestore reads or writes. Everything is generated below.
+  const DEMO = new URLSearchParams(window.location.search).get('demo') === '1';
+  let demoAsOwner = false;
+
   // Auth
   authForm.addEventListener('submit', async e => {
     e.preventDefault();
@@ -35,7 +42,89 @@
     }
   });
 
+  function startDemo() {
+    adminData = { role: 'admin', companyId: 'demo', name: 'Demo', cohortManager: demoAsOwner };
+    companyId = 'demo';
+    const stressCard = document.getElementById('m-avg-stress').closest('.metric-card');
+    if (stressCard) stressCard.style.display = demoAsOwner ? '' : 'none';
+    const assessTab = document.querySelector('.tab-btn[data-tab="assessments"]');
+    if (assessTab) assessTab.style.display = demoAsOwner ? '' : 'none';
+    const roadmapRow = document.getElementById('cohort-roadmap-row');
+    if (roadmapRow) roadmapRow.style.display = demoAsOwner ? '' : 'none';
+    document.getElementById('demo-as-hr').style.opacity = demoAsOwner ? '0.6' : '1';
+    document.getElementById('demo-as-owner').style.opacity = demoAsOwner ? '1' : '0.6';
+    authScreen.style.display = 'none';
+    dashboard.style.display = 'block';
+    document.getElementById('company-name').textContent = 'Sample Company (demo)';
+    const demo = buildDemoData();
+    participants = demo.participants;
+    aggs = demo.aggs;
+    assessmentsLoaded = false;
+    document.getElementById('assessment-results').innerHTML = '<p style="color:var(--slate);font-size:0.8rem;">Click to load assessment data.</p>';
+    renderMetrics();
+    renderTable();
+    updateTimestamp();
+    renderInvite('DEMO25', { challengeStartDate: demo.startDate, maxSeats: 25, seatsUsed: participants.length, roadmap: false });
+    if (demoAsOwner) renderFunnel({ signups: 40, src_book: 14, src_talk: 9, d0: 33, d1: 30, d2: 27, d3: 25, d4: 24, d5: 22, d6: 21, d7: 21, d8: 19, d9: 18, d10: 18, d11: 17, d12: 16, d13: 16, d14: 16, d15: 15, d16: 15, d17: 14, d18: 14, d19: 14, d20: 13, d21: 13, post: 11 });
+    else document.getElementById('funnel-card').style.display = 'none';
+  }
+
+  // Deterministic made-up cohort: 12 people, Day 21, mixed completion. Names are
+  // placeholders on purpose. Aggregates are built the same way the app would
+  // have counted them (one rating per person per day), so every number ties out.
+  function buildDemoData() {
+    const seedRand = (() => { let x = 42; return () => { x = (x * 1103515245 + 12345) % 2147483648; return x / 2147483648; }; })();
+    const names = ['Alex D.', 'Blair D.', 'Casey D.', 'Dana D.', 'Emery D.', 'Finley D.', 'Gray D.', 'Harper D.', 'Indigo D.', 'Jules D.', 'Kai D.', 'Lane D.'];
+    const now = new Date();
+    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 21);
+    const pad = n => (n < 10 ? '0' : '') + n;
+    const startDate = start.getFullYear() + '-' + pad(start.getMonth() + 1) + '-' + pad(start.getDate());
+    const aggs = {};
+    const add = (bucket, key, v) => { const a = aggs[bucket] = aggs[bucket] || {}; a['sum_' + key] = (a['sum_' + key] || 0) + v; a['n_' + key] = (a['n_' + key] || 0) + (v > 0 ? 1 : 0); };
+    const people = names.map((name, i) => {
+      // completion profile: most finish, a few fade out
+      const lastDay = i < 8 ? 21 : i < 10 ? 10 + i : 4 + i;
+      const skip = i % 4 === 1 ? 6 + i : -1; // one missed day for some
+      const logs = {};
+      const baseStress = 5 + (i % 4);
+      for (let d = 0; d <= lastDay; d++) {
+        if (d === skip) continue;
+        logs[String(d)] = { completed: true, breathing: d % 2 === 0 || i % 3 === 0, meal: d % 3 === 0, action: d >= 17 && i % 2 === 0 };
+        const stress = Math.max(1, Math.min(10, Math.round(baseStress - d * 0.12 + (seedRand() - 0.5) * 2)));
+        add('d' + d, 'd' + d, stress);
+      }
+      const pre = { stress: baseStress + 1, sleep: 4 + (i % 3), financial: 3 + (i % 3), energy: 4 + (i % 2), overwhelm: 6 + (i % 3), savings: 2 + (i % 3), exercise: 3 + (i % 3), breathing: 2 + (i % 2), p_health: 4 + (i % 3), p_wealth: 3 + (i % 3), p_finwell: 3 + (i % 2), p_retsave: 3 + (i % 3), p_jobskills: 5 + (i % 2) };
+      Object.keys(pre).forEach(k => add('pre', k, pre[k]));
+      if (lastDay === 21 && i < 10) {
+        // On purpose, the sample end-survey shows no improvement story: the same
+        // numbers with small mixed wobble, so the demo shows the layout, not a result.
+        const post = {};
+        Object.keys(pre).forEach((k, j) => { post[k] = Math.max(1, Math.min(10, pre[k] + ((i + j) % 3) - 1)); });
+        Object.keys(post).forEach(k => add('post', k, post[k]));
+      }
+      add('savings', 'cents', (150 + 50 * (i % 5)) * 100);
+      const p = { id: 'demo' + i, name, email: 'person' + (i + 1) + '@example.com', challengeStartDate: startDate, breathingSessions: 4 + (i % 7), logs, engagementWeeks: {} };
+      return p;
+    });
+    people.forEach(p => {
+      const completedDays = Object.values(p.logs).filter(l => l.completed).length;
+      p.currentDay = 21; p.elapsedDays = 21; p.completedDays = completedDays;
+      p.completionPct = Math.min(100, Math.round((completedDays / 22) * 100));
+      let streak = 0, graceUsed = false;
+      for (let d = 21; d >= 0; d--) {
+        const done = p.logs[String(d)] && p.logs[String(d)].completed;
+        if (done) streak++; else if (d === 21) continue; else if (!graceUsed) { graceUsed = true; continue; } else break;
+      }
+      p.streak = streak;
+      const logDays = Object.keys(p.logs).map(Number).sort((a, b) => b - a);
+      p.lastCheckinDay = logDays[0]; p.lastCheckin = 'Day ' + logDays[0];
+      p.daysSinceCheckin = 21 - logDays[0]; p.inactive = p.daysSinceCheckin >= 3;
+    });
+    return { participants: people, aggs, startDate };
+  }
+
   auth.onAuthStateChanged(async user => {
+    if (DEMO) return;
     if (!user) {
       authScreen.style.display = '';
       dashboard.style.display = 'none';
@@ -134,6 +223,7 @@
   function isProgramOwner() { return !!(adminData && adminData.cohortManager === true); }
 
   async function loadAggregates() {
+    if (DEMO) return; // generated once in startDemo()
     aggs = {};
     if (!isProgramOwner()) return;
     const names = Object.keys(Aggregates.BUCKETS);
@@ -508,6 +598,7 @@
   }
 
   document.getElementById('gen-code').addEventListener('click', async () => {
+    if (DEMO) { alert('Demo mode: codes are not created here.'); return; }
     // Only the program owner's account (cohortManager) may mint or change codes;
     // the rules enforce it, this just says so instead of failing silently.
     if (adminData && adminData.cohortManager !== true) {
@@ -544,6 +635,7 @@
   // Employee Roadmap on/off for the active code (program owner only; the rules
   // refuse it for HR admins, whose dashboard hides the switch).
   document.getElementById('cohort-roadmap').addEventListener('change', async e => {
+    if (DEMO) return;
     if (!activeCode || !isProgramOwner()) return;
     const on = e.target.checked;
     try {
@@ -583,14 +675,15 @@
     return code;
   }
 
-  // Sign out
-  document.getElementById('admin-signout').addEventListener('click', () => auth.signOut());
+  // Sign out (demo: back to the real dashboard)
+  document.getElementById('admin-signout').addEventListener('click', () => { if (DEMO) { window.location.href = '/dashboard.html'; return; } auth.signOut(); });
 
   // Refresh data
   document.getElementById('refresh-data').addEventListener('click', async () => {
     const btn = document.getElementById('refresh-data');
     btn.disabled = true;
     btn.textContent = '...';
+    if (DEMO) { startDemo(); btn.textContent = '↻'; btn.disabled = false; return; }
     await loadParticipants();
     if (isProgramOwner()) { try { renderFunnel(await Funnel.readAll()); } catch (e) { console.warn('Could not load funnel counts:', e); } }
     btn.textContent = '↻';
@@ -880,6 +973,7 @@
       .note{font-size:0.72rem;color:#94A3B8;margin-top:28px;border-top:1px solid #e2e8f0;padding-top:12px;line-height:1.5;}@media print{body{padding:0;}}</style></head><body>
       <h1>Bend Your Baseline: Day-21 Summary</h1>
       <div class="sub">${escapeHtml(companyName)} · ${today}</div>
+      ${DEMO ? '<div style="background:#F59E0B;color:#0F172A;padding:8px 12px;border-radius:8px;font-weight:600;font-size:0.85rem;margin-bottom:16px;">SAMPLE REPORT. Made-up data for demonstration. Not a real company, not real results.</div>' : ''}
       <h2>Cohort Outcomes</h2>
       <div class="row">${metric(joined, 'Enrolled')}${metric(participationRate + '%', 'Participated')}${metric(avgCompletion + '%', 'Avg Completion')}${owner ? metric(totalSavedStr, 'Saved (cohort)') : ''}${metric(totalBreathing, 'Breathing Sessions')}</div>
       ${owner ? `<div style="margin-top:12px;font-size:0.85rem;color:#334155;">Average stress (Week 1 → Week 3): <strong>${stressTrend}</strong></div>` : ''}
@@ -897,4 +991,12 @@
   }
 
   document.getElementById('results-report').addEventListener('click', generateResultsReport);
+
+  // Demo mode starts last, after every module-level `let` above is initialised.
+  if (DEMO) {
+    document.getElementById('demo-banner').style.display = 'block';
+    document.getElementById('demo-as-hr').addEventListener('click', () => { demoAsOwner = false; startDemo(); });
+    document.getElementById('demo-as-owner').addEventListener('click', () => { demoAsOwner = true; startDemo(); });
+    startDemo();
+  }
 })();

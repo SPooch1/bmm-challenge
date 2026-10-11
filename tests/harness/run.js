@@ -457,6 +457,34 @@ const scenarios = {
     await ctx.close();
   },
 
+  async demo(browser) {
+    // dashboard.html?demo=1: no sign-in, made-up cohort, HR view by default
+    const { ctx, page, errors } = await open(browser, '/dashboard.html?seed=none&demo=1', { width: 1100, height: 1000 });
+    await page.waitForSelector('#dashboard', { state: 'visible' });
+    await sleep(800);
+    check('demo: banner says demo, made-up data', (await page.textContent('#demo-banner')).includes('made-up data'));
+    check('demo: no sign-in needed', !(await page.isVisible('#admin-auth')));
+    check('demo: 12 sample rows', (await page.$$eval('#participant-rows tr', r => r.length)) === 12);
+    check('demo: HR view hides stress and assessments', !(await page.isVisible('#m-avg-stress')) && !(await page.isVisible('.tab-btn[data-tab="assessments"]')) && !(await page.isVisible('#funnel-card')));
+    check('demo: no Firestore traffic', (await page.evaluate(() => window.__fake.log.length)) === 0, await page.evaluate(() => window.__fake.log.slice(0, 3)));
+    await page.click('.tab-btn[data-tab="export"]');
+    let [popup] = await Promise.all([ctx.waitForEvent('page'), page.click('#results-report')]);
+    await sleep(800);
+    let rep = await popup.evaluate(() => document.body.innerText);
+    check('demo: Day-21 summary opens with the sample label, participation only', rep.includes('SAMPLE REPORT') && rep.includes('PARTICIPATION BY PERSON') && !/Cohort Averages/i.test(rep), rep.slice(0, 200));
+    await page.click('#demo-as-owner');
+    await sleep(600);
+    check('demo: owner view shows stress, assessments, funnel', await page.isVisible('#m-avg-stress') && await page.isVisible('.tab-btn[data-tab="assessments"]') && await page.isVisible('#funnel-card'));
+    await page.click('.tab-btn[data-tab="assessments"]');
+    await sleep(600);
+    const at = (await page.textContent('#assessment-results')).replace(/\s+/g, ' ');
+    check('demo: owner assessments table from generated aggregates', at.includes('Based on 12 start / 8 end'), at.slice(0, 160));
+    check('demo: still no Firestore traffic', (await page.evaluate(() => window.__fake.log.length)) === 0);
+    check('demo: no page errors', errors.filter(e => !e.includes('ERR_TUNNEL')).length === 0, errors);
+    await page.screenshot({ path: SHOTS + '/demo-owner.png', fullPage: true });
+    await ctx.close();
+  },
+
   async dashsmall(browser) {
     // min group: only 2 people in the cohort -> averages hidden
     const { ctx, page, errors } = await open(browser, '/dashboard.html?seed=dash&rules=final&as=scott', { width: 1100, height: 900 });
