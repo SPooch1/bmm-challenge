@@ -7,6 +7,7 @@ const STATIC_ASSETS = [
   '/js/firebase-config.js',
   '/js/privacy.js',
   '/js/aggregates.js',
+  '/js/funnel.js',
   '/js/auth.js',
   '/js/challenge.js',
   '/js/margin.js',

@@ -47,6 +47,7 @@
     </div>
     <div class="auth-box">
       <h2 id="auth-title">Sign In</h2>
+      <div id="auth-source-note" style="display:none;font-size:0.85rem;background:var(--sky-soft);color:var(--navy);border-radius:var(--radius);padding:10px 12px;margin-bottom:12px;"></div>
       <div id="auth-error" class="error-msg"></div>
       <form id="auth-form">
         <div id="name-group" class="form-group" style="display:none;">
@@ -88,11 +89,11 @@
       <div style="text-align:left;margin-bottom:24px;">
         <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;">
           <div style="min-width:32px;height:32px;border-radius:50%;background:var(--green);color:var(--white);display:flex;align-items:center;justify-content:center;font-weight:700;">1</div>
-          <div><strong style="color:var(--white);">Watch & Do</strong><br><span style="color:var(--text-light);font-size:0.85rem;">Each day has a short video and an exercise. Do both.</span></div>
+          <div><strong style="color:var(--white);">Read and do</strong><br><span style="color:var(--text-light);font-size:0.85rem;">Each day has one small exercise, some days a short video. Most days take a few minutes.</span></div>
         </div>
         <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;">
           <div style="min-width:32px;height:32px;border-radius:50%;background:var(--green);color:var(--white);display:flex;align-items:center;justify-content:center;font-weight:700;">2</div>
-          <div><strong style="color:var(--white);">Check In Daily</strong><br><span style="color:var(--text-light);font-size:0.85rem;">Log your stress, sleep, and movement. Track your streak.</span></div>
+          <div><strong style="color:var(--white);">Check in daily</strong><br><span style="color:var(--text-light);font-size:0.85rem;">One checkbox and a stress rating. Missing a day resets nothing; you can log it later.</span></div>
         </div>
         <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;">
           <div style="min-width:32px;height:32px;border-radius:50%;background:var(--green);color:var(--white);display:flex;align-items:center;justify-content:center;font-weight:700;">3</div>
@@ -100,7 +101,7 @@
         </div>
         <div style="display:flex;gap:12px;align-items:flex-start;">
           <div style="min-width:32px;height:32px;border-radius:50%;background:var(--green);color:var(--white);display:flex;align-items:center;justify-content:center;font-weight:700;">4</div>
-          <div><strong style="color:var(--white);">Save</strong><br><span style="color:var(--text-light);font-size:0.85rem;">Build your Peace of Mind Account. Goal: $500.</span></div>
+          <div><strong style="color:var(--white);">Save</strong><br><span style="color:var(--text-light);font-size:0.85rem;">Build your separate Peace of Mind Account. First marker: $500.</span></div>
         </div>
       </div>
 
@@ -504,6 +505,7 @@
   <script src="/js/firebase-config.js"></script>
   <script src="/js/privacy.js"></script>
   <script src="/js/aggregates.js"></script>
+  <script src="/js/funnel.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/challenge.js"></script>
   <script src="/js/margin.js"></script>

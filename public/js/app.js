@@ -157,6 +157,7 @@ function showToast(message) {
         document.getElementById('view-today').classList.add('active');
         window.scrollTo({ top: 0 });
         showToast('Baseline saved. Day 0 is ready.');
+        showOnboarding();
       });
     }
 
@@ -168,6 +169,7 @@ function showToast(message) {
       await Survey.showSurvey(userData.id, 'post', surveyContainer, async responses => {
         // Keep the survey view on screen so the before/after comparison —
         // the payoff of the whole challenge — is actually seen
+        if (typeof Funnel !== 'undefined') Funnel.postSurveyDone();
         const postData = { responses };
         Survey.renderComparison(preSurvey, postData, surveyContainer, 'post');
         const doneBtn = document.createElement('button');
@@ -306,15 +308,20 @@ function showToast(message) {
     const quoteEl = document.getElementById('daily-quote');
     quoteEl.textContent = '"' + (quotes[day] || quotes[day % quotes.length]) + '"';
 
-    // Onboarding (first visit only)
-    if (!localStorage.getItem('onboardingSeen') && day <= 1) {
+    // Onboarding (first visit only). Waits until the baseline survey is done so a
+    // new person never sees two screens stacked on top of each other.
+    function showOnboarding() {
+      let seen = null;
+      try { seen = localStorage.getItem('onboardingSeen'); } catch (e) { /* ignore */ }
+      if (seen || day > 1) return;
       const overlay = document.getElementById('onboarding');
       overlay.style.display = 'block';
       document.getElementById('onboarding-start').onclick = () => {
         overlay.style.display = 'none';
-        localStorage.setItem('onboardingSeen', '1');
+        try { localStorage.setItem('onboardingSeen', '1'); } catch (e) { /* ignore */ }
       };
     }
+    if (!surveyView.classList.contains('active')) showOnboarding();
 
     // Tomorrow preview
     if (day < 21) {
@@ -390,7 +397,8 @@ function showToast(message) {
       comeback.style.display = 'block';
     }
     renderComeback();
-    afterCheckinSaved = async () => {
+    afterCheckinSaved = async (savedDay, firstSave) => {
+      if (firstSave && typeof Funnel !== 'undefined') Funnel.dayLogged(savedDay);
       progressData = await Progress.loadProgress(userData.id, day, progressOpts());
       renderComeback();
       renderStreak();

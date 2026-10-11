@@ -207,6 +207,43 @@ const scenarios = {
     await ctx.close();
   },
 
+  async book(browser) {
+    // ?src=book: sign-up opens with the reader note, source saved, funnel counted
+    const { ctx, page, errors } = await open(browser, '/?seed=signup&rules=final&src=book');
+    await page.waitForSelector('#auth-form', { state: 'visible' });
+    check('book: sign-up mode with the reader note', await page.isVisible('#auth-source-note') && (await page.textContent('#auth-title')) === 'Create Account');
+    await page.fill('#auth-name', 'Rae Reader');
+    await page.fill('#auth-email', 'rae@test.com');
+    await page.fill('#auth-password', 'secret1');
+    await page.click('#auth-submit');
+    await page.waitForSelector('#app', { state: 'visible' });
+    await sleep(1000);
+    const users = await page.evaluate(() => Object.entries(window.__fake.dump()).filter(([k]) => /^users\/[^/]+$/.test(k)).map(([, v]) => v));
+    check('book: user doc carries source=book, no company', users.length === 1 && users[0].source === 'book' && users[0].companyId === null, users[0]);
+    const f = await page.evaluate(() => { const d = window.__fake.dump(); return { s: d['stats/funnel/counters/signups'], b: d['stats/funnel/counters/src_book'] }; });
+    check('book: funnel counted the sign-up and the source', f.s && f.s.n === 1 && f.b && f.b.n === 1, f);
+    // pre-survey is up; complete it, then the first check-in counts d0 once
+    await page.waitForSelector('#survey-form', { state: 'visible' });
+    check('book: welcome overlay waits behind the survey', !(await page.isVisible('#onboarding')));
+    await page.click('#survey-form button[type=submit]');
+    await sleep(800);
+    check('book: welcome overlay shows after the baseline is saved', await page.isVisible('#onboarding'));
+    await page.click('#onboarding-start');
+    await sleep(300);
+    await page.check('#checkin-completed');
+    await page.click('#checkin-submit');
+    await sleep(800);
+    await page.click('#checkin-submit');
+    await sleep(800);
+    const d0 = await store(page, 'stats/funnel/counters/d0');
+    check('book: first check-in of Day 0 counted once (second save not counted)', d0 && d0.n === 1, d0);
+    const ps = await page.evaluate(() => { const d = window.__fake.dump(); return Object.keys(d).filter(k => k.startsWith('stats/')); });
+    check('book: funnel holds counters only', ps.every(k => /^stats\/funnel\/counters\/(signups|src_book|d0)$/.test(k)), ps);
+    check('book: no page errors', errors.filter(e => !e.includes('ERR_TUNNEL')).length === 0, errors);
+    await page.screenshot({ path: SHOTS + '/book-signup.png', fullPage: true });
+    await ctx.close();
+  },
+
   async signup(browser) {
     // full cohort
     let { ctx, page, errors } = await open(browser, '/?seed=signup&rules=final&code=FULL01');

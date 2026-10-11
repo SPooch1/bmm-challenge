@@ -24,6 +24,9 @@ const Auth = (() => {
   let signupPending = null;
 
   const SEATS_FULL_MSG = 'This cohort is full. Please contact your HR contact about joining.';
+  // Where this sign-up came from (?src=book on the link in the book). Stored on the
+  // user doc as `source` and counted once in the owner's funnel (funnel.js).
+  const signupSource = typeof Funnel !== 'undefined' ? Funnel.readSourceFromUrl() : '';
   const seatsFull = d => d && typeof d.maxSeats === 'number' && d.maxSeats > 0 && (d.seatsUsed || 0) >= d.maxSeats;
 
   function showError(msg) {
@@ -98,6 +101,7 @@ const Auth = (() => {
             challengeStartDate: cohortStart || new Date().toISOString().split('T')[0],
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
           };
+          if (signupSource) profile.source = signupSource;
           if (!inviteCode) {
             await db.collection('users').doc(cred.user.uid).set(profile);
           } else {
@@ -119,6 +123,8 @@ const Auth = (() => {
               return;
             }
           }
+          // Counted after the user doc exists; never blocks the sign-up
+          if (typeof Funnel !== 'undefined') { Funnel.signedUp(signupSource); Funnel.clearSource(); }
         } finally {
           finishSignup();
           signupPending = null;
@@ -220,6 +226,20 @@ const Auth = (() => {
     if (code) {
       if (!isSignUp) toggleMode();
       inviteInput.value = code;
+    }
+  })();
+
+  // Book link: ?src=book opens sign-up with a short note for readers
+  (function applyBookBridge() {
+    const note = document.getElementById('auth-source-note');
+    if (!note) return;
+    if (signupSource === 'book') {
+      note.innerHTML = '<strong>Reading the book?</strong> Each day in the book has a matching day here. Create a free account and leave the invite code blank.';
+      note.style.display = 'block';
+      if (!isSignUp && !auth.currentUser) toggleMode();
+    } else if (signupSource === 'talk' || signupSource === 'guide') {
+      note.innerHTML = '<strong>Welcome.</strong> Create a free account and leave the invite code blank unless your employer gave you one.';
+      note.style.display = 'block';
     }
   })();
 

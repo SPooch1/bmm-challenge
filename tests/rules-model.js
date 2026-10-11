@@ -160,6 +160,12 @@
         rules.push(() => op === 'create' && A.signedIn() && A.aggWriteOk(s[1], s[3], {}));
         rules.push(() => op === 'update' && A.signedIn() && A.aggWriteOk(s[1], s[3], R));
         rules.push(() => (read || write) && A.isMigrator());
+      } else if (s.length === 4 && s[0] === 'stats' && s[1] === 'funnel' && s[2] === 'counters') {
+        const key = s[3];
+        const funnelKey = k => /^(signups|post|d([0-9]|1[0-9]|2[0-1])|src_[a-z0-9]{1,20})$/.test(k);
+        rules.push(() => read && A.signedIn() && A.userData(A.uid()).role === 'admin' && mget(A.userData(A.uid()), 'cohortManager', false) === true);
+        rules.push(() => op === 'create' && A.signedIn() && funnelKey(key) && hasOnly(keys(Q), ['n']) && Q.n === 1);
+        rules.push(() => op === 'update' && A.signedIn() && funnelKey(key) && hasOnly(keys(Q), ['n']) && Q.n === mget(R, 'n', 0) + 1);
       } else if (s.length === 2 && s[0] === 'inviteCodes') {
         const code = s[1];
         rules.push(() => op === 'get');

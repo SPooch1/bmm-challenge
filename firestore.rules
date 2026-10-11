@@ -301,6 +301,25 @@ service cloud.firestore {
       // <<< TRANSITIONAL
     }
 
+    // ---- Funnel counts (program owner only) ----
+    // stats/funnel/counters/{key} = { n }. Counts only: sign-ups, sign-up source
+    // (src_book from the book's link), first check-in per day (d0..d21), post
+    // survey. Any signed-in person may move one counter by exactly +1 (the app
+    // does it fire-and-forget); nothing per person, no company, no wellness data.
+    // Only the program owner (cohortManager) reads them.
+    function funnelKey(key) { return key.matches('signups|post|d([0-9]|1[0-9]|2[0-1])|src_[a-z0-9]{1,20}'); }
+    match /stats/funnel/counters/{key} {
+      allow read: if signedIn()
+        && userData(request.auth.uid).role == 'admin'
+        && userData(request.auth.uid).get('cohortManager', false) == true;
+      allow create: if signedIn() && funnelKey(key)
+        && request.resource.data.keys().hasOnly(['n'])
+        && request.resource.data.n == 1;
+      allow update: if signedIn() && funnelKey(key)
+        && request.resource.data.keys().hasOnly(['n'])
+        && request.resource.data.n == resource.data.get('n', 0) + 1;
+    }
+
     // Invite codes: PUBLIC get (validated at sign-up before the user is authenticated).
     // Nobody can enumerate codes; a company admin may list their own company's codes
     // (the dashboard query filters on companyId).

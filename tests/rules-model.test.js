@@ -363,6 +363,37 @@ test('[final] seat cap: join within cap, refused when full or without a seat cla
   assert.equal(await can(db.collection('inviteCodes').where('companyId', '==', 'acme').get()), false, 'public list');
 });
 
+for (const mode of ['final', 'transitional']) {
+  test(`[${mode}] funnel counters: anyone signed in moves one counter by +1; only the owner reads`, async () => {
+    const { fake, db, FV } = world(mode);
+    const c = key => db.collection('stats').doc('funnel').collection('counters').doc(key);
+    const bump = key => c(key).set({ n: FV.increment(1) }, { merge: true });
+    fake.signInAs('ivy'); // individual participant
+    assert.equal(await can(bump('signups')), true, 'first count creates with n=1');
+    assert.equal(fake.read('stats/funnel/counters/signups').n, 1);
+    assert.equal(await can(bump('signups')), true, 'second count = +1');
+    assert.equal(fake.read('stats/funnel/counters/signups').n, 2);
+    assert.equal(await can(bump('src_book')), true, 'source tag');
+    assert.equal(await can(bump('d7')), true, 'day counter');
+    assert.equal(await can(bump('post')), true, 'post survey');
+    assert.equal(await can(c('d7').set({ n: FV.increment(2) }, { merge: true })), false, 'jump by two');
+    assert.equal(await can(c('d7').set({ n: 0 })), false, 'reset to zero');
+    assert.equal(await can(c('d7').set({ n: 2, who: 'ivy' }, { merge: true })), false, 'extra field');
+    assert.equal(await can(bump('d22')), false, 'unknown day');
+    assert.equal(await can(bump('names')), false, 'unknown key');
+    assert.equal(await can(bump('src_Book Readers')), false, 'bad source tag');
+    assert.equal(await can(c('d7').get()), false, 'participant cannot read');
+    fake.signInAs('hr');
+    assert.equal(await can(c('d7').get()), false, 'HR admin cannot read');
+    assert.equal(await can(db.collection('stats').doc('funnel').collection('counters').get()), false, 'HR admin cannot list');
+    fake.signInAs('scott');
+    assert.equal(await can(c('d7').get()), true, 'owner reads');
+    assert.equal((await db.collection('stats').doc('funnel').collection('counters').get()).size, 4, 'owner lists');
+    fake.signOut();
+    assert.equal(await can(bump('signups')), false, 'signed out');
+  });
+}
+
 test('migrator branch exists only in the transitional rules', async () => {
   for (const [mode, expect] of [['transitional', true], ['final', false]]) {
     const { fake, db } = world(mode);
