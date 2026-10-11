@@ -1,0 +1,120 @@
+KDP LISTING: Bend Your Baseline (Book 1 of the Baseline Series)
+Revised 2026-10-11 from the 10-05 file (kept unchanged for reference). Source of truth for the upload. Copy the blocks below into kdp.amazon.com field by field.
+Changes from 10-05: description rewritten against the KDP description rules fetched 2026-10-11 (no URL, no "free", no price, no dates); keyword 3 no longer uses "emergency fund" (Scott's copy rules); keyword 6 and 7 made more searchable; a RULES CHECKED section with the KDP source URLs; STILL ON SCOTT updated (the Division I line is out of the book).
+
+==========================================================
+BOOK DETAILS (Kindle and paperback share these)
+==========================================================
+Language: English
+Book title: Bend Your Baseline
+Subtitle: Why Good Habits Don't Stick, and 21 Days to Raise Your Floor
+   (title + subtitle = 78 characters; KDP cap is 200 together)
+Series: leave blank (add the Baseline Series page when Book 2 exists; series plan 9/27)
+Edition number: leave blank
+Author: Scott Pooch
+Contributors: none
+AI-generated content: YES, answer the KDP question honestly: text drafted with AI tools and edited by the author; illustrations are the author's own (SVG figures and the Bitsy drawings). KDP rule verified 9/27: AI-generated text must be disclosed at upload.
+Primary audience: not for children; no sexually explicit content; reading age blank
+
+==========================================================
+DESCRIPTION (KDP cap 4,000 characters; this block is about 2,200 with tags)
+Allowed tags used: <b>, <p>. Paste as is.
+No URL, no price, no dates, no "free", no testimonials, no keyword stuffing (all prohibited in the description by KDP's Metadata Guidelines, see RULES CHECKED).
+==========================================================
+<b>You already know how habits work. This book is for the part after the reading: 21 days where you do one small thing a day, and the months after that where you keep it.</b>
+<p>Diets snap back. Budgets snap back. The fresh start that felt so good in January can be gone a few months later. It is easy to blame the plan, or yourself. The pull comes from somewhere else: your baseline, what your ordinary days produce when you are not trying. A plan is a push. When the push ends, the ordinary days are still there.</p>
+<p>Bend Your Baseline is a short book with one job: raise the floor you fall back to, with changes small enough to survive a bad week.</p>
+<p><b>Part One</b> explains why good intentions snap back and what to do instead. Four short chapters you can read in one sitting.</p>
+<p><b>Part Two</b> is 21 days, one short chapter per day, each ending with something to do today in less time than it takes to read the chapter. You will name your yo-yo, find your Peace of Mind number, start a separate Peace of Mind Account, find a body baseline you can hold on your worst week, and build a stress blueprint from what happens in your days. Every day has a hard day version for when everything goes wrong.</p>
+<p><b>Part Three</b> is Day 22 and after: how to keep what you built, what to do when the storm hits, and a bonus chapter for anyone who leads a team and has watched a wellness program or company initiative fade.</p>
+<p>A companion web app follows the book day by day, with the same exercises, a breathing timer, and a savings tracker. Nothing to download from an app store. Paper works fine too; the trackers are in the back.</p>
+<p>Scott Pooch is a retirement plan consultant and educator in Columbus, Ohio, and a former college distance running coach. He has spent more than twenty years working with business owners and their employees, and watching programs their people stop using. This book is what he tells the people in the room.</p>
+<p>Start smaller than you think you need to. If you cannot do it on your worst day, it is too big. Shrink it.</p>
+
+==========================================================
+KEYWORDS (7 boxes, up to 50 characters each)
+No other authors or titles, no "free", no "bestselling", no claims. Nothing here repeats the title words.
+==========================================================
+1. habits that stick after motivation fades
+2. 21 day habit challenge
+3. rainy day savings plan for beginners
+4. why diets and budgets fail
+5. small daily habits financial wellness
+6. stress management breathing exercise
+7. new year resolutions habit book
+
+==========================================================
+CATEGORIES (KDP: up to 3 per title, chosen in title setup from Amazon's own browse tree)
+Same three as 10-05 (verified 2026-10-05 against live Amazon best-seller pages; not re-checked 10-11).
+==========================================================
+1. Kindle Store > Kindle eBooks > Self-Help > Personal Transformation
+   https://www.amazon.com/Best-Sellers-Personal-Transformation/zgbs/digital-text/156571011
+2. Kindle Store > Kindle eBooks > Business & Money > Personal Finance > Budgeting & Money Management
+   https://www.amazon.com/Best-Sellers-Kindle-Store-Budgeting-Money-Management/zgbs/digital-text/8493814011
+3. Kindle Store > Kindle eBooks > Self-Help > Motivational
+   https://www.amazon.com/Best-Sellers-Kindle-Store-Motivational-Self-Help/zgbs/digital-text/156570011
+Paperback: pick the same three under Books > Self-Help / Books > Business & Money (the paperback tree mirrors these; KDP's picker shows the path).
+
+==========================================================
+RULES CHECKED (2026-10-11)
+==========================================================
+Description
+- Limit: "we have a limit of 4000 characters for the description."
+  Source: Write a Book Description, https://kdp.amazon.com/en_US/help/topic/G201189630
+- Supported HTML: <br>, <p>, <b>, <em>, <i>, <u>, <h4> to <h6>, <ol>, <ul>, <li>. "<h1>, <h2>, and <h3> are not supported."
+  Source: same page, https://kdp.amazon.com/en_US/help/topic/G201189630
+- Not allowed in the description: phone numbers, mailing or email addresses, URLs; reviews, quotes or testimonials; requests for reviews; advertisements or promotional material; time-sensitive information (promo tour or lecture dates); price, availability or alternative ordering information; keywords or book tag phrases.
+  Source: Metadata Guidelines for Books, https://kdp.amazon.com/en_US/help/topic/G201953870
+  Applied: the app's web address, the price, the founding group date and the word "free" stay OUT of the description. They live in the book itself.
+
+Title and subtitle
+- "Your title and subtitle together must be fewer than 200 characters." No references to other titles or authors, no "bestselling", no "free", no generic keyword stuffing.
+  Source: https://kdp.amazon.com/en_US/help/topic/G201953870
+  Applied: 78 characters, no author or title names.
+
+Keywords
+- Prohibited: references to other authors or their books, sales rank claims ("bestselling"), promotional references ("free"), content unrelated to the book, HTML tags. "We do not tolerate keywords that mislead or manipulate our customers."
+  Source: https://kdp.amazon.com/en_US/help/topic/G201953870
+- Field count and size: 7 keyword boxes, up to 50 characters each. KDP's own page for this is "Make Your Book More Discoverable with Keywords", https://kdp.amazon.com/en_US/help/topic/G201298500. NOT re-fetched 2026-10-11 (fetch budget); the count matches the 9/27 check in the 10-05 file and current third-party guides. Scott: the KDP form shows the boxes, so this is self-checking at upload.
+  Applied: no "Atomic Habits", no author names, no "free", no "bestseller", no "proven", nothing about results.
+
+Categories
+- "up to three categories" chosen in title setup, based on primary audience and marketplace; categories must be relevant, not chosen to mislead.
+  Source: https://kdp.amazon.com/en_US/help/topic/G201953870
+  Applied: 3 categories, all on topic (habits, personal finance, motivational self-help).
+
+AI disclosure
+- Carried over from 10-05 (verified 9/27): AI-generated text must be disclosed at upload. Not re-fetched 10-11.
+
+==========================================================
+KINDLE EBOOK (carried over from 10-05; rebuild the files on the Mac before upload)
+==========================================================
+Manuscript: growth/book/build/Bend_Your_Baseline_21_Day.epub (rebuild after the 10-11 text edits; build.py runs on the Mac)
+Cover: growth/book/build/Bend_Your_Baseline_Kindle_Cover_1600x2560.jpg
+DRM: No
+Pre-order: No
+ISBN: none for Kindle (not needed)
+Territories: All territories (worldwide rights)
+Primary marketplace: Amazon.com
+KDP Select: ENROLL (decided 9/27); run the free promotion at launch
+Pricing (decided by Scott 9/27): $2.99 USD, 70% royalty; other marketplaces: let KDP convert from the US price
+Plan: drop Book 1 to $0.99 (35% royalty, the KDP minimum) when Book 2 launches
+
+==========================================================
+PAPERBACK (carried over from 10-05)
+==========================================================
+Manuscript: growth/book/build/Bend_Your_Baseline_Paperback_Interior_6x9.pdf (rebuild after the 10-11 text edits; page count comes from build.py)
+Cover: growth/book/build/Bend_Your_Baseline_Paperback_Cover_Wrap.pdf (full wrap, spine sized to the page count by build.py)
+ISBN: Free KDP ISBN unless Scott says otherwise
+Print options: black & white interior, white paper (the spine width in the wrap cover assumes white paper), 6 x 9 in (15.24 x 22.86 cm), no bleed, matte cover finish (glossy is the alternative)
+Territories: All territories
+Pricing: Scott decides. KDP shows the minimum list price after it computes printing cost; $9.99 to $12.99 is the range to look at.
+
+==========================================================
+STILL ON SCOTT
+==========================================================
+1. The "Division I" wording is now out of the book (About the Author and Chapter 1 say "college distance runners"). Check the back cover (build/cover_wrap.html) and the launch LinkedIn post for the same phrase before upload.
+2. Paperback list price.
+3. Rebuild EPUB, DOCX and PDFs on the Mac (python3 growth/book/build/build.py) after the 10-11 text edits, then upload.
+4. The upload itself (KDP login, the AI disclosure question, and the final Publish click). After it is live: the /getbook redirect on bendyourbaseline.com switches to the Amazon URL, then the launch LinkedIn post with the real link in the first comment.
+5. Decide: the description no longer says the app is "free" (KDP lists promotional references among the things it does not accept in descriptions). If you want "free" back in, it is one word in the app paragraph.

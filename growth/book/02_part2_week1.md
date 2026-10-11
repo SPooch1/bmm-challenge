@@ -19,7 +19,7 @@ A few ground rules:
 - **Missing a day doesn't reset anything.** Just pick up where you left off. More on why in Day 19.
 - **If you're using the free app**, each chapter matches that day in the app. The app adds a breathing timer and a place to track your numbers. It doesn't send reminders, so set a daily alarm on your phone for your reading time.
 
-And a quick word about why 21 days. Twenty-one days is not magic. Research on habit formation suggests that it often takes longer, sometimes much longer, for a new behavior to feel automatic. Twenty-one days is the foundation, not the finish line. It's long enough to gather some honest numbers, practice a few small actions, and decide what you want to carry forward, and short enough that you can commit to it today.
+Why 21 days? Not magic. Research on habit formation suggests it can take longer, sometimes much longer, for a new behavior to feel automatic. Twenty-one days is the foundation, not the finish line. It's long enough to gather honest numbers, practice a few small actions, and decide what to carry forward, and short enough that you can commit to it today.
 
 # Day 0: Getting Set Up
 
@@ -37,7 +37,7 @@ Before Day 1, take five minutes to set yourself up.
 - *Body:* "I sit most of the day and I'm tired by 2 p.m."
 - *Stress:* "Sunday nights are rough because I'm already thinking about Monday."
 
-That's all. You're not trying to change anything yet. You're just writing down where the starting line is.
+That's all. You're not changing anything yet. You're writing down where the starting line is.
 
 ## Optional: set up the app (about two minutes)
 
@@ -67,7 +67,7 @@ Other people using the app can't see your entries.
 
 # Day 1: Name Your Yo-Yo
 
-Most of us live on a yo-yo in at least one area of life. We spike, we crash, we promise to restart. Today, we stop the promising and start with the truth.
+Many of us live on a yo-yo in at least one area of life. We spike, we crash, we promise to restart. Today, we stop the promising and start with the truth.
 
 Think back over the last few years. Where have you cycled? Where have you started strong more than once and ended up back at the beginning?
 
@@ -77,7 +77,7 @@ Pick **one**. The one that stings a little.
 
 Now write down your honest baseline in that area. Not where you were at your best. Not where you'll be after you get serious. Where you are *right now*, on an ordinary day.
 
-This is harder than it sounds. We're used to describing ourselves at our peak. "I run three miles a day" (I did, for five weeks in the spring). "I'm on a budget" (I set one up in January). Your baseline is what happens when you aren't pushing.
+This is harder than it sounds. We're used to describing ourselves at our peak. "I run three miles a day" (for five weeks last spring). "I'm on a budget" (I set one up in January). Your baseline is what happens when you aren't pushing.
 
 Don't judge it. Just name it. You can't work with a baseline you refuse to look at.
 
@@ -92,7 +92,7 @@ Notice there's no *should* in any of those. That's on purpose.
 
 ## Common snag: "I have more than one yo-yo"
 
-Most of us do. Money and weight. Sleep and stress. Exercise and everything else. Pick the one that bothers you most today, not the one you think you *should* fix first. You'll touch all three areas over the next three weeks anyway. Today is about practicing honesty in one place. Honesty is a skill, and it gets easier the second and third time.
+Many of us do. Money and weight. Sleep and stress. Exercise and everything else. Pick the one that bothers you most today, not the one you think you *should* fix first. You'll touch all three areas over the next three weeks anyway. Today is about practicing honesty in one place. Honesty is a skill, and it gets easier the second and third time.
 
 **Today:** Write down one area where you've been living on the yo-yo, and your honest baseline in that area right now.
 
@@ -100,9 +100,9 @@ Most of us do. Money and weight. Sleep and stress. Exercise and everything else.
 
 # Day 2: Your Peace of Mind Number
 
-Most financial advice tells you to build an emergency fund. That sounds about as exciting as doing your taxes. So we're going to call it what it really is: a **Peace of Mind Account**.
+You've heard the standard advice: set money aside for emergencies. That sounds about as exciting as doing your taxes. So we're going to call it what it really is: a **Peace of Mind Account**.
 
-A Peace of Mind Account is a separate pile of money with one job: to turn the next surprise from an emergency into an expense. The transmission, the roof leak, the vet bill, the week of work you miss because you're sick. It's not for vacations. It's not for sales. It's for storms.
+A Peace of Mind Account is a separate pile of money, apart from your everyday checking and savings, with one job: to turn the next surprise from an emergency into an expense. The transmission, the roof leak, the vet bill, the week of work you miss because you're sick. It's not for vacations. It's not for sales. It's for storms.
 
 You're not alone if you don't have one. In the Federal Reserve's 2025 survey of household finances, 63 percent of adults said they would cover a $400 emergency expense using cash, savings, or a credit card they'd pay off at the next statement. That means more than a third would not. If that's you, it isn't a personal failing. It's also fixable, one small step at a time.
 
@@ -110,7 +110,7 @@ You're not alone if you don't have one. In the Federal Reserve's 2025 survey of 
 
 Today you're going to write down two numbers.
 
-**Your first marker: $500.** For this challenge, I use $500 as a simple first marker. If you already have some savings, the marker is adding $500 to it. If $500 doesn't fit your situation right now, choose a smaller first marker you can work toward safely. Five hundred dollars won't cover every storm, but it covers some common ones. The first win matters more than its size.
+**Your first marker: $500.** If you already have some savings, the marker is adding $500 to them. If $500 doesn't fit your situation right now, choose a smaller first marker you can work toward safely. Five hundred dollars won't cover every storm, but it covers some common ones. The first win matters more than its size.
 
 **Your Peace of Mind number: one month of basics.** Add up what you need each month to keep the lights on:
 
@@ -133,11 +133,11 @@ Give the account a nickname if your bank allows it. "Peace of Mind" works. So do
 
 ## Common snag: "I don't have any extra money"
 
-Then $500 might feel like a fantasy. Start smaller. Track every dollar you spend for one week, and you'll likely find a few that surprised you. Even $5 or $10 a week is a start. The first goal isn't the size of the number. It's proving to yourself that you can move money in the right direction on purpose. A Peace of Mind Account with $20 in it is still a Peace of Mind Account.
+Then $500 might feel like a fantasy. Start smaller. Track every dollar you spend for one week, and you may find a few that surprise you. Even $5 or $10 a week is a start. The first goal isn't the size of the number. It's proving to yourself that you can move money in the right direction on purpose. A Peace of Mind Account with $20 in it is still a Peace of Mind Account.
 
 ## Common snag: "I have debt. Shouldn't I pay that first?"
 
-Paying down debt matters, and nothing here says to stop making your required payments. Without any cushion, though, the next surprise often goes right back on a credit card. That's why some people choose to build a small cushion while continuing their debt payments. The right order depends on your debts, interest rates, cash flow, and circumstances. If you're unsure, talk with a qualified financial professional.
+Paying down debt matters, and nothing here says to stop making your required payments. Without any cushion, though, the next surprise can go right back on a credit card. That's why some people choose to build a small cushion while continuing their debt payments. The right order depends on your debts, interest rates, cash flow, and circumstances. If you're unsure, talk with a qualified financial professional.
 
 **Today:** Write down your first marker and your Peace of Mind number (one month of essentials).
 
@@ -147,7 +147,7 @@ Paying down debt matters, and nothing here says to stop making your required pay
 
 Today we turn to the body. And just like with money, we start by looking, not fixing.
 
-How much do you actually move on an ordinary day? How do you actually eat? How do you actually sleep? Most of us have a picture of ourselves that's a little rosier than reality. That's normal. It's also why programs fail. We plan from the picture instead of the baseline.
+How much do you move on an ordinary day? How do you eat? How do you sleep? Many of us carry a picture of ourselves that's a little rosier than reality. That's one reason programs fail. We plan from the picture instead of the baseline.
 
 For the next seven days, track three things:
 
@@ -157,7 +157,7 @@ For the next seven days, track three things:
 
 **3. Sleep quality.** Each morning, rate last night's sleep from 1 to 10. Don't overthink it. How rested do you feel?
 
-That's it. Observe. Don't change anything on purpose this week. If you notice you're already moving more because you're watching, that's fine, but don't force it. We need honest numbers.
+That's it. Observe. Don't change anything on purpose this week. If you find you're moving more because you're watching, fine, but don't force it. We need honest numbers.
 
 ## Start thinking about your one simple action
 
@@ -176,7 +176,7 @@ The best one is the one so small you're a little embarrassed by it. Small is wha
 
 ## Common snag: "Tracking makes me feel judged"
 
-That's common, especially if you've tried tracking before as part of a diet that ended badly. Remember the rule for this week: observe, don't grade. You're not being scored. You're collecting information, the same way a doctor takes your temperature before deciding anything. If writing down a meal feels loaded, just write the time you ate it. That's data too.
+That can happen, especially if you've tried tracking before as part of a diet that ended badly. Remember the rule for this week: observe, don't grade. You're not being scored. You're collecting information, the same way a doctor takes your temperature before deciding anything. If writing down a meal feels loaded, just write the time you ate it. That's data too.
 
 **Today:** Start tracking movement, one meal, and sleep quality. You'll keep this up for seven days.
 
@@ -186,7 +186,7 @@ That's common, especially if you've tried tracking before as part of a diet that
 
 Stress has a pattern, even when it feels random. Something triggers it. Your body responds. Then you recover, or you don't.
 
-Today we start mapping that pattern. Think of it as the blueprint of your stress: where the pressure comes from, where it goes in your body, and how it drains out (or doesn't).
+Today we start mapping that pattern: where the pressure comes from, where it goes in your body, and how it drains out (or doesn't). That's your stress blueprint.
 
 ## First, check in right now
 
@@ -197,7 +197,7 @@ As you read this, notice:
 - Is your neck tight?
 - Are you breathing shallowly, or holding your breath?
 
-If you said yes to any of those, you're carrying stress in your body right now, probably without having noticed until this moment. Most of us do. I resisted breathing exercises for years. I thought they were a little weird. Then I tried it, and I realized how tense I'd been going through ordinary days. If I hadn't been so stubborn, I'd have been more relaxed for a lot more of my life.
+If you said yes to any of those, you're carrying stress in your body right now, and you probably hadn't noticed until this moment. Many of us do. I resisted breathing exercises for years. I thought they were a little weird. Then I tried one, and I realized how tense I'd been on ordinary days. If I hadn't been so stubborn, I'd have been more relaxed for a lot more of my life.
 
 ## The 4x4x4x4 breath
 
@@ -230,7 +230,7 @@ You're not fixing anything yet. You're drawing the map.
 
 ## Common snag: "It feels silly"
 
-It might, at first. It did for me. Try it anyway for two weeks before you decide. Do it somewhere nobody's watching if that helps, like the car before you walk into work. The point isn't to feel peaceful and enlightened. The point is to notice the tension you've been carrying and let a little of it go. You may notice something the first time. You may not. Either is fine.
+It might, at first. It did for me. Try it anyway for two weeks before you decide. Do it somewhere nobody's watching if that helps, like the car before you walk into work. The point isn't to feel peaceful and enlightened. It's to notice the tension you've been carrying and let a little of it go. You may feel something the first time. You may not. Either is fine.
 
 ## Common snag: "I forget to do it"
 
@@ -252,15 +252,15 @@ Write one sentence for each. Use numbers wherever you can. For example:
 
 Now look at the three sentences together. Do you see connections?
 
-Maybe you do. For example, late nights on the phone may sit next to both poor sleep and online shopping. A stressful Monday morning may be the same morning you skip breakfast and grab a pastry. Money worries may show up as tension in your jaw.
+Maybe you do. Late nights on the phone may sit next to both poor sleep and online shopping. A stressful Monday morning may be the same morning you skip breakfast and grab a pastry. Money worries may show up as tension in your jaw.
 
-That's why we look at all three at once, gently. They aren't three separate problems. They're three views of one life.
+That's why we look at all three at once. They aren't three separate problems. They're three views of one life.
 
 Draw an arrow between any two pillars that seem connected in your life. Write one word on each arrow saying how. ("Sleep" from Stress to Body. "Takeout" from Body to Money.)
 
 ## Common snag: "My numbers are depressing"
 
-Honest numbers often are, the first time you see them. But look at what you just did: you wrote them down. A baseline you can see is a baseline you can work with. The ones that stay invisible are the ones that run your life.
+Honest numbers can be, the first time you see them. But look at what you just did: you wrote them down. A baseline you can see is a baseline you can work with. The ones that stay invisible are the ones that run your life.
 
 **Today:** Write your three-pillar snapshot, one sentence each, with numbers. Draw at least one arrow connecting two of them.
 
@@ -270,7 +270,7 @@ Honest numbers often are, the first time you see them. But look at what you just
 
 Today is a pause.
 
-Reflection gets a bad reputation. It sounds like journaling for its own sake. But the pause is where you actually make sense of what you've been doing. Without it, a week of tracking is just a pile of numbers.
+Reflection gets a bad reputation. It sounds like journaling for its own sake. But the pause is where you make sense of what you've been doing. Without it, a week of tracking is a pile of numbers.
 
 Look back over the last five days of notes. Your movement numbers. Your one meal. Your sleep scores. Your stress entries. Your Peace of Mind number.
 
@@ -281,7 +281,7 @@ Then write down **three things you noticed**. They can be:
 - **A clearer number.** "My monthly basics are $400 more than I thought."
 - **A connection.** "My worst sleep nights were the nights I ate late."
 
-There are no wrong answers. The point is to *see* your own life a little more clearly than you did a week ago. That clarity is the point of this week.
+There are no wrong answers. The point is to *see* your own life a little more clearly than you did a week ago.
 
 **Today:** Write down three things you noticed about your baselines this week.
 
@@ -289,9 +289,7 @@ There are no wrong answers. The point is to *see* your own life a little more cl
 
 # Day 7: Pick Your Anchor
 
-In seven days, you've gotten more specific about where you actually are.
-
-That's the foundation. Everything from here builds on it.
+Seven days in, you have an honest picture of where you are. That's the foundation. Everything from here builds on it.
 
 Today, pick **one number** from this week to be your anchor. It might be:
 
@@ -302,7 +300,7 @@ Today, pick **one number** from this week to be your anchor. It might be:
 
 Choose the one that matters most to you right now. Then write it somewhere you'll see it every day. On a sticky note on your bathroom mirror. As the lock screen on your phone. On the dashboard of your car. Taped to your computer monitor.
 
-Why? Because what you see, you tend to think about. What you think about, you tend to act on. This is a tiny example of changing your environment instead of relying on willpower, and you'll use that idea a lot in the next two weeks.
+Why? Because what you see, you think about. What you think about, you tend to act on. This is a small example of changing your environment instead of relying on willpower, and you'll use that idea a lot in the next two weeks.
 
 Also, if it makes sense for you and you haven't yet: **open the separate account for your Peace of Mind money.** Even if you put just $5 in it today, open it. An account with $5 in it is a real thing. A plan to open one someday isn't.
 

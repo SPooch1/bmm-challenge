@@ -6,13 +6,13 @@ Day 22 is the most dangerous day of the whole plan.
 
 The novelty is gone. Nobody is congratulating you. There's no new chapter waiting tomorrow morning. And the habits you built are still new enough that skipping one feels harmless.
 
-This is where a new routine can quietly fade. Nothing dramatic has to happen. The reminders simply stop.
+This is where a new routine can quietly fade. Nothing dramatic has to happen. The daily chapter that carried you simply stops.
 
 So for the next few weeks, your only job is to **keep your margin**. Don't add anything new. Don't start a big push. Just keep doing what's on your one page.
 
 ## Boring is the goal
 
-The first 21 days had some energy to them. Every day was a little different. From here on, it may get a little boring. Good. You don't need novelty here. You need something ordinary enough to repeat.
+The first 21 days had some energy to them. Every day was a little different. From here on, it may get boring. Good. You don't need novelty here. You need something ordinary enough to repeat.
 
 If you notice yourself itching to do something bigger, write it down and save it. For now, protect what you've built.
 
@@ -29,7 +29,7 @@ That's it. Five minutes, once a week.
 
 ## Growing the Peace of Mind Account
 
-Once you reach your first marker, keep the automatic transfer running if you can, and choose your next marker based on your own expenses, obligations, other savings, and debt. The one-month Peace of Mind number from Day 2 is one reference point, not a universal target. Some people keep building from there toward several months of essentials. Go at whatever pace your life allows.
+Once you reach your first marker, keep the automatic transfer running if you can, and choose your next marker based on your own expenses, obligations, other savings, and debt. The one-month Peace of Mind number from Day 2 is a reference point, not a universal target. Some people keep building from there toward several months of essentials. Go at whatever pace your life allows.
 
 If the storms are kind for a while, the account may start to become that opportunity fund: money that lets you say yes when something good comes along.
 
@@ -41,15 +41,15 @@ After about a month of keeping your margin, when your habits feel ordinary, you 
 - Specific enough that someone could tell whether you did it.
 - Hooked onto a routine you already have.
 
-One at a time. Settle one, then add another. One real risk to a good baseline isn't laziness. It's getting excited and piling on so many new habits that the whole thing collapses under its own weight.
+One at a time. Settle one, then add another. A real risk to a good baseline isn't laziness. It's getting excited and piling on so many new habits that the whole thing collapses under its own weight.
 
 ## If the app helps
 
-The free companion app has a "Keep Your Margin" mode for exactly this stretch. It keeps a simple daily check-in going after Day 21, so you still have a place to mark each day even when the challenge is over, and it walks you through the weekly check above. If you set a daily alarm for your 21 days, keep it. You'll find it at **bendyourbaseline.com/book**.
+The free companion app has a "Keep Your Margin" mode for exactly this stretch. It keeps a simple daily check-in going after Day 21, so you still have a place to mark each day, and it walks you through the weekly check above. If you set a daily alarm for your 21 days, keep it. You'll find the app at **bendyourbaseline.com/book**.
 
 ## Bringing the people you live with along
 
-If your changes start affecting household routines, the people closest to you may notice. Sometimes they'll cheer. Sometimes they'll push back, usually without meaning to. The cookies still show up. The spontaneous dinner out still sounds fun. The "you're no fun anymore" comment still stings.
+If your changes start affecting household routines, the people closest to you may notice. Sometimes they'll cheer. Sometimes they'll push back, and not always on purpose. The cookies still show up. The spontaneous dinner out still sounds fun. The "you're no fun anymore" comment still stings.
 
 A few things tend to help:
 
@@ -69,7 +69,7 @@ This chapter is for that season.
 
 ## First: this is what the margin was for
 
-If you have to spend your Peace of Mind money on a real storm, spend it. That's its job. The money may cover part or all of the cost, depending on the size of the storm and the balance you've built. Either way, the account didn't fail.
+If you have to spend your Peace of Mind money on a real storm, spend it. That's its job. It may cover part of the cost or all of it, depending on the storm and the balance you've built. Either way, the account didn't fail.
 
 Don't feel guilty about using it. Feel glad you had it.
 
@@ -97,19 +97,27 @@ When the storm passes, rebuild in order:
 
 ## You haven't gone back to the start
 
-Here's the thing to remember when you're in the middle of it. Even if you slip a long way, you're not starting over. You know your numbers. You have your one page. You know what works for you and what doesn't. You know how to restart small.
+Remember this when you're in the middle of it. Even if you slip a long way, you're not starting over. You know your numbers. You have your one page. You know what works for you and what doesn't. You know how to restart small.
 
 The aim was never to make storms harmless. It's to give yourself a few familiar actions to return to instead of rebuilding everything from zero.
 
 # A Final Word
 
-The storms of life will keep coming. They always do.
+The storms will keep coming. They always do.
 
-Think about the pieces you've been practicing: a small habit, a little money set aside, a brief pause before a hard moment. Those are what this book means by bending your baseline.
+What you've been practicing is small on purpose: a small habit, a little money set aside, a brief pause before a hard moment. That's what this book means by bending your baseline.
 
-They won't look like much from one day to the next. They aren't supposed to. A year from now, look back at the floor you wrote down on Day 0 and see what changed.
+It won't look like much from one day to the next. It isn't supposed to. A year from now, look back at the floor you wrote down on Day 0 and see what changed.
 
 You can't change your destination overnight. But you can change your direction today.
+
+## Two ways to keep going
+
+**The free 21-day app.** If you read this on paper or on a Kindle and never set up the app, it's still there. Go to **challenge.buildmoremargin.com** on your phone, tap Sign Up, and leave the Invite Code box blank. That gives you an individual account: the same 21 days with a place to write your answers, the breathing timer, your Peace of Mind tracker, and the Keep Your Margin check-in for Day 22 and after. There's nothing to download, and other people using the app can't see your entries.
+
+**A small group.** Some people would rather do the 21 days with other people and a date on the calendar. I'm running a founding group starting Monday, January 4, 2027: four live calls on Tuesday evenings, 20 seats, $97. You can reserve a seat free at **bendyourbaseline.com/group** and decide later whether to confirm. If it's past January when you read this, that page will say what's next.
+
+Either way, the work is the same: one small thing, on an ordinary day, again tomorrow.
 
 *Go bend your baseline.*
 
@@ -121,7 +129,7 @@ You can't change your destination overnight. But you can change your direction t
 
 # Bonus: If You Lead Other People
 
-This short chapter is for managers, business owners, HR leaders, committee chairs, and coaches. The same lens can be useful at work: organizations can live on the yo-yo too.
+This short chapter is for managers, business owners, HR leaders, committee chairs, and coaches. Organizations live on the yo-yo too.
 
 In many workplaces, every quarter brings a new initiative, introduced as *the new direction*, and a quarter or two later it's replaced by the next one, introduced with the same words. The wellness program. The engagement survey action plan. The safety campaign. The new software. Launch energy, a strong start, a slow fade.
 
@@ -137,7 +145,7 @@ Many workplace programs lean on one or more of these. Each can be useful. Each t
 
 **3. A tool expected to carry adoption on its own: "we'll buy a platform."** Every step (download it, log in, enter your data, remember to come back) is a place to lose someone.
 
-**4. One person championing it: "we'll assign a champion."** That can help, but it often depends on the struggling person raising a hand, and one person only has so much time.
+**4. One person championing it: "we'll assign a champion."** That can help, but it depends on the struggling person raising a hand, and one person only has so much time.
 
 ## A two-minute check for any initiative
 
@@ -146,7 +154,7 @@ Many workplace programs lean on one or more of these. Each can be useful. Each t
 3. Does anyone get something manageable to *do* before being handed more to learn?
 4. Could someone keep doing it during their worst week of the year?
 5. What happens when the person driving it moves on?
-6. Who does the work? Who bears the consequences? Who reaps the rewards? Author James Clear uses those three questions to test whether incentives line up: when they do, it's the same person. If your answers name three different people, look closely at how the initiative is set up.
+6. Author James Clear uses three questions to test whether incentives line up: Who does the work? Who bears the consequences? Who reaps the rewards? When they line up, it's the same person. If your answers name three different people, look closely at how the initiative is set up.
 
 The organizational version of bending the baseline looks a lot like the personal one: one small action, delivered where people already are, an action before a lesson, and a path people can always see their place on.
 
@@ -258,9 +266,9 @@ This book is for general education. It isn't personalized financial, medical, or
 
 **Scott Pooch** is a retirement plan consultant and educator based in Columbus, Ohio, and the founder of 401Grow. He works with business owners and their employees on the everyday habits behind money, health, and stress, and he speaks to conferences, associations, and companies on why good intentions snap back. His keynote, *Bend Your Baseline: why diets, budgets, and big initiatives snap back, and what actually holds*, is the source of this book.
 
-Before any of that, he was a runner. He ran the 800 meters in college and later coached Division I college distance runners for four years, which is where he first learned that the easy days matter as much as the hard ones.
+Before any of that, he was a runner. He ran the 800 meters in college and later coached college distance runners for four years, which is where he first learned that the easy days matter as much as the hard ones.
 
-When he isn't speaking or working with clients, he's usually on the road in his van, trying to keep his own baseline from sliding.
+When he isn't speaking or working with clients, you'll find him on the road in his van, trying to keep his own baseline from sliding.
 
 **Free companion app and guide:** bendyourbaseline.com/book
 

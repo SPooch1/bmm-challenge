@@ -4,7 +4,7 @@
 
 For the next three days, you'll take your biggest opportunity and make it easier to repeat. I call these three days **Your Next Move**: a slightly bigger step, built on the small habits you already have.
 
-Part 1 is alignment. Before you push on any one pillar, you want to make sure the three aren't fighting each other.
+Part 1 is alignment. Before you push on any one pillar, make sure the three aren't fighting each other.
 
 Here's what fighting looks like:
 
@@ -12,7 +12,7 @@ Here's what fighting looks like:
 - You're trying to walk more, but you're sleeping five hours a night and too tired to move.
 - You're trying to sleep better, but you lie awake worrying about money.
 
-In each case, one pillar is pulling against another. You can push as hard as you want on the first one. The second one will keep pulling it back.
+In each case, one pillar is pulling against another. Push as hard as you want on the first one. The second will keep pulling it back.
 
 Look at your three pillars and your notes from the last two weeks. **Find one place where two of them are working against each other.** Then write down one small fix for that connection.
 
@@ -54,7 +54,7 @@ Now, following the book's own rule of one at a time: **choose one of the three t
 
 ## Common snag: "I can't decide which move to pick"
 
-Pick the one that also helps another pillar, since you're starting just one for now. A lunchtime walk helps your body and your stress. Packing lunch helps your money and often your body. When one move helps two pillars, you get two wins for the effort of one.
+Pick the one that also helps another pillar. A lunchtime walk helps your body and your stress. Packing lunch helps your money and your body. When one move helps two pillars, you get two wins for the effort of one.
 
 **Today:** Write down your three 15 percent moves, one per pillar. Choose one and start it today.
 
@@ -62,11 +62,11 @@ Pick the one that also helps another pillar, since you're starting just one for 
 
 # Day 17: Your Next Move, Part 3: Lock It In
 
-Here's where most plans fall apart. You've picked good moves. You're motivated. And motivation is exactly what won't last.
+Here's where a plan falls apart. You've picked good moves. You're motivated. And motivation is exactly what won't last.
 
 So today, you take the move you started yesterday and answer one question: **how will this happen without me having to want it?**
 
-Don't make the action depend on feeling motivated. Decide what will remind you, remove a step, or make the action easier to begin on an ordinary day.
+Decide what will remind you, remove a step, or make the action easier to begin on an ordinary day, so it doesn't depend on feeling motivated.
 
 Here's how that looks in each pillar:
 
@@ -76,7 +76,7 @@ Here's how that looks in each pillar:
 
 **Stress: set a cue.** Set a phone reminder or an hourly watch chime. Put a sticky note on your monitor with "4x4" on it. Decide that every time you sit down in your car, you'll do four rounds before you start the engine.
 
-For your move, write down the automation, the environment change, or the cue that will make it happen. Then set it up. Today, not tomorrow. Setting up the transfer takes five minutes. Doing it "later" is how it doesn't happen.
+For your move, write down the automation, the environment change, or the cue that will make it happen. Then set it up. Today, not tomorrow. The transfer takes five minutes to set up. "Later" is how it doesn't happen.
 
 **Today:** For the move you started, write down and set up one thing that makes it happen without relying on motivation.
 
@@ -86,11 +86,11 @@ For your move, write down the automation, the environment change, or the cue tha
 
 You already have routines that happen every day without fail. You make coffee. You brush your teeth. You sit down at your desk. You eat lunch. You get in the car. You get into bed.
 
-Those routines are some of the most reliable things in your life. So today, you're going to use one of them as the reminder for your new move.
+Those routines are some of the most reliable things in your life. Today, you use one of them as the reminder for your new move.
 
 Pick one routine that already happens every day, at a time that makes sense for the move you started on Day 16. Then decide on the one small action you'll do right at that point.
 
-A few examples of how this can look:
+A few examples:
 
 - The coffee is brewing. That's when you do four rounds of breathing.
 - You've just sat down at your desk. That's when you fill your water bottle.
@@ -118,7 +118,7 @@ You'll miss a day. You'll dip into your Peace of Mind Account for something that
 
 That's not failure. That's information.
 
-Here's something encouraging from the research on how habits form. In a well-known 2010 study from University College London, people picked a new daily behavior and tracked how automatic it felt over 12 weeks. **Missing a single day had little effect on how the habit developed.** What matters is getting back to it, not keeping a perfect streak.
+Here's something encouraging from the research on how habits form. In a 2010 study from University College London, people picked a new daily behavior and tracked how automatic it felt over 12 weeks. **Missing a single day had little effect on how the habit developed.** What matters is getting back to it, not keeping a perfect streak.
 
 So the goal isn't to never slip. The goal is to have a plan for when you do: a **reset plan**.
 
@@ -177,7 +177,7 @@ Take a single sheet of paper (or one note on your phone) and fill in the blanks:
 
 That's it. One page. Everything that matters, nothing that doesn't.
 
-Look at what's on it. Three weeks ago, you probably couldn't have filled in half these blanks. Now you can fill in every one.
+Look at what's on it. Three weeks ago, you probably couldn't have filled in half these blanks.
 
 Put this page somewhere you'll see it: on the fridge, in your wallet, or as a photo on your phone. Read it once a week. It's your baseline, written down.
 
@@ -193,11 +193,11 @@ That's fine. Fill in what you know. An honest one page with a few blanks is more
 
 You made it. Twenty-one days.
 
-Take a minute and look back at Day 0, when you wrote one sentence about where you were in money, body, and stress. Read those three sentences now.
+Look back at Day 0, when you wrote one sentence each about where you were in money, body, and stress. Read those three sentences now.
 
 Then write three new ones. Where are you *today*?
 
-The difference may be small. That's fine. Small enough to continue is more useful here than big enough to exhaust you. You've practiced a different kind of change: smaller actions built around ordinary days.
+The difference may be small. That's fine. Small enough to continue is more useful than big enough to exhaust you. You've practiced a different kind of change: small actions built around ordinary days.
 
 ## Your next 90 days
 
@@ -215,9 +215,9 @@ Put a reminder on your calendar for 30, 60, and 90 days from today. At each one,
 
 **On your own.** Everything you need is in this book and on your one page. Part Three will help you keep going.
 
-**With the free app.** If you haven't used it yet, the companion app has a "Keep Your Margin" mode for Day 22 and after, with daily check-ins to keep your habits going. It's free at **bendyourbaseline.com/book**.
+**With the free app.** If you haven't used it yet, the companion app has a "Keep Your Margin" mode for Day 22 and after, with a daily check-in to keep your habits going. It's free at **bendyourbaseline.com/book**.
 
-**With your team or group.** If you lead people at work, the bonus chapter at the end looks at how the same idea applies to organizations.
+**With other people.** The Final Word at the end of the book has details on a small group that works through the 21 days together. And if you lead people at work, the bonus chapter looks at how the same idea applies to organizations.
 
 One last thing. Tell someone what you did. Not to brag. Just say it out loud: "I started a Peace of Mind Account." "I walk at lunch now." Saying it out loud makes it feel more real.
 
