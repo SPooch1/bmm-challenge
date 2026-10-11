@@ -195,16 +195,6 @@
         <!-- Daily Quote -->
         <div id="daily-quote" style="text-align:center;padding:0 16px 12px;font-style:italic;font-size:0.8rem;color:var(--slate);"></div>
 
-        <!-- Video -->
-        <div class="card" id="today-video-card" style="display:none;">
-          <h3 id="today-video-heading">Today's Video</h3>
-          <button type="button" id="video-revisit-btn" style="display:none;width:100%;align-items:center;justify-content:center;gap:8px;padding:12px;background:var(--sky-soft);border:1px solid var(--border);border-radius:var(--radius);color:var(--sky-dark);font-size:0.9rem;font-weight:600;cursor:pointer;"></button>
-          <div class="video-container" id="today-video-container">
-            <div class="video-placeholder" id="today-video-placeholder">No video today.</div>
-            <video id="today-video" controls style="display:none;"></video>
-          </div>
-        </div>
-
         <!-- Exercise + Description -->
         <div class="card">
           <h3 style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;" id="exercise-toggle" role="button" tabindex="0" aria-expanded="false" aria-controls="exercise-detail">
@@ -219,6 +209,16 @@
           </div>
           <!-- Day 2: Peace of Mind number · Days 17-21: the one health action to keep -->
           <div id="exercise-capture" style="display:none;"></div>
+        </div>
+
+        <!-- Video -->
+        <div class="card" id="today-video-card" style="display:none;">
+          <h3 id="today-video-heading">Today's Video</h3>
+          <button type="button" id="video-revisit-btn" style="display:none;width:100%;align-items:center;justify-content:center;gap:8px;padding:12px;background:var(--sky-soft);border:1px solid var(--border);border-radius:var(--radius);color:var(--sky-dark);font-size:0.9rem;font-weight:600;cursor:pointer;"></button>
+          <div class="video-container" id="today-video-container">
+            <div class="video-placeholder" id="today-video-placeholder">No video today.</div>
+            <video id="today-video" controls style="display:none;"></video>
+          </div>
         </div>
 
         <!-- Daily Check-in -->
