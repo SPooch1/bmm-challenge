@@ -67,7 +67,7 @@ Other people using the app can't see your entries.
 
 # Day 1: Name Your Yo-Yo
 
-Many of us live on a yo-yo in at least one area of life. We spike, we crash, we promise to restart. Today, we stop the promising and start with the truth.
+Maybe you live on a yo-yo in at least one area of life. We spike, we crash, we promise to restart. Today, we stop the promising and start with the truth.
 
 Think back over the last few years. Where have you cycled? Where have you started strong more than once and ended up back at the beginning?
 
@@ -92,7 +92,7 @@ Notice there's no *should* in any of those. That's on purpose.
 
 ## Common snag: "I have more than one yo-yo"
 
-Many of us do. Money and weight. Sleep and stress. Exercise and everything else. Pick the one that bothers you most today, not the one you think you *should* fix first. You'll touch all three areas over the next three weeks anyway. Today is about practicing honesty in one place. Honesty is a skill, and it gets easier the second and third time.
+That's fine. Money and weight. Sleep and stress. Exercise and everything else. Pick the one that bothers you most today, not the one you think you *should* fix first. You'll touch all three areas over the next three weeks anyway. Today is about practicing honesty in one place. Honesty is a skill, and it gets easier the second and third time.
 
 **Today:** Write down one area where you've been living on the yo-yo, and your honest baseline in that area right now.
 
@@ -147,7 +147,7 @@ Paying down debt matters, and nothing here says to stop making your required pay
 
 Today we turn to the body. And just like with money, we start by looking, not fixing.
 
-How much do you move on an ordinary day? How do you eat? How do you sleep? Many of us carry a picture of ourselves that's a little rosier than reality. That's one reason programs fail. We plan from the picture instead of the baseline.
+How much do you move on an ordinary day? How do you eat? How do you sleep? It's easy to carry a picture of yourself that's a little rosier than reality. Then the plan gets built from the picture instead of the baseline.
 
 For the next seven days, track three things:
 
@@ -197,7 +197,7 @@ As you read this, notice:
 - Is your neck tight?
 - Are you breathing shallowly, or holding your breath?
 
-If you said yes to any of those, you're carrying stress in your body right now, and you probably hadn't noticed until this moment. Many of us do. I resisted breathing exercises for years. I thought they were a little weird. Then I tried one, and I realized how tense I'd been on ordinary days. If I hadn't been so stubborn, I'd have been more relaxed for a lot more of my life.
+If you said yes to any of those, you're carrying stress in your body right now, and you may not have noticed until this moment. I resisted breathing exercises for years. I thought they were a little weird. Then I tried one, and I realized how tense I'd been on ordinary days. If I hadn't been so stubborn, I'd have been more relaxed for a lot more of my life.
 
 ## The 4x4x4x4 breath
 

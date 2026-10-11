@@ -37,15 +37,23 @@ const Reminder = (() => {
     return { time, hm, first, until };
   }
 
+  // Five minutes after the start, rolling into the next hour or day when needed
+  function endStamp(p) {
+    const m = p.hm[0] * 60 + p.hm[1] + 5;
+    const day = m >= 1440 ? addDaysYmd(p.first, 1) : p.first;
+    const mm = m % 1440;
+    return compact(day) + 'T' + pad(Math.floor(mm / 60)) + pad(mm % 60) + '00';
+  }
+
   function escapeIcs(s) { return String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n'); }
 
   function icsText(opts) {
     const p = plan(opts);
     const start = compact(p.first) + 'T' + pad(p.hm[0]) + pad(p.hm[1]) + '00';
-    const end = compact(p.first) + 'T' + pad(p.hm[0]) + pad(p.hm[1] + 5 < 60 ? p.hm[1] + 5 : 59) + '00';
+    const end = endStamp(p);
     const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
     const uid = 'bmm-reminder-' + compact(p.first) + '-' + p.time.replace(':', '') + '@challenge.buildmoremargin.com';
-    const title = opts && opts.marginMode ? 'Keep Your Margin: two minutes' : 'Build More Margin: today\'s two minutes';
+    const title = opts && opts.marginMode ? 'Keep Your Margin: today\'s check-in' : 'Build More Margin: today\'s small action';
     const desc = 'Open the app, do today\'s small action, check in. ' + APP_URL;
     // Floating local times (no Z, no TZID): the event lands at the chosen clock
     // time wherever the phone is.
@@ -68,8 +76,8 @@ const Reminder = (() => {
   function googleUrl(opts) {
     const p = plan(opts);
     const start = compact(p.first) + 'T' + pad(p.hm[0]) + pad(p.hm[1]) + '00';
-    const end = compact(p.first) + 'T' + pad(p.hm[0]) + pad(p.hm[1] + 5 < 60 ? p.hm[1] + 5 : 59) + '00';
-    const title = opts && opts.marginMode ? 'Keep Your Margin: two minutes' : 'Build More Margin: today\'s two minutes';
+    const end = endStamp(p);
+    const title = opts && opts.marginMode ? 'Keep Your Margin: today\'s check-in' : 'Build More Margin: today\'s small action';
     const q = new URLSearchParams({
       action: 'TEMPLATE',
       text: title,
@@ -107,7 +115,7 @@ const Reminder = (() => {
     box.innerHTML = `
       <h3 style="display:flex;align-items:center;justify-content:space-between;">Daily reminder
         ${opts.dismissable ? '<button type="button" id="reminder-dismiss" aria-label="Hide this reminder prompt" style="background:none;border:none;color:var(--slate);font-size:1.2rem;cursor:pointer;padding:0 4px;">&times;</button>' : ''}</h3>
-      <p style="font-size:0.9rem;color:var(--slate);margin-top:6px;">This app does not send notifications. A calendar alert at the same time each day works on any phone. Pick a time, then add it.</p>
+      <p style="font-size:0.9rem;color:var(--slate);margin-top:6px;">This app does not send notifications. A daily calendar alert does the same job. Pick a time, then add it.</p>
       <div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap;">
         <label for="reminder-time" style="font-size:0.85rem;font-weight:600;">Time</label>
         <input type="time" id="reminder-time" value="${time}" style="flex:0 0 130px;">

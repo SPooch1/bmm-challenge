@@ -6,7 +6,7 @@ Day 22 is the most dangerous day of the whole plan.
 
 The novelty is gone. Nobody is congratulating you. There's no new chapter waiting tomorrow morning. And the habits you built are still new enough that skipping one feels harmless.
 
-This is where a new routine can quietly fade. Nothing dramatic has to happen. The daily chapter that carried you simply stops.
+This is where a new routine can quietly fade. Nothing dramatic has to happen. After Day 21, there's no new chapter waiting each morning.
 
 So for the next few weeks, your only job is to **keep your margin**. Don't add anything new. Don't start a big push. Just keep doing what's on your one page.
 
@@ -129,7 +129,7 @@ Either way, the work is the same: one small thing, on an ordinary day, again tom
 
 # Bonus: If You Lead Other People
 
-This short chapter is for managers, business owners, HR leaders, committee chairs, and coaches. Organizations live on the yo-yo too.
+This short chapter is for managers, business owners, HR leaders, committee chairs, and coaches. Organizations can live on the yo-yo too.
 
 In many workplaces, every quarter brings a new initiative, introduced as *the new direction*, and a quarter or two later it's replaced by the next one, introduced with the same words. The wellness program. The engagement survey action plan. The safety campaign. The new software. Launch energy, a strong start, a slow fade.
 

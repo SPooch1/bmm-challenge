@@ -22,20 +22,20 @@ Allowed tags used: <b>, <p>. Paste as is.
 No URL, no price, no dates, no "free", no testimonials, no keyword stuffing (all prohibited in the description by KDP's Metadata Guidelines, see RULES CHECKED).
 ==========================================================
 <b>You already know how habits work. This book is for the part after the reading: 21 days where you do one small thing a day, and the months after that where you keep it.</b>
-<p>Diets snap back. Budgets snap back. The fresh start that felt so good in January can be gone a few months later. It is easy to blame the plan, or yourself. The pull comes from somewhere else: your baseline, what your ordinary days produce when you are not trying. A plan is a push. When the push ends, the ordinary days are still there.</p>
+<p>Diets snap back. Budgets snap back. The fresh start that felt so good in January can be gone a few months later. You might blame the plan or yourself. The pull comes from somewhere else: your baseline, what your ordinary days produce when you are not trying. A plan is a push. When the push ends, the ordinary days are still there.</p>
 <p>Bend Your Baseline is a short book with one job: raise the floor you fall back to, with changes small enough to survive a bad week.</p>
 <p><b>Part One</b> explains why good intentions snap back and what to do instead. Four short chapters you can read in one sitting.</p>
-<p><b>Part Two</b> is 21 days, one short chapter per day, each ending with something to do today in less time than it takes to read the chapter. You will name your yo-yo, find your Peace of Mind number, start a separate Peace of Mind Account, find a body baseline you can hold on your worst week, and build a stress blueprint from what happens in your days. Every day has a hard day version for when everything goes wrong.</p>
-<p><b>Part Three</b> is Day 22 and after: how to keep what you built, what to do when the storm hits, and a bonus chapter for anyone who leads a team and has watched a wellness program or company initiative fade.</p>
+<p><b>Part Two</b> is 21 days, one short chapter per day, each ending with something to do today in less time than it takes to read the chapter. You will name your yo-yo, find your Peace of Mind number, start a separate Peace of Mind Account, find a body baseline you can hold on your worst week, and build a stress blueprint from what happens in your days. Every day includes a smaller version for a hard day.</p>
+<p><b>Part Three</b> is Day 22 and after: how to keep going after Day 21, what to do when the storm hits, and a bonus chapter for anyone who leads a team and has watched a wellness program or company initiative fade.</p>
 <p>A companion web app follows the book day by day, with the same exercises, a breathing timer, and a savings tracker. Nothing to download from an app store. Paper works fine too; the trackers are in the back.</p>
-<p>Scott Pooch is a retirement plan consultant and educator in Columbus, Ohio, and a former college distance running coach. He has spent more than twenty years working with business owners and their employees, and watching programs their people stop using. This book is what he tells the people in the room.</p>
+<p>Scott Pooch is a retirement plan consultant and educator in Columbus, Ohio, and a former college distance running coach. He has spent more than twenty years working with business owners and their employees on money, retirement, and the workplace. This book is what he tells the people in the room.</p>
 <p>Start smaller than you think you need to. If you cannot do it on your worst day, it is too big. Shrink it.</p>
 
 ==========================================================
 KEYWORDS (7 boxes, up to 50 characters each)
 No other authors or titles, no "free", no "bestselling", no claims. Nothing here repeats the title words.
 ==========================================================
-1. habits that stick after motivation fades
+1. building habits without daily motivation
 2. 21 day habit challenge
 3. rainy day savings plan for beginners
 4. why diets and budgets fail
@@ -53,7 +53,7 @@ Same three as 10-05 (verified 2026-10-05 against live Amazon best-seller pages; 
    https://www.amazon.com/Best-Sellers-Kindle-Store-Budgeting-Money-Management/zgbs/digital-text/8493814011
 3. Kindle Store > Kindle eBooks > Self-Help > Motivational
    https://www.amazon.com/Best-Sellers-Kindle-Store-Motivational-Self-Help/zgbs/digital-text/156570011
-Paperback: pick the same three under Books > Self-Help / Books > Business & Money (the paperback tree mirrors these; KDP's picker shows the path).
+Paperback: choose the closest matching three in the paperback category picker (Books > Self-Help / Books > Business & Money); confirm the exact paths during setup.
 
 ==========================================================
 RULES CHECKED (2026-10-11)

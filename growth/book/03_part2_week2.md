@@ -50,7 +50,7 @@ Today, add 5 to 10 percent.
 
 If you averaged 4,000 steps, aim for 4,200 to 4,400. If you moved on purpose for 10 minutes a day, aim for 11. That's it.
 
-It sounds almost too small to bother with. That's the point. A dramatic change can leave you sore, tired, hungry, or unable to fit the plan into your day. A small increase fits. Choose one that's appropriate for you.
+It sounds almost too small to bother with. That's the point. A dramatic change can leave you sore, tired, hungry, or unable to fit the plan into your day. A small increase is easier to fit. Choose one that's appropriate for you.
 
 A few places to find the extra:
 

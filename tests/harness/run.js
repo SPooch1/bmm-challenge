@@ -335,7 +335,7 @@ const scenarios = {
     await page.click('#refresh-data');
     await sleep(1200);
     const fun = (await page.textContent('#funnel-card')).replace(/\s+/g, ' ');
-    check('dash: owner funnel card shows sign-ups, sources, drops', await page.isVisible('#funnel-card') && fun.includes('10 signed up') && fun.includes('book 4') && fun.includes('Day 1 to Day 2 (3 of 6 stopped)'), fun.slice(0, 260));
+    check('dash: owner funnel card shows sign-ups, sources, drops', await page.isVisible('#funnel-card') && fun.includes('10 signed up') && fun.includes('book 4') && fun.includes('Day 1 to Day 2 (6 to 3)'), fun.slice(0, 260));
     // detail overlay
     await page.click('#participant-rows tr');
     const detail = await page.textContent('#detail-content');

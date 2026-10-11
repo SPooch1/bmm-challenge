@@ -502,8 +502,8 @@
     drops.sort((a, b) => b.lost - a.lost);
     const top = drops.filter(x => x.lost > 0).slice(0, 3);
     document.getElementById('funnel-table').innerHTML = top.length
-      ? 'Biggest drops: ' + top.map(x => `Day ${x.d - 1} to Day ${x.d} (${x.lost} of ${x.from} stopped)`).join(' · ')
-      : 'No drop between days yet.';
+      ? 'Biggest drops in check-ins: ' + top.map(x => `Day ${x.d - 1} to Day ${x.d} (${x.from} to ${x.from - x.lost})`).join(' · ')
+      : 'No drop in check-ins between days yet.';
     card.style.display = 'block';
   }
 

@@ -76,7 +76,7 @@ Here's how that looks in each pillar:
 
 **Stress: set a cue.** Set a phone reminder or an hourly watch chime. Put a sticky note on your monitor with "4x4" on it. Decide that every time you sit down in your car, you'll do four rounds before you start the engine.
 
-For your move, write down the automation, the environment change, or the cue that will make it happen. Then set it up. Today, not tomorrow. The transfer takes five minutes to set up. "Later" is how it doesn't happen.
+For your move, write down the automation, the environment change, or the cue that will make it happen. Then set it up. Today, not tomorrow. The transfer takes a few minutes to set up. "Later" is how it doesn't happen.
 
 **Today:** For the move you started, write down and set up one thing that makes it happen without relying on motivation.
 

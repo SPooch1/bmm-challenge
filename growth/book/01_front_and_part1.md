@@ -87,7 +87,7 @@ Organizations do this too.
 
 If you've worked in a company for any length of time, you've seen it. Every quarter brings a new initiative, and every one is announced the same way: *"This isn't just for this quarter. This is our new direction."* A quarter or two later, a different initiative arrives, announced with the exact same sentence.
 
-The people saying it aren't lying. They mean it every time. That's what makes it a design problem instead of a character problem. We'll come back to organizations in Part Three.
+The people saying it aren't lying. They mean it every time. That's what makes it a design problem instead of a character problem. We'll come back to organizations in the bonus chapter at the end.
 
 For now, the question is simple: if pushing harder isn't the answer, what is?
 
