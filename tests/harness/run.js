@@ -324,6 +324,12 @@ const scenarios = {
       return out;
     });
     check('dash: devtools reads of private data are refused', Object.values(leak).every(v => v === 'permission-denied'), leak);
+    // funnel card: owner only, counts from stats/funnel/counters
+    await page.evaluate(() => { const f = window.__fake; f.put('stats/funnel/counters/signups', { n: 10 }); f.put('stats/funnel/counters/src_book', { n: 4 }); f.put('stats/funnel/counters/d0', { n: 8 }); f.put('stats/funnel/counters/d1', { n: 6 }); f.put('stats/funnel/counters/d2', { n: 3 }); f.put('stats/funnel/counters/post', { n: 1 }); });
+    await page.click('#refresh-data');
+    await sleep(1200);
+    const fun = (await page.textContent('#funnel-card')).replace(/\s+/g, ' ');
+    check('dash: owner funnel card shows sign-ups, sources, drops', await page.isVisible('#funnel-card') && fun.includes('10 signed up') && fun.includes('book 4') && fun.includes('Day 1 to Day 2 (3 of 6 stopped)'), fun.slice(0, 260));
     // detail overlay
     await page.click('#participant-rows tr');
     const detail = await page.textContent('#detail-content');
@@ -406,6 +412,7 @@ const scenarios = {
     check('dashhr: roster shown', (await page.$$eval('#participant-rows tr', r => r.length)) === 4);
     check('dashhr: avg stress card hidden', !(await page.isVisible('#m-avg-stress')));
     check('dashhr: assessments tab hidden', !(await page.isVisible('.tab-btn[data-tab="assessments"]')));
+    check('dashhr: funnel card hidden', !(await page.isVisible('#funnel-card')));
     const aggTry = await page.evaluate(async () => { const out = []; for (const b of ['d1', 'pre', 'savings']) { try { await db.collection('companies').doc('acme').collection('aggregates').doc(b).get(); out.push('READ'); } catch (e) { out.push(e.code); } } return out; });
     check('dashhr: devtools aggregate reads refused', aggTry.every(x => x === 'permission-denied'), aggTry);
     await page.click('.tab-btn[data-tab="invite"]');

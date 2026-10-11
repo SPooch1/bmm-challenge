@@ -91,6 +91,9 @@
       } catch (invErr) {
         console.warn('Could not load invite codes:', invErr);
       }
+      if (isProgramOwner()) {
+        try { renderFunnel(await Funnel.readAll()); } catch (fErr) { console.warn('Could not load funnel counts:', fErr); }
+      }
     } catch (err) {
       console.error('Dashboard auth error:', err);
       errorEl.textContent = 'Error loading dashboard: ' + err.message;
@@ -374,6 +377,46 @@
     }).join('');
   }
 
+  // ---- Where people stop (program owner): sign-ups, sources, first check-in per day ----
+  function renderFunnel(counts) {
+    const card = document.getElementById('funnel-card');
+    if (!card) return;
+    counts = counts || {};
+    const signups = counts.signups || 0;
+    const sources = Object.keys(counts).filter(k => k.startsWith('src_') && counts[k] > 0)
+      .sort((a, b) => counts[b] - counts[a]).map(k => k.slice(4) + ' ' + counts[k]);
+    const days = [];
+    for (let d = 0; d <= 21; d++) days.push(counts['d' + d] || 0);
+    const post = counts.post || 0;
+    const summary = document.getElementById('funnel-summary');
+    if (signups === 0 && days.every(n => n === 0)) {
+      summary.textContent = 'No counts yet. They start with the first sign-up or check-in after this release.';
+      document.getElementById('funnel-chart').innerHTML = '';
+      document.getElementById('funnel-table').innerHTML = '';
+      card.style.display = 'block';
+      return;
+    }
+    summary.innerHTML = `<strong style="color:var(--text);">${signups}</strong> signed up` +
+      (sources.length ? ` (by source: ${escapeHtml(sources.join(', '))})` : '') +
+      ` · <strong style="color:var(--text);">${days[0]}</strong> logged Day 0 · <strong style="color:var(--text);">${days[21]}</strong> logged Day 21 · <strong style="color:var(--text);">${post}</strong> finished the Day 21 survey`;
+    const base = Math.max(signups, ...days, 1);
+    document.getElementById('funnel-chart').innerHTML = days.map((n, d) => {
+      const h = Math.max(4, (n / base) * 100);
+      const pct = Math.round((n / base) * 100);
+      const color = pct >= 70 ? 'var(--green)' : pct >= 40 ? 'var(--gold)' : pct > 0 ? 'var(--red)' : 'var(--border)';
+      return `<div style="flex:1;height:${h}%;background:${color};border-radius:2px 2px 0 0;min-height:4px;" title="Day ${d}: ${n} of ${base} (${pct}%)"></div>`;
+    }).join('');
+    // Biggest single-day drops, so the problem days are named, not guessed
+    const drops = [];
+    for (let d = 1; d <= 21; d++) if (days[d - 1] > 0) drops.push({ d, lost: days[d - 1] - days[d], from: days[d - 1] });
+    drops.sort((a, b) => b.lost - a.lost);
+    const top = drops.filter(x => x.lost > 0).slice(0, 3);
+    document.getElementById('funnel-table').innerHTML = top.length
+      ? 'Biggest drops: ' + top.map(x => `Day ${x.d - 1} to Day ${x.d} (${x.lost} of ${x.from} stopped)`).join(' · ')
+      : 'No drop between days yet.';
+    card.style.display = 'block';
+  }
+
   function renderEngagementChart() {
     const container = document.getElementById('engagement-chart');
     const total = participants.length;
@@ -549,6 +592,7 @@
     btn.disabled = true;
     btn.textContent = '...';
     await loadParticipants();
+    if (isProgramOwner()) { try { renderFunnel(await Funnel.readAll()); } catch (e) { console.warn('Could not load funnel counts:', e); } }
     btn.textContent = '↻';
     btn.disabled = false;
   });

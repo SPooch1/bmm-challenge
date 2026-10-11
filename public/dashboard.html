@@ -148,6 +148,18 @@
         <div id="post-note" style="display:none;font-size:0.7rem;color:var(--slate);margin-top:6px;">Bar = share of graduates active 3+ days that week (a check-in, the health action, or a breathing session). Complete weeks only. Engagement only, never stress, notes, or dollars.</div>
       </div>
 
+      <!-- Where people stop: all app users, counts only (program owner only) -->
+      <div class="card" id="funnel-card" style="display:none;">
+        <h3>Where people stop (all app users)</h3>
+        <div id="funnel-summary" style="font-size:0.9rem;margin-top:6px;color:var(--slate);"></div>
+        <div id="funnel-chart" style="display:flex;align-items:flex-end;gap:2px;height:90px;margin-top:12px;border-bottom:1px solid var(--border);"></div>
+        <div style="display:flex;justify-content:space-between;font-size:0.65rem;color:var(--slate);margin-top:4px;">
+          <span>Day 0</span><span>Day 21</span>
+        </div>
+        <div id="funnel-table" style="margin-top:10px;font-size:0.8rem;"></div>
+        <div style="font-size:0.7rem;color:var(--slate);margin-top:8px;">Bar = people who logged that day at least once, as a share of sign-ups. Everyone who uses the app, individuals and every cohort. Counts only; nothing per person. Counting started with the October 2026 release, so earlier sign-ups are not included.</div>
+      </div>
+
       <!-- Tabs -->
       <div class="tab-bar">
         <button class="tab-btn active" data-tab="participants">Participants</button>
@@ -246,6 +258,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="/js/firebase-config.js"></script>
   <script src="/js/aggregates.js"></script>
+  <script src="/js/funnel.js"></script>
   <script src="/js/admin.js"></script>
 </body>
 </html>
