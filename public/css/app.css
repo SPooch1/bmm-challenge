@@ -905,3 +905,7 @@ body.dark .milestone-card { background: rgba(245,158,11,0.12); }
 .roadmap-card .rm-earlier li { margin-bottom: 6px; }
 .roadmap-card .rm-done-mark { color: var(--green); font-weight: 700; }
 .roadmap-card a.btn { text-decoration: none; text-align: center; display: block; }
+
+/* Comeback card (missed days) */
+.comeback-card { border-left: 4px solid var(--amber); }
+.comeback-card h3 { margin: 0; }

@@ -171,6 +171,16 @@
           <button class="btn btn-outline" id="share-btn" style="padding:6px 14px;font-size:0.75rem;display:none;">Share</button>
         </div>
 
+        <!-- Comeback card: shown when days were missed (app.js) -->
+        <div id="comeback-card" class="card comeback-card" style="display:none;">
+          <h3 id="comeback-title">Welcome back</h3>
+          <p id="comeback-text" style="margin-top:6px;font-size:0.9rem;"></p>
+          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+            <button type="button" class="btn btn-primary" id="comeback-today" style="flex:1;">Start with today</button>
+            <button type="button" class="btn btn-outline" id="comeback-log" style="flex:1;display:none;"></button>
+          </div>
+        </div>
+
         <!-- Bitsy daily line -->
         <div id="bitsy-line" class="bitsy-line" style="display:none;">
           <img src="/icons/bitsy.png" alt="Bitsy" class="bitsy-avatar">

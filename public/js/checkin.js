@@ -5,6 +5,11 @@ const Checkin = (() => {
   const submitBtn = document.getElementById('checkin-submit');
   const actionRow = document.getElementById('checkin-action-row');
   const actionLabel = document.getElementById('checkin-action-label');
+  // Days that already have a saved log this session (first save of a day is what
+  // the comeback card and the owner's funnel counts care about).
+  const logged = {};
+  let onSaved = () => {};
+  let loadedDay = null;
 
   // Health action (locked in on Days 17-21) shows as one extra checkbox on the
   // daily check-in so the streak starts before the challenge ends.
@@ -21,6 +26,8 @@ const Checkin = (() => {
   async function loadCheckin(uid, day) {
     // Shell (engagement) + owner-only private subdoc, merged (privacy.js)
     const data = await Privacy.loadDailyLog(uid, day);
+    loadedDay = day;
+    if (data) logged[String(day)] = true;
     if (data) {
       document.getElementById('checkin-action').checked = data.action || false;
       document.getElementById('checkin-completed').checked = data.completed || false;
@@ -31,7 +38,7 @@ const Checkin = (() => {
       document.getElementById('checkin-meal').checked = data.meal || false;
       document.getElementById('checkin-notes').value = data.notes || '';
       submitBtn.textContent = 'Update Check-in';
-      clearDraft();
+      clearDraft(day);
     } else {
       document.getElementById('checkin-action').checked = false;
       document.getElementById('checkin-completed').checked = false;
@@ -41,9 +48,9 @@ const Checkin = (() => {
       document.getElementById('checkin-breathing').checked = false;
       document.getElementById('checkin-meal').checked = false;
       document.getElementById('checkin-notes').value = '';
-      submitBtn.textContent = 'Save Check-in';
+      submitBtn.textContent = day === Challenge.calculateCurrentDay(Auth.getUser() && Auth.getUser().challengeStartDate) ? 'Save Check-in' : 'Log Day ' + day;
       // Try loading draft if no saved data
-      loadDraft();
+      loadDraft(day);
     }
     // Sync slider value displays
     document.getElementById('stress-val').textContent = document.getElementById('checkin-stress').value;
@@ -69,11 +76,16 @@ const Checkin = (() => {
     await Privacy.saveDailyLog(uid, day, data);
     Aggregates.record(Aggregates.dayBucket(day), { ['d' + day]: data.stress });
 
+    const firstSave = !logged[String(day)];
+    logged[String(day)] = true;
     savedMsg.style.display = 'block';
     submitBtn.textContent = 'Update Check-in';
     showConfetti();
     setTimeout(() => { savedMsg.style.display = 'none'; }, 3000);
+    try { onSaved(day, firstSave, data); } catch (e) { console.warn('onSaved hook failed', e); }
   }
+
+  function hasLog(day) { return !!logged[String(day)]; }
 
   function showConfetti() {
     const container = document.createElement('div');
@@ -94,7 +106,8 @@ const Checkin = (() => {
     setTimeout(() => container.remove(), 3000);
   }
 
-  // Auto-save draft to localStorage
+  // Auto-save draft to localStorage, one draft per challenge day
+  const draftKey = day => 'checkinDraft:' + (day == null ? loadedDay : day);
   function saveDraft() {
     const draft = {
       completed: document.getElementById('checkin-completed').checked,
@@ -106,11 +119,12 @@ const Checkin = (() => {
       meal: document.getElementById('checkin-meal').checked,
       notes: document.getElementById('checkin-notes').value
     };
-    localStorage.setItem('checkinDraft', JSON.stringify(draft));
+    try { localStorage.setItem(draftKey(), JSON.stringify(draft)); } catch (e) { /* storage unavailable */ }
   }
 
-  function loadDraft() {
-    const raw = localStorage.getItem('checkinDraft');
+  function loadDraft(day) {
+    let raw = null;
+    try { raw = localStorage.getItem(draftKey(day)); } catch (e) { /* storage unavailable */ }
     if (!raw) return;
     try {
       const d = JSON.parse(raw);
@@ -127,11 +141,12 @@ const Checkin = (() => {
     } catch (e) { /* ignore bad draft */ }
   }
 
-  function clearDraft() {
-    localStorage.removeItem('checkinDraft');
+  function clearDraft(day) {
+    try { localStorage.removeItem(draftKey(day)); } catch (e) { /* storage unavailable */ }
   }
 
-  function init(getUid, getCurrentDay) {
+  function init(getUid, getCurrentDay, savedHook) {
+    if (typeof savedHook === 'function') onSaved = savedHook;
     // Auto-save on any input change
     ['checkin-completed', 'checkin-action', 'checkin-stress', 'checkin-sleep', 'checkin-steps', 'checkin-breathing', 'checkin-meal', 'checkin-notes'].forEach(id => {
       const el = document.getElementById(id);
@@ -143,8 +158,9 @@ const Checkin = (() => {
       e.preventDefault();
       submitBtn.disabled = true;
       try {
-        await saveCheckin(getUid(), getCurrentDay());
-        clearDraft();
+        const day = getCurrentDay();
+        await saveCheckin(getUid(), day);
+        clearDraft(day);
       } catch (err) {
         console.error('Failed to save check-in:', err);
         savedMsg.textContent = 'Save failed. Check your connection and try again.';
@@ -156,5 +172,5 @@ const Checkin = (() => {
     });
   }
 
-  return { loadCheckin, saveCheckin, init, setHealthAction, showConfetti };
+  return { loadCheckin, saveCheckin, init, setHealthAction, showConfetti, hasLog };
 })();

@@ -102,10 +102,13 @@ function showToast(message) {
   let currentProgressOpts = null;
   let currentChallengeDay = 0;
 
-  // Initialize check-in form
+  // Initialize check-in form. The saved hook refreshes the streak/comeback state
+  // without a reload (Progress re-reads the logs).
+  let afterCheckinSaved = () => {};
   Checkin.init(
     () => Auth.getUid(),
-    () => Challenge.getCurrentDay()
+    () => Challenge.getCurrentDay(),
+    (day, firstSave, data) => afterCheckinSaved(day, firstSave, data)
   );
 
   // Auth state listener
@@ -235,6 +238,8 @@ function showToast(message) {
     function renderDay(d) {
       Challenge.renderToday(d);
       Margin.renderCapture(d, { marginMode });
+      const exTitle = document.getElementById('exercise-toggle');
+      if (exTitle && exTitle.firstChild) exTitle.firstChild.nodeValue = d === day ? "Today's Exercise " : 'Day ' + d + ' Exercise ';
     }
     renderDay(day);
     Checkin.setHealthAction(marginSettings.healthAction && day >= 17 ? marginSettings.healthAction : '');
@@ -248,36 +253,28 @@ function showToast(message) {
       prevBtn.disabled = viewingDay <= 0;
       nextBtn.disabled = viewingDay >= day;
       backLink.style.display = viewingDay !== day ? 'inline' : 'none';
-      // Hide check-in form when viewing past/future days. In Keep Your Margin
-      // mode the daily check-in lives on the margin home, so the challenge
-      // check-in stays hidden (Day 21 has already been logged or passed).
-      document.getElementById('checkin-card').style.display = (viewingDay === day && !marginMode) ? 'block' : 'none';
+      // The check-in form shows for today AND for earlier days (a missed day can
+      // be logged late; the book says a missed day barely matters, so the app
+      // lets you catch it up). In Keep Your Margin mode the daily check-in lives
+      // on the margin home, so the challenge check-in stays hidden.
+      document.getElementById('checkin-card').style.display = (viewingDay <= day && !marginMode) ? 'block' : 'none';
+      const h = document.querySelector('#checkin-card h3');
+      if (h) h.textContent = viewingDay === day ? 'Daily Check-in' : 'Day ' + viewingDay + ' Check-in';
+    }
+
+    // Move to another challenge day: render it and load that day's check-in
+    async function goToDay(d) {
+      viewingDay = d;
+      renderDay(d);
+      updateDayNav();
+      if (!marginMode) await Checkin.loadCheckin(userData.id, d);
     }
 
     // onclick assignments (not addEventListener) so a sign-out/sign-in
     // without a reload doesn't stack duplicate handlers
-    prevBtn.onclick = () => {
-      if (viewingDay > 0) {
-        viewingDay--;
-        renderDay(viewingDay);
-        updateDayNav();
-      }
-    };
-
-    nextBtn.onclick = () => {
-      if (viewingDay < day) {
-        viewingDay++;
-        renderDay(viewingDay);
-        updateDayNav();
-      }
-    };
-
-    backLink.onclick = e => {
-      e.preventDefault();
-      viewingDay = day;
-      renderDay(day);
-      updateDayNav();
-    };
+    prevBtn.onclick = () => { if (viewingDay > 0) goToDay(viewingDay - 1); };
+    nextBtn.onclick = () => { if (viewingDay < day) goToDay(viewingDay + 1); };
+    backLink.onclick = e => { e.preventDefault(); goToDay(day); };
 
     updateDayNav();
 
@@ -355,7 +352,49 @@ function showToast(message) {
       pomFunded: !!(Margin.getSettings().pomTarget && PeaceOfMind.getTotal() >= Margin.getSettings().pomTarget),
       resets: (Margin.getSettings().resets || []).length
     });
-    const progressData = await Progress.loadProgress(userData.id, day, progressOpts());
+    let progressData = await Progress.loadProgress(userData.id, day, progressOpts());
+
+    // Comeback card: a returning person who missed one or more days. The book's
+    // line (Day 19): a missed day barely matters. Say so, and offer to log the
+    // day they missed instead of pretending it didn't happen.
+    const comeback = document.getElementById('comeback-card');
+    function renderComeback() {
+      if (!comeback || marginMode || day < 1) { if (comeback) comeback.style.display = 'none'; return; }
+      const logs = progressData ? progressData.logs : {};
+      const loggedDays = Object.keys(logs).map(Number).filter(n => !isNaN(n) && n < day);
+      const missed = [];
+      for (let d = 0; d < day; d++) if (!logs[String(d)]) missed.push(d);
+      const last = loggedDays.length ? Math.max(...loggedDays) : -1;
+      const yesterdayMissed = !logs[String(day - 1)];
+      // Show only when the day before today was missed (so a steady run never sees it)
+      if (!yesterdayMissed || (missed.length === day && day < 2)) { comeback.style.display = 'none'; return; }
+      const title = document.getElementById('comeback-title');
+      const text = document.getElementById('comeback-text');
+      const logBtn = document.getElementById('comeback-log');
+      const n = missed.length;
+      if (last >= 0) {
+        title.textContent = 'Welcome back';
+        text.textContent = 'You last checked in on Day ' + last + '. ' + (n === 1 ? 'One day' : n + ' days') + ' went by without a check-in. That does not reset anything. Pick up with today, or log Day ' + (day - 1) + ' if you did it.';
+      } else {
+        title.textContent = 'Welcome back';
+        text.textContent = 'Days 0 to ' + (day - 1) + ' went by without a check-in. That is fine. Start with today. The earlier days stay here if you want them.';
+      }
+      logBtn.style.display = 'inline-flex';
+      logBtn.textContent = 'Log Day ' + (day - 1);
+      logBtn.onclick = () => goToDay(day - 1);
+      document.getElementById('comeback-today').onclick = () => {
+        comeback.style.display = 'none';
+        const ex = document.getElementById('exercise-toggle');
+        if (ex) ex.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      };
+      comeback.style.display = 'block';
+    }
+    renderComeback();
+    afterCheckinSaved = async () => {
+      progressData = await Progress.loadProgress(userData.id, day, progressOpts());
+      renderComeback();
+      renderStreak();
+    };
 
     // Cohort accounts: retry any aggregate update that failed earlier and re-check
     // the counted totals once a day (aggregates.js). Fresh reads, fire-and-forget.
@@ -383,7 +422,9 @@ function showToast(message) {
     const streakMsg = document.getElementById('streak-msg');
     const shareBtn = document.getElementById('share-btn');
 
-    if (progressData && progressData.streak > 0) {
+    function renderStreak() {
+      if (marginMode) return;
+      if (!(progressData && progressData.streak > 0)) { streakBar.style.display = 'none'; return; }
       streakBar.style.display = 'flex';
       const s = progressData.streak;
       if (s >= 21) streakMsg.textContent = '21-day streak. All 21 days checked in.';
@@ -391,8 +432,9 @@ function showToast(message) {
       else if (s >= 7) streakMsg.textContent = s + '-day streak. Two weeks is in sight.';
       else if (s >= 3) streakMsg.textContent = s + '-day streak. Building momentum.';
       else streakMsg.textContent = s + '-day streak. Keep going.';
-      if (progressData.graceUsed) streakMsg.textContent += ' 🛡️';
+      if (progressData.graceUsed) streakMsg.textContent += ' (one missed day forgiven)';
     }
+    renderStreak();
 
     // Bitsy — a warm daily line with personality
     const bitsyText = document.getElementById('bitsy-text');

@@ -182,6 +182,31 @@ const scenarios = {
     await ctx.close();
   },
 
+  async missed(browser) {
+    const { ctx, page, errors } = await open(browser, '/?seed=missed&rules=final');
+    await page.waitForSelector('#app', { state: 'visible' });
+    await sleep(1200);
+    check('missed: comeback card shown', await page.isVisible('#comeback-card'));
+    const txt = await page.textContent('#comeback-text');
+    check('missed: names the last check-in and the gap', txt.includes('Day 4') && txt.includes('3 days'), txt);
+    check('missed: no streak chip while the gap is open', !(await page.isVisible('#streak-bar')));
+    await page.click('#comeback-log');
+    await sleep(500);
+    check('missed: viewing Day 7 with its check-in form', (await page.textContent('#today-day-num')).trim() === '7' && await page.isVisible('#checkin-card') && (await page.textContent('#checkin-submit')).includes('Log Day 7'));
+    await page.check('#checkin-completed');
+    await page.click('#checkin-submit');
+    await sleep(900);
+    const l7 = await store(page, 'users/ivy/dailyLogs/7');
+    check('missed: late check-in saved to Day 7', l7 && l7.completed === true, l7);
+    check('missed: comeback card gone once the gap is closed', !(await page.isVisible('#comeback-card')));
+    await page.click('#day-back-to-today');
+    await sleep(400);
+    check('missed: back on Day 8 with the normal form', (await page.textContent('#today-day-num')).trim() === '8' && (await page.textContent('#checkin-submit')).includes('Save Check-in'));
+    check('missed: no page errors', errors.filter(e => !e.includes('ERR_TUNNEL')).length === 0, errors);
+    await page.screenshot({ path: SHOTS + '/missed.png', fullPage: true });
+    await ctx.close();
+  },
+
   async signup(browser) {
     // full cohort
     let { ctx, page, errors } = await open(browser, '/?seed=signup&rules=final&code=FULL01');

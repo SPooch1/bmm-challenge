@@ -113,6 +113,10 @@
       fake.signInAs('rae');
       break;
     }
+    case 'missed': // individual on Day 8 who stopped after Day 4 (comeback card)
+      person('ivy', { user: { challengeStartDate: ymd(-8) }, days: days(4, d => logDay(d, 5)), surveys: { pre: FULL } });
+      fake.signInAs('ivy');
+      break;
     case 'signup': // nobody signed in; one full code, one open code
       companyBase();
       fake.put('inviteCodes/FULL01', { companyId: 'acme', active: true, maxSeats: 2, seatsUsed: 2, challengeStartDate: ymd(-1) });

@@ -679,8 +679,10 @@ const Margin = (() => {
     batch.delete(userRef.collection('assessments').doc('post'));
     batch.update(userRef, { challengeStartDate: todayKey() });
     await batch.commit();
-    localStorage.removeItem('checkinDraft');
-    localStorage.removeItem('onboardingSeen');
+    try {
+      Object.keys(localStorage).filter(k => k === 'checkinDraft' || k.startsWith('checkinDraft:')).forEach(k => localStorage.removeItem(k));
+      localStorage.removeItem('onboardingSeen');
+    } catch (e) { /* storage unavailable */ }
     window.location.reload();
   }
 
