@@ -309,7 +309,22 @@ const Margin = (() => {
     const notesOpen = draft.notesOpen != null ? draft.notesOpen : !!todayLog.notes;
     renderedKey = today;
 
-    home.innerHTML = `
+    // One-time "the 21 days are done" note, Day 22 to Day 35, whatever the
+    // completion count (the old banner needed all 21 check-ins, so most people
+    // never saw any acknowledgment). States their count; no claims about results.
+    let gradHtml = '';
+    let gradSeen = null;
+    try { gradSeen = localStorage.getItem('graduatedSeen:' + startDate); } catch (e) { /* ignore */ }
+    if (!gradSeen && elapsed >= 22 && elapsed <= 35) {
+      const done = Object.keys(dailyLogs || {}).filter(k => dailyLogs[k] && dailyLogs[k].completed).length;
+      gradHtml = `<div class="card comeback-card" id="graduated-card">
+        <h3>The 21 days are done</h3>
+        <p style="font-size:0.9rem;margin-top:6px;">You checked in on ${done} of the 22 days (Day 0 through Day 21). From here the app is Keep Your Margin: one tap for your health action, a stress rating, and a five-minute check once a week. Your Peace of Mind Account, breathing timer and every day's exercise stay here.</p>
+        <button type="button" class="btn btn-outline btn-full" id="graduated-ok" style="margin-top:10px;">Got it</button>
+      </div>`;
+    }
+
+    home.innerHTML = `${gradHtml}
       <div class="card margin-hero">
         <div class="margin-eyebrow">Keep Your Margin</div>
         <h2>${heroTitle(elapsed)}</h2>
@@ -432,6 +447,12 @@ const Margin = (() => {
     if (typeof Roadmap !== 'undefined') Roadmap.render(document.getElementById('roadmap-slot'), elapsed);
 
     // wire up
+    const gradOk = document.getElementById('graduated-ok');
+    if (gradOk) gradOk.onclick = () => {
+      try { localStorage.setItem('graduatedSeen:' + startDate, '1'); } catch (e) { /* ignore */ }
+      const c = document.getElementById('graduated-card');
+      if (c) c.style.display = 'none';
+    };
     const goBreathe = document.getElementById('margin-go-breathe');
     if (goBreathe) goBreathe.onclick = () => hooks.switchView('breathing');
     const goSavings = document.getElementById('margin-go-savings');

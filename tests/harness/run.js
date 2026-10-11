@@ -131,6 +131,11 @@ const scenarios = {
     await sleep(800);
     const home = await page.textContent('#margin-home');
     check('margin30: Day 22+ home renders', home.length > 200, home.slice(0, 80));
+    const grad = await page.textContent('#graduated-card');
+    check('margin30: one-time "21 days are done" note with the count', grad.includes('22 of the 22 days'), grad.slice(0, 120));
+    await page.click('#graduated-ok');
+    await sleep(300);
+    check('margin30: note dismissed', !(await page.isVisible('#graduated-card')));
     const restart = await page.textContent('#restart-card');
     check('margin30: re-run card shown for individual', restart.includes('Run the 21 days again'));
     await page.click('.nav-item[data-view="savings"]');
