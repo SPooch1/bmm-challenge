@@ -1,6 +1,6 @@
 # Session summary, growth sprint, 2026-10-11
 
-Branch `byb-growth-2026-10`, 15 commits, all pushed. Nothing deployed, published, or sent.
+Branch `byb-growth-2026-10`, 15 commits this sprint, all pushed. Nothing deployed, published, or sent.
 
 ## What changed
 
