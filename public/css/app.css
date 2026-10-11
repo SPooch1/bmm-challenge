@@ -810,3 +810,85 @@ body.dark .savings-ring-center .savings-amount { color: var(--text); }
   color: var(--text-light);
   font-size: 0.875rem;
 }
+
+/* ===== Keep Your Margin (Day 22+) ===== */
+.margin-hero {
+  background: linear-gradient(135deg, var(--navy), var(--navy-light));
+  color: var(--white);
+}
+.margin-hero h2 { color: #fff; margin: 4px 0 0; }
+.margin-eyebrow {
+  font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.2px;
+  color: var(--sky); font-weight: 700;
+}
+.margin-hero .bitsy-line div { color: #fff; }
+.margin-tiles .stat-card { position: relative; padding-bottom: 22px; }
+.tile-delta {
+  display: block; font-size: 0.65rem; color: var(--slate); margin-top: 4px; line-height: 1.2;
+}
+.tile-delta.good { color: var(--green); font-weight: 600; }
+.tile-delta.bad { color: var(--amber-dark); font-weight: 600; }
+.action-row { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+.action-toggle {
+  border: 2px solid var(--border); background: var(--bg); color: var(--text);
+  border-radius: 999px; padding: 12px 16px; font-weight: 700; font-size: 0.85rem;
+  cursor: pointer; min-width: 120px; transition: all 0.2s; font-family: var(--font);
+}
+.action-toggle.on { background: var(--green); border-color: var(--green); color: #fff; }
+.quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.quick-btn {
+  background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 14px 12px; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  cursor: pointer; font-family: var(--font); color: var(--text); box-shadow: var(--shadow);
+  font-weight: 600; font-size: 0.9rem;
+}
+.quick-btn small { color: var(--slate); font-weight: 500; font-size: 0.7rem; }
+.quick-icon {
+  width: 36px; height: 36px; border-radius: 50%; background: var(--sky-soft); color: var(--sky-dark);
+  display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; margin-bottom: 4px;
+}
+.week-table { margin-top: 8px; }
+.week-head, .week-row {
+  display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 8px; align-items: center;
+  padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem;
+}
+.week-head { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--slate); }
+.week-row:last-child { border-bottom: none; }
+.milestone-card { border: 1px solid var(--amber); background: var(--amber-soft); }
+body.dark .milestone-card { background: rgba(245,158,11,0.12); }
+.reset-quote {
+  margin: 10px 0 14px; padding: 10px 14px; border-left: 3px solid var(--amber);
+  background: var(--bg); border-radius: 0 var(--radius) var(--radius) 0; font-size: 0.9rem; white-space: pre-wrap;
+}
+.capture-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sky-dark); font-weight: 700; margin-bottom: 6px; }
+.capture-msg { font-size: 0.75rem; color: var(--slate); margin-top: 6px; min-height: 1em; }
+#exercise-capture { margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--border); }
+.chip-row { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; margin-top: 6px; }
+.chip {
+  width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg);
+  color: var(--text); font-size: 0.75rem; font-weight: 600; cursor: pointer; font-family: var(--font);
+}
+.chip.on { background: var(--green); border-color: var(--green); color: #fff; }
+.chip-note { font-size: 0.75rem; color: var(--green); font-weight: 600; margin-top: 6px; min-height: 1em; }
+.breath-rate { margin-top: 12px; font-size: 0.8rem; color: var(--slate); }
+.ms-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; color: var(--slate); }
+.ms-row.hit { color: var(--text); }
+.ms-dot {
+  width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: #fff; flex-shrink: 0;
+}
+.ms-row.hit .ms-dot { background: var(--green); border-color: var(--green); }
+.dot-row { display: flex; gap: 4px; flex-wrap: wrap; }
+.dot { width: 12px; height: 12px; border-radius: 50%; background: var(--border); display: inline-block; }
+.dot.on { background: var(--green); }
+/* Flex rows with an input + buttons: let the input shrink so nothing overflows at 375px */
+.card input[type="number"], .card input[type="text"] { min-width: 0; }
+.savings-display .form-group .btn, #exercise-capture .btn, #savings-target-form .btn, #margin-checkin-card .btn-primary:not(.btn-full) { padding-left: 14px; padding-right: 14px; white-space: nowrap; }
+
+/* Hard day version (every challenge day) */
+.hardday-line { margin-top: 8px; padding: 8px 10px; font-size: 0.85rem; color: var(--navy); background: var(--amber-soft); border-left: 3px solid var(--amber); border-radius: 6px; }
+
+/* Weekly check (Keep Your Margin) */
+.wc-last { font-size: 0.85rem; color: var(--slate); margin-top: 6px; }
+.wc-steps { margin: 10px 0 12px 18px; padding: 0; font-size: 0.9rem; }
+.wc-steps li { margin-bottom: 10px; }

@@ -36,13 +36,28 @@ const Challenge = (() => {
       });
   }
 
-  function calculateCurrentDay(startDate) {
+  // Days elapsed since the start date, uncapped. Day 22+ = Keep Your Margin mode.
+  function calculateElapsedDay(startDate) {
     if (!startDate) return 0;
-    const start = new Date(startDate + 'T00:00:00');
+    // Calendar days, not elapsed hours: build UTC ordinals from the LOCAL
+    // y/m/d so a DST change (23- or 25-hour day) never shifts the count.
+    const p = String(startDate).split('-').map(Number);
+    if (p.length !== 3 || p.some(isNaN)) return 0;
+    const startOrd = Date.UTC(p[0], p[1] - 1, p[2]);
     const now = new Date();
-    now.setHours(0, 0, 0, 0);
-    const diff = Math.floor((now - start) / (1000 * 60 * 60 * 24));
-    return Math.max(0, Math.min(diff, 21));
+    const nowOrd = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+    const diff = Math.round((nowOrd - startOrd) / 86400000);
+    return Math.max(0, diff);
+  }
+
+  // Challenge day (0-21). Everything keyed by challenge day (dailyLogs, content,
+  // completion %) uses this; the uncapped value drives Keep Your Margin.
+  function calculateCurrentDay(startDate) {
+    return Math.min(calculateElapsedDay(startDate), 21);
+  }
+
+  function isMarginMode(startDate) {
+    return calculateElapsedDay(startDate) > 21;
   }
 
   function getDayData(dayNum) {
@@ -59,6 +74,12 @@ const Challenge = (() => {
     document.getElementById('today-phase').textContent = data.phase;
     document.getElementById('today-exercise').textContent = data.exercise;
     document.getElementById('today-description').textContent = data.description;
+    const hard = document.getElementById('today-hardday');
+    if (hard) {
+      hard.innerHTML = data.hardDay ? '<strong>Hard day version:</strong> ' : '';
+      if (data.hardDay) hard.appendChild(document.createTextNode(data.hardDay));
+      hard.style.display = data.hardDay ? 'block' : 'none';
+    }
 
     // Pillar badge
     const badge = document.getElementById('today-pillar-badge');
@@ -115,5 +136,5 @@ const Challenge = (() => {
   function getCurrentDay() { return currentDay; }
   function getAllDays() { return daysData; }
 
-  return { loadDays, calculateCurrentDay, getDayData, renderToday, getCurrentDay, getAllDays };
+  return { loadDays, calculateCurrentDay, calculateElapsedDay, isMarginMode, getDayData, renderToday, getCurrentDay, getAllDays };
 })();

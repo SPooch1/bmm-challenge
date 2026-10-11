@@ -44,16 +44,40 @@ service cloud.firestore {
         && isCompanyAdmin(get(/databases/$(database)/documents/users/$(userId)).data.companyId);
     }
 
+    // Keep Your Margin data (Day 22+): OWNER ONLY. No admin branch on purpose:
+    // the health action, Peace of Mind number, post-challenge stress/notes and
+    // breathing before/after ratings are personal wellness data.
+    match /users/{userId}/private/{doc} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    match /users/{userId}/marginLogs/{date} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    match /users/{userId}/breathSessions/{sessionId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Engagement summary (dates only: active days, action days, breathing days
+    // per week). Owner writes; company admin may read, same as dailyLogs. This is
+    // the post-Day-21 "still active" measure on the cohort dashboard.
+    match /users/{userId}/engagement/{doc} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null
+        && get(/databases/$(database)/documents/users/$(userId)).data.companyId != null
+        && isCompanyAdmin(get(/databases/$(database)/documents/users/$(userId)).data.companyId);
+    }
+
     // Companies: admin of that company
     match /companies/{companyId} {
       allow read, write: if request.auth != null && isCompanyAdmin(companyId);
     }
 
-    // Invite codes: PUBLIC read (validated at sign-up before the user is authenticated;
-    // codes are meant to be shared and only expose {companyId, active, start, seats}).
+    // Invite codes: PUBLIC get (validated at sign-up before the user is authenticated).
+    // Listing is denied so nobody can enumerate client/cohort codes.
     // Writes remain admin-only.
     match /inviteCodes/{code} {
-      allow read: if true;
+      allow get: if true;
+      allow list: if false;
       allow write: if request.auth != null
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }

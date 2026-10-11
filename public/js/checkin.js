@@ -3,11 +3,26 @@ const Checkin = (() => {
   const form = document.getElementById('checkin-form');
   const savedMsg = document.getElementById('checkin-saved');
   const submitBtn = document.getElementById('checkin-submit');
+  const actionRow = document.getElementById('checkin-action-row');
+  const actionLabel = document.getElementById('checkin-action-label');
+
+  // Health action (locked in on Days 17-21) shows as one extra checkbox on the
+  // daily check-in so the streak starts before the challenge ends.
+  function setHealthAction(text) {
+    if (!actionRow) return;
+    if (text) {
+      actionRow.style.display = 'flex';
+      actionLabel.textContent = 'My health action: ' + text;
+    } else {
+      actionRow.style.display = 'none';
+    }
+  }
 
   async function loadCheckin(uid, day) {
     const doc = await db.collection('users').doc(uid).collection('dailyLogs').doc(String(day)).get();
     if (doc.exists) {
       const data = doc.data();
+      document.getElementById('checkin-action').checked = data.action || false;
       document.getElementById('checkin-completed').checked = data.completed || false;
       document.getElementById('checkin-stress').value = data.stress || 5;
       document.getElementById('checkin-sleep').value = data.sleep || 5;
@@ -18,6 +33,7 @@ const Checkin = (() => {
       submitBtn.textContent = 'Update Check-in';
       clearDraft();
     } else {
+      document.getElementById('checkin-action').checked = false;
       document.getElementById('checkin-completed').checked = false;
       document.getElementById('checkin-stress').value = 5;
       document.getElementById('checkin-sleep').value = 5;
@@ -38,6 +54,7 @@ const Checkin = (() => {
   async function saveCheckin(uid, day) {
     const data = {
       completed: document.getElementById('checkin-completed').checked,
+      action: document.getElementById('checkin-action').checked,
       stress: parseInt(document.getElementById('checkin-stress').value),
       sleep: parseInt(document.getElementById('checkin-sleep').value),
       steps: parseInt(document.getElementById('checkin-steps').value) || 0,
@@ -78,6 +95,7 @@ const Checkin = (() => {
   function saveDraft() {
     const draft = {
       completed: document.getElementById('checkin-completed').checked,
+      action: document.getElementById('checkin-action').checked,
       stress: document.getElementById('checkin-stress').value,
       sleep: document.getElementById('checkin-sleep').value,
       steps: document.getElementById('checkin-steps').value,
@@ -94,6 +112,7 @@ const Checkin = (() => {
     try {
       const d = JSON.parse(raw);
       document.getElementById('checkin-completed').checked = d.completed || false;
+      document.getElementById('checkin-action').checked = d.action || false;
       document.getElementById('checkin-stress').value = d.stress || 5;
       document.getElementById('checkin-sleep').value = d.sleep || 5;
       document.getElementById('checkin-steps').value = d.steps || '';
@@ -111,7 +130,7 @@ const Checkin = (() => {
 
   function init(getUid, getCurrentDay) {
     // Auto-save on any input change
-    ['checkin-completed', 'checkin-stress', 'checkin-sleep', 'checkin-steps', 'checkin-breathing', 'checkin-meal', 'checkin-notes'].forEach(id => {
+    ['checkin-completed', 'checkin-action', 'checkin-stress', 'checkin-sleep', 'checkin-steps', 'checkin-breathing', 'checkin-meal', 'checkin-notes'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.addEventListener('input', saveDraft);
       if (el) el.addEventListener('change', saveDraft);
@@ -134,5 +153,5 @@ const Checkin = (() => {
     });
   }
 
-  return { loadCheckin, saveCheckin, init };
+  return { loadCheckin, saveCheckin, init, setHealthAction, showConfetti };
 })();

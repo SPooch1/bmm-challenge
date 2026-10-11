@@ -129,27 +129,61 @@
   }
 
   async function loadParticipantLogs(participant) {
-    const logs = await db.collection('users').doc(participant.id)
-      .collection('dailyLogs').get();
+    const userRef = db.collection('users').doc(participant.id);
+    const [logs, engDoc] = await Promise.all([
+      userRef.collection('dailyLogs').get(),
+      // Post-Day-21 engagement summary (dates only). Missing doc = no activity yet.
+      userRef.collection('engagement').doc('weekly').get().catch(() => null)
+    ]);
     participant.logs = {};
     logs.forEach(doc => { participant.logs[doc.id] = doc.data(); });
+    participant.engagementWeeks = (engDoc && engDoc.exists && engDoc.data() && engDoc.data().weeks) || {};
 
     // Calculate stats
     const completedDays = Object.values(participant.logs).filter(l => l.completed).length;
-    const today = new Date().toISOString().split('T')[0];
+    // Same local-midnight day math as challenge.js calculateCurrentDay — the old
+    // UTC version put an evening-US admin a day ahead of the participant app.
     const startDate = participant.challengeStartDate;
-    const currentDay = startDate ? Math.max(0, Math.min(21, Math.floor((new Date(today) - new Date(startDate)) / 86400000))) : 0;
+    let currentDay = 0;
+    let elapsedDays = 0;
+    if (startDate) {
+      // Calendar-day arithmetic (UTC ordinals from local y/m/d) so DST never
+      // shifts the day; identical to challenge.js calculateElapsedDay.
+      const p = String(startDate).split('-').map(Number);
+      const now = new Date();
+      if (p.length === 3 && !p.some(isNaN)) {
+        const diff = Math.round((Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) - Date.UTC(p[0], p[1] - 1, p[2])) / 86400000);
+        elapsedDays = Math.max(0, diff);
+        currentDay = Math.min(21, elapsedDays);
+      }
+    }
 
     participant.currentDay = currentDay;
+    participant.elapsedDays = elapsedDays; // uncapped: > 21 = past the challenge
     participant.completedDays = completedDays;
-    participant.completionPct = currentDay > 0 ? Math.round((completedDays / currentDay) * 100) : 0;
+    // Day 0 is completable: denominator = days elapsed (currentDay + 1), capped at
+    // the 22 total days, clamped so it can never exceed 100%. Matches progress.js.
+    participant.completionPct = Math.min(100, Math.round((completedDays / Math.min(currentDay + 1, 22)) * 100));
 
-    // Streak
+    // Streak — same forgiving algorithm as the participant side (progress.js):
+    // today-not-yet-checked-in costs nothing, and one missed day of grace keeps
+    // the streak alive, so admin and participant always show the same number.
     let streak = 0;
+    let graceUsed = false;
     for (let d = currentDay; d >= 0; d--) {
-      if (participant.logs[String(d)] && participant.logs[String(d)].completed) {
+      const done = participant.logs[String(d)] && participant.logs[String(d)].completed;
+      if (done) {
         streak++;
-      } else if (d < currentDay) { break; }
+      } else if (d === currentDay) {
+        // Today not checked in yet — no penalty
+        continue;
+      } else if (!graceUsed) {
+        // Forgive a single missed day and keep the streak alive
+        graceUsed = true;
+        continue;
+      } else {
+        break;
+      }
     }
     participant.streak = streak;
 
@@ -176,12 +210,18 @@
       return todayLog && todayLog.completed;
     }).length;
 
-    const avgStress = total > 0
-      ? (participants.reduce((sum, p) => {
-          const stressVals = Object.values(p.logs).map(l => l.stress).filter(Boolean);
-          return sum + (stressVals.length > 0 ? stressVals.reduce((a, b) => a + b, 0) / stressVals.length : 0);
-        }, 0) / total).toFixed(1)
-      : '-';
+    // Average stress across participants who actually logged stress — counting
+    // no-data participants as 0 understated the average (and disagreed with the
+    // HR report's pooled calculation).
+    const perPersonStress = participants
+      .map(p => {
+        const stressVals = Object.values(p.logs).map(l => l.stress).filter(Boolean);
+        return stressVals.length > 0 ? stressVals.reduce((a, b) => a + b, 0) / stressVals.length : null;
+      })
+      .filter(v => v != null);
+    const avgStress = perPersonStress.length > 0
+      ? (perPersonStress.reduce((a, b) => a + b, 0) / perPersonStress.length).toFixed(1)
+      : '—';
 
     const avgCompletion = total > 0
       ? Math.round(participants.reduce((sum, p) => sum + p.completionPct, 0) / total)
@@ -197,12 +237,94 @@
     // Engagement chart
     renderEngagementChart();
 
+    // After Day 21: still active?
+    renderPostChallenge();
+
     // At-risk indicator
     const atRiskEl = document.getElementById('m-at-risk');
     if (atRiskEl) {
       atRiskEl.textContent = atRisk;
       atRiskEl.style.color = atRisk > 0 ? 'var(--red)' : 'var(--green)';
     }
+  }
+
+  // ---- After Day 21: share of graduates active 3+ days a week ----
+  const ACTIVE_DAYS_PER_WEEK = 3;
+  const ordinal = k => { const p = String(k).split('-').map(Number); return Date.UTC(p[0], p[1] - 1, p[2]); };
+  const keyFromOrdinal = o => new Date(o).toISOString().slice(0, 10);
+  const mondayOf = k => keyFromOrdinal(ordinal(k) - (((new Date(ordinal(k)).getUTCDay() + 6) % 7) * 86400000));
+
+  // Per graduate: complete post-Day-21 calendar weeks (Mon-Sun) with active-day
+  // counts, indexed week 1, 2, 3... from the first Monday on or after Day 22.
+  function postChallengeStats() {
+    const now = new Date();
+    const todayOrd = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+    const graduates = participants.filter(p => p.elapsedDays > 21 && p.challengeStartDate);
+    const perPerson = graduates.map(p => {
+      const day22 = keyFromOrdinal(ordinal(p.challengeStartDate) + 22 * 86400000);
+      const firstMonday = mondayOf(day22) < day22 ? keyFromOrdinal(ordinal(mondayOf(day22)) + 7 * 86400000) : mondayOf(day22);
+      const weeks = [];
+      for (let n = 0; n < 1040; n++) { // every complete week to date (20-year safety cap)
+        const monOrd = ordinal(firstMonday) + n * 7 * 86400000;
+        if (monOrd + 7 * 86400000 > todayOrd) break; // week not complete yet
+        const monKey = keyFromOrdinal(monOrd);
+        const w = p.engagementWeeks[monKey];
+        // Count only well-formed dates that fall inside this week with value === true;
+        // the doc is participant-written, so anything else is ignored.
+        const days = (w && w.days && typeof w.days === 'object') ? w.days : {};
+        const activeDays = Object.keys(days).filter(k => /^\d{4}-\d{2}-\d{2}$/.test(k) && days[k] === true
+          && ordinal(k) >= monOrd && ordinal(k) < monOrd + 7 * 86400000).length;
+        weeks.push({ n: n + 1, activeDays });
+      }
+      return { p, weeks };
+    });
+    return { graduates: graduates.length, perPerson };
+  }
+
+  function renderPostChallenge() {
+    const headline = document.getElementById('post-headline');
+    const chart = document.getElementById('post-chart');
+    const labels = document.getElementById('post-chart-labels');
+    const note = document.getElementById('post-note');
+    if (!headline) return;
+    const stats = postChallengeStats();
+    participants.postStats = stats;
+    if (stats.graduates === 0) {
+      headline.textContent = 'No one has passed Day 21 yet.';
+      chart.style.display = 'none'; labels.style.display = 'none'; note.style.display = 'none';
+      return;
+    }
+    const measured = stats.perPerson.filter(x => x.weeks.length > 0);
+    if (measured.length === 0) {
+      headline.textContent = stats.graduates + ' past Day 21. The first full week after the challenge is not complete yet.';
+      chart.style.display = 'none'; labels.style.display = 'none'; note.style.display = 'none';
+      return;
+    }
+    // Headline: average active days over each person's last 4 complete weeks
+    const stillActive = measured.filter(x => {
+      const recent = x.weeks.slice(-4);
+      const avg = recent.reduce((s, w) => s + w.activeDays, 0) / recent.length;
+      return avg >= ACTIVE_DAYS_PER_WEEK;
+    }).length;
+    const pct = Math.round((stillActive / measured.length) * 100);
+    headline.innerHTML = `<strong style="font-size:1.4rem;color:var(--text);">${pct}%</strong> of the ${measured.length} past Day 21 are active ${ACTIVE_DAYS_PER_WEEK}+ days a week (last up to 4 complete weeks)` +
+      (stats.graduates > measured.length ? ` · ${stats.graduates - measured.length} more awaiting their first complete post-challenge week` : '');
+
+    // Curve: week n after Day 21 → share of those who completed week n and were active 3+ days
+    const maxWeeks = Math.min(12, Math.max(...measured.map(x => x.weeks.length)));
+    const bars = [];
+    for (let n = 1; n <= maxWeeks; n++) {
+      const eligible = measured.filter(x => x.weeks.length >= n);
+      const active = eligible.filter(x => x.weeks[n - 1].activeDays >= ACTIVE_DAYS_PER_WEEK).length;
+      bars.push({ n, pct: eligible.length ? Math.round((active / eligible.length) * 100) : 0, active, eligible: eligible.length });
+    }
+    chart.style.display = 'flex'; labels.style.display = 'flex'; note.style.display = 'block';
+    document.getElementById('post-chart-last').textContent = 'Week ' + maxWeeks;
+    chart.innerHTML = bars.map(b => {
+      const h = Math.max(4, b.pct);
+      const color = b.pct >= 70 ? 'var(--green)' : b.pct >= 40 ? 'var(--gold)' : b.pct > 0 ? 'var(--red)' : 'var(--border)';
+      return `<div style="flex:1;height:${h}%;background:${color};border-radius:2px 2px 0 0;min-height:4px;" title="Week ${b.n} after Day 21: ${b.active}/${b.eligible} active ${ACTIVE_DAYS_PER_WEEK}+ days (${b.pct}%)"></div>`;
+    }).join('');
   }
 
   function renderEngagementChart() {
@@ -424,41 +546,62 @@
     overlay.style.display = 'flex';
   }
 
+  // Assessment areas — shared by the Assessments tab and the printed HR report.
+  // Includes the Real Retirement Readiness pillars (12-Month Roadmap baseline).
+  const ASSESSMENT_QUESTIONS = [
+    { id: 'stress', label: 'Stress', inverse: true },
+    { id: 'sleep', label: 'Sleep' },
+    { id: 'financial', label: 'Financial Confidence' },
+    { id: 'energy', label: 'Energy' },
+    { id: 'overwhelm', label: 'Overwhelm', inverse: true },
+    { id: 'savings', label: 'Savings Habit' },
+    { id: 'exercise', label: 'Exercise' },
+    { id: 'breathing', label: 'Breathing' },
+    { id: 'p_health', label: 'Pillar — Health' },
+    { id: 'p_wealth', label: 'Pillar — Wealth' },
+    { id: 'p_finwell', label: 'Pillar — Financial Wellness' },
+    { id: 'p_retsave', label: 'Pillar — Retirement Savings' },
+    { id: 'p_jobskills', label: 'Pillar — Job Skills' }
+  ];
+
+  const avgResponse = (arr, id) => {
+    const vals = arr.map(r => r && r[id]).filter(v => typeof v === 'number');
+    return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+  };
+
+  // Collect assessment responses only — names are deliberately NOT retained
+  // (aggregate-only privacy rule). Returns { pre: [...], post: [...], ... }.
+  async function fetchAssessmentResponses(types) {
+    const sink = {};
+    types.forEach(t => { sink[t] = []; });
+    for (const p of participants) {
+      try {
+        const docs = await Promise.all(
+          types.map(t => db.collection('users').doc(p.id).collection('assessments').doc(t).get())
+        );
+        types.forEach((t, i) => {
+          if (docs[i].exists) sink[t].push(docs[i].data().responses);
+        });
+      } catch (e) { /* skip if no access */ }
+    }
+    return sink;
+  }
+
   // Assessments — COHORT AGGREGATE ONLY. Individual responses are never shown
   // (employee anonymity); only the group's pre->post trend per area.
   async function loadAssessments() {
     const container = document.getElementById('assessment-results');
-    const QUESTIONS = [
-      { id: 'stress', label: 'Stress', inverse: true },
-      { id: 'sleep', label: 'Sleep' },
-      { id: 'financial', label: 'Financial Confidence' },
-      { id: 'energy', label: 'Energy' },
-      { id: 'overwhelm', label: 'Overwhelm', inverse: true },
-      { id: 'savings', label: 'Savings Habit' },
-      { id: 'exercise', label: 'Exercise' },
-      { id: 'breathing', label: 'Breathing' }
-    ];
+    const QUESTIONS = ASSESSMENT_QUESTIONS;
 
-    // Collect responses only — names are deliberately NOT retained
-    const pres = [], posts = [];
-    for (const p of participants) {
-      try {
-        const preDoc = await db.collection('users').doc(p.id).collection('assessments').doc('pre').get();
-        const postDoc = await db.collection('users').doc(p.id).collection('assessments').doc('post').get();
-        if (preDoc.exists) pres.push(preDoc.data().responses);
-        if (postDoc.exists) posts.push(postDoc.data().responses);
-      } catch (e) { /* skip if no access */ }
-    }
+    const sink = await fetchAssessmentResponses(['pre', 'post', 'm3', 'm6', 'm12']);
+    const pres = sink.pre, posts = sink.post, m3s = sink.m3, m6s = sink.m6, m12s = sink.m12;
 
     if (pres.length === 0) {
       container.innerHTML = '<p style="color:var(--slate);font-size:0.8rem;">No assessment data yet.</p>';
       return;
     }
 
-    const avg = (arr, id) => {
-      const vals = arr.map(r => r && r[id]).filter(v => typeof v === 'number');
-      return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
-    };
+    const avg = avgResponse;
 
     let html = '<p style="color:var(--slate);font-size:0.85rem;margin-bottom:12px;">Cohort averages (scale 1–10). Individual responses are private to each participant — only the group trend is shown.</p>';
     html += '<table class="participant-table"><thead><tr><th>Area</th><th style="text-align:center;">Start (avg)</th><th style="text-align:center;">End (avg)</th><th style="text-align:center;">Change</th></tr></thead><tbody>';
@@ -479,6 +622,31 @@
     });
     html += '</tbody></table>';
     html += `<p style="color:var(--slate);font-size:0.72rem;margin-top:8px;">Based on ${pres.length} start / ${posts.length} end responses. Green = improvement (lower stress &amp; overwhelm, higher everything else).</p>`;
+
+    // Readiness Pillars over time — the 12-Month Roadmap view (only once milestone data exists).
+    if (m3s.length || m6s.length || m12s.length) {
+      const PILLARS = [
+        { id: 'p_health', label: 'Health' },
+        { id: 'p_wealth', label: 'Wealth' },
+        { id: 'p_finwell', label: 'Financial Wellness' },
+        { id: 'p_retsave', label: 'Retirement Savings' },
+        { id: 'p_jobskills', label: 'Job Skills' }
+      ];
+      const cell = v => v != null ? v.toFixed(1) : '-';
+      html += '<h3 style="margin:20px 0 6px;font-size:0.95rem;">Readiness Pillars over time</h3>';
+      html += '<p style="color:var(--slate);font-size:0.78rem;margin-bottom:10px;">Cohort averages (1–10, higher = better). Baseline is the pre-survey; M3/M6/M12 are the Roadmap check-ins.</p>';
+      html += '<table class="participant-table"><thead><tr><th>Pillar</th><th style="text-align:center;">Baseline</th><th style="text-align:center;">M3</th><th style="text-align:center;">M6</th><th style="text-align:center;">M12</th></tr></thead><tbody>';
+      PILLARS.forEach(p => {
+        html += `<tr><td>${p.label}</td>
+          <td style="text-align:center;color:var(--slate);">${cell(avg(pres, p.id))}</td>
+          <td style="text-align:center;">${cell(avg(m3s, p.id))}</td>
+          <td style="text-align:center;">${cell(avg(m6s, p.id))}</td>
+          <td style="text-align:center;font-weight:600;">${cell(avg(m12s, p.id))}</td></tr>`;
+      });
+      html += '</tbody></table>';
+      html += `<p style="color:var(--slate);font-size:0.72rem;margin-top:8px;">Milestone responses: ${m3s.length} (M3) / ${m6s.length} (M6) / ${m12s.length} (M12). Aggregate only.</p>`;
+    }
+
     container.innerHTML = html;
   }
 
@@ -516,8 +684,12 @@
 
   // HR Results Report — employer-safe: cohort aggregates + per-person engagement only.
   // NEVER includes individual stress, savings, or journal notes.
-  function generateResultsReport() {
+  async function generateResultsReport() {
     if (participants.length === 0) { alert('No participants yet.'); return; }
+    // Open the window synchronously (inside the click gesture) so popup blockers
+    // don't kill it while we await the assessment aggregates below.
+    const win = window.open('', '_blank');
+    if (!win) { alert('Please allow pop-ups to generate the report.'); return; }
     const companyName = document.getElementById('company-name').textContent || 'Your Company';
     const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
@@ -540,6 +712,47 @@
       stressTrend = wk1.toFixed(1) + ' → ' + wk3.toFixed(1) + (delta > 0 ? ' (down ' + delta.toFixed(1) + ')' : '');
     } else if (wk1 != null) {
       stressTrend = 'Week 1 avg ' + wk1.toFixed(1);
+    }
+
+    // After Day 21: share still active 3+ days a week (engagement dates only)
+    let postLine = '';
+    const ps = postChallengeStats();
+    const measured = ps.perPerson.filter(x => x.weeks.length > 0);
+    if (measured.length > 0) {
+      const stillActive = measured.filter(x => {
+        const recent = x.weeks.slice(-4);
+        return recent.reduce((s, w) => s + w.activeDays, 0) / recent.length >= ACTIVE_DAYS_PER_WEEK;
+      }).length;
+      postLine = `<div style="margin-top:6px;font-size:0.85rem;color:#334155;">After Day 21: <strong>${Math.round((stillActive / measured.length) * 100)}%</strong> of ${measured.length} graduates active ${ACTIVE_DAYS_PER_WEEK}+ days a week (last up to 4 complete weeks; a check-in, the health action, or a breathing session counts as active).</div>`;
+    }
+
+    // Aggregate pre->post assessment table — cohort AVERAGES only, no individuals
+    // (same privacy rule as the Assessments tab, which computes the same numbers).
+    const { pre: pres, post: assessPosts } = await fetchAssessmentResponses(['pre', 'post']);
+    let assessmentSection = '';
+    if (pres.length > 0) {
+      const assessRows = ASSESSMENT_QUESTIONS.map(q => {
+        const pre = avgResponse(pres, q.id);
+        const post = assessPosts.length ? avgResponse(assessPosts, q.id) : null;
+        if (pre == null && post == null) return '';
+        const preStr = pre != null ? pre.toFixed(1) : '—';
+        let postStr = '—', changeStr = '<span style="color:#94A3B8;">pending</span>';
+        if (pre != null && post != null) {
+          postStr = post.toFixed(1);
+          const delta = post - pre;
+          const improved = q.inverse ? delta < 0 : delta > 0;
+          const color = delta === 0 ? '#475569' : (improved ? '#047857' : '#b91c1c');
+          const sign = delta > 0 ? '+' : '';
+          changeStr = `<span style="color:${color};font-weight:600;">${sign}${delta.toFixed(1)}</span>`;
+        }
+        return `<tr><td>${escapeHtml(q.label)}</td>
+          <td style="text-align:center;">${preStr}</td>
+          <td style="text-align:center;">${postStr}</td>
+          <td style="text-align:center;">${changeStr}</td></tr>`;
+      }).join('');
+      assessmentSection = `<h2>Wellness Assessment — Cohort Averages (Start vs. End)</h2>
+        <table><thead><tr><th>Area</th><th style="text-align:center;">Start (avg)</th><th style="text-align:center;">End (avg)</th><th style="text-align:center;">Change</th></tr></thead><tbody>${assessRows}</tbody></table>
+        <div style="font-size:0.72rem;color:#94A3B8;margin-top:6px;">Based on ${pres.length} start / ${assessPosts.length} end responses (scale 1&ndash;10). Improvement = lower stress &amp; overwhelm, higher everything else. Group averages only &mdash; individual responses are never shown.</div>`;
     }
 
     const rows = participants.slice().sort((a, b) => b.completionPct - a.completionPct).map(p => `
@@ -565,13 +778,13 @@
       <h2>Cohort Outcomes</h2>
       <div class="row">${metric(joined, 'Enrolled')}${metric(participationRate + '%', 'Participated')}${metric(avgCompletion + '%', 'Avg Completion')}${metric('$' + totalSaved.toFixed(0), 'Saved (cohort)')}${metric(totalBreathing, 'Breathing Sessions')}</div>
       <div style="margin-top:12px;font-size:0.85rem;color:#334155;">Average stress (Week 1 → Week 3): <strong>${stressTrend}</strong></div>
+      ${postLine}
+      ${assessmentSection}
       <h2>Participation by Person</h2>
       <table><thead><tr><th>Name</th><th style="text-align:center;">Day</th><th style="text-align:center;">Completion</th><th style="text-align:center;">Streak</th><th style="text-align:center;">Status</th></tr></thead><tbody>${rows}</tbody></table>
       <div class="note"><strong>Privacy:</strong> This report shows participation and aggregate outcomes only. Individual stress levels, savings amounts, and journal entries are private to each participant and are never shared with employers.</div>
       </body></html>`;
 
-    const win = window.open('', '_blank');
-    if (!win) { alert('Please allow pop-ups to generate the report.'); return; }
     win.document.write(html);
     win.document.close();
     win.focus();

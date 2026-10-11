@@ -137,10 +137,16 @@
         <div id="completion-banner" class="card" style="display:none;text-align:center;background:linear-gradient(135deg,var(--navy),var(--navy-light));color:var(--white);">
           <img src="/icons/bitsy.png" alt="Bitsy celebrating" style="width:72px;height:72px;margin-bottom:8px;filter:drop-shadow(0 8px 24px rgba(0,0,0,0.4));animation:bitsy-pop 0.5s cubic-bezier(0.34,1.56,0.64,1);">
           <h2 style="margin-bottom:8px;">Challenge Complete!</h2>
-          <p style="color:var(--text-light);margin-bottom:12px;">You finished all 21 days. That puts you ahead of 95% of people who start something like this.</p>
-          <p style="font-weight:600;color:var(--green);">Your Fusion Formula is built. Now sustain it.</p>
+          <p style="color:var(--text-light);margin-bottom:12px;">You finished all 21 days. The framework is built. From here it is about keeping it.</p>
+          <p style="font-weight:600;color:var(--green);">Your one page is built. Now keep your margin.</p>
         </div>
 
+        <!-- Keep Your Margin home (Day 22+), rendered by margin.js -->
+        <div id="margin-home" style="display:none;"></div>
+
+        <!-- The 21-day challenge surface. In Keep Your Margin mode this is hidden
+             behind the "Revisit the 21 days" toggle. -->
+        <div id="challenge-home">
         <div class="card">
           <div style="display:flex;align-items:center;justify-content:space-between;">
             <button class="btn btn-outline" id="day-prev" style="padding:8px 12px;font-size:0.8rem;" disabled aria-label="Previous day">&larr;</button>
@@ -191,10 +197,13 @@
             <span id="exercise-arrow" style="font-size:0.8rem;color:var(--slate);transition:transform 0.2s;">&#9660;</span>
           </h3>
           <p id="today-exercise" style="margin-top:8px;"></p>
+          <p id="today-hardday" class="hardday-line" style="display:none;"></p>
           <div id="exercise-detail" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
             <div style="font-size:0.75rem;text-transform:uppercase;color:var(--slate);letter-spacing:0.5px;margin-bottom:4px;">Why This Matters</div>
             <p id="today-description" style="font-size:0.9rem;color:var(--slate);"></p>
           </div>
+          <!-- Day 2: Peace of Mind number · Days 17-21: the one health action to keep -->
+          <div id="exercise-capture" style="display:none;"></div>
         </div>
 
         <!-- Daily Check-in -->
@@ -204,6 +213,10 @@
             <div class="check-item">
               <input type="checkbox" id="checkin-completed">
               <label for="checkin-completed">I completed today's exercise</label>
+            </div>
+            <div class="check-item" id="checkin-action-row" style="display:none;">
+              <input type="checkbox" id="checkin-action">
+              <label for="checkin-action" id="checkin-action-label">My health action</label>
             </div>
 
             <div class="form-group" style="margin-top:12px;">
@@ -265,6 +278,7 @@
             </div>
           </div>
         </div>
+        </div><!-- /challenge-home -->
       </div>
 
       <!-- Progress View -->
@@ -275,11 +289,11 @@
           <div class="stats-grid">
             <div class="stat-card">
               <div class="stat-value" id="progress-day">0</div>
-              <div class="stat-label">Day</div>
+              <div class="stat-label" id="progress-day-label">Day</div>
             </div>
             <div class="stat-card">
               <div class="stat-value" id="progress-streak">0</div>
-              <div class="stat-label">Streak</div>
+              <div class="stat-label" id="progress-streak-label">Streak</div>
             </div>
             <div class="stat-card">
               <div class="stat-value" id="progress-pct">0%</div>
@@ -306,11 +320,8 @@
           <div id="phase-list"></div>
         </div>
 
-        <!-- Leaderboard (company participants only) -->
-        <div class="card" id="leaderboard-card" style="display:none;">
-          <h3>Team Leaderboard</h3>
-          <div id="leaderboard-list"></div>
-        </div>
+        <!-- Team leaderboard removed (Firestore rules deny cross-user reads from a
+             participant session; future fix = admin-written participation doc). -->
 
         <!-- Trends -->
         <div class="card">
@@ -340,14 +351,27 @@
             </div>
           </div>
           <div class="breathing-cycle" id="breathing-cycle">Tap Start or press Space to begin</div>
+          <div class="breath-rate" id="breath-before">
+            <div>Stress right now? <span style="color:var(--text-light);">(optional)</span></div>
+            <div class="chip-row"></div>
+          </div>
           <div style="margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
             <button class="btn btn-primary" id="breathing-start">Start</button>
             <button class="btn btn-outline" id="breathing-pause" style="display:none;">Pause</button>
             <button class="btn btn-outline" id="breathing-stop" style="display:none;">Stop</button>
           </div>
+          <div class="breath-rate" id="breath-after" style="display:none;">
+            <div>And now?</div>
+            <div class="chip-row"></div>
+            <div class="chip-note"></div>
+          </div>
           <div style="margin-top:16px;font-size:0.8rem;color:var(--slate);">
             Sessions completed: <strong id="breathing-total">0</strong>
           </div>
+        </div>
+        <div class="card">
+          <h3>What it does for you</h3>
+          <div id="breathing-stats" class="week-table"></div>
         </div>
       </div>
 
@@ -356,7 +380,17 @@
         <div style="height:16px;"></div>
         <div class="card">
           <h2>Peace of Mind Account</h2>
-          <p>Track your $500 savings goal — your financial safety net.</p>
+          <p id="savings-intro">Track your $500 starter goal, your financial safety net.</p>
+          <div id="savings-target-row" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:0.85rem;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+              <span>Peace of Mind number: <strong id="savings-target-current">Not set yet</strong></span>
+              <a href="#" id="savings-target-edit" style="color:var(--sky-dark);font-weight:600;">Edit</a>
+            </div>
+            <div id="savings-target-form" style="display:none;gap:8px;margin-top:8px;">
+              <input type="number" id="savings-target-input" placeholder="One month of essentials" min="0" step="1" inputmode="numeric" style="flex:1;">
+              <button class="btn btn-primary" id="savings-target-save">Save</button>
+            </div>
+          </div>
         </div>
         <div class="card savings-display">
           <div class="savings-ring-wrap">
@@ -371,13 +405,19 @@
           </div>
           <div id="savings-pace" style="font-size:0.78rem;color:var(--slate);margin-top:4px;min-height:1em;"></div>
           <div class="form-group" style="margin-top:16px;">
-            <label for="savings-input">Add to Savings</label>
+            <label for="savings-input">Add to the account</label>
             <div style="display:flex;gap:8px;">
               <input type="number" id="savings-input" placeholder="Amount" min="0" step="0.01" inputmode="decimal" style="flex:1;">
               <button class="btn btn-primary" id="savings-add">Add</button>
+              <button class="btn btn-outline" id="savings-use" title="Log money you used from the account">Used</button>
             </div>
+            <div style="font-size:0.72rem;color:var(--slate);margin-top:6px;">Used some for a real emergency? Log it with Used. That is what the account is for.</div>
           </div>
           <div id="savings-history" style="margin-top:12px;"></div>
+        </div>
+        <div class="card">
+          <h3>Milestones</h3>
+          <div id="savings-milestones" style="margin-top:8px;"></div>
         </div>
       </div>
 
@@ -398,6 +438,7 @@
           </div>
           <button class="btn btn-outline btn-full" id="profile-save">Save Settings</button>
         </div>
+        <div class="card" id="restart-card" style="display:none;"></div>
         <div class="card">
           <h3>Appearance</h3>
           <div style="display:flex;align-items:center;justify-content:space-between;">
@@ -449,6 +490,7 @@
   <script src="/js/firebase-config.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/challenge.js"></script>
+  <script src="/js/margin.js"></script>
   <script src="/js/checkin.js"></script>
   <script src="/js/progress.js"></script>
   <script src="/js/breathing-timer.js"></script>

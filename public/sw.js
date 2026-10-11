@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bmm-challenge-v7';
+const CACHE_NAME = 'bmm-challenge-v12';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -7,6 +7,7 @@ const STATIC_ASSETS = [
   '/js/firebase-config.js',
   '/js/auth.js',
   '/js/challenge.js',
+  '/js/margin.js',
   '/js/checkin.js',
   '/js/progress.js',
   '/js/breathing-timer.js',
@@ -63,7 +64,9 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // App assets: network-first with cache fallback (ensures fresh deploys work)
+  // App assets: network-first with cache fallback (ensures fresh deploys work).
+  // Navigations (incl. manifest shortcuts like /?view=breathing) fall back to
+  // the cached shell so an unvisited query URL still opens offline.
   event.respondWith(
     fetch(event.request)
       .then(response => {
@@ -71,6 +74,10 @@ self.addEventListener('fetch', event => {
         caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
         return response;
       })
-      .catch(() => caches.match(event.request))
+      .catch(() => caches.match(event.request).then(hit => {
+        if (hit) return hit;
+        if (event.request.mode === 'navigate') return caches.match('/index.html');
+        return undefined;
+      }))
   );
 });

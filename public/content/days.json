@@ -1,200 +1,222 @@
 [
   {
     "day": 0,
-    "title": "Welcome & Setup",
+    "title": "Getting Set Up",
     "phase": "welcome",
     "pillar": null,
     "videoUrl": "https://bmm-deliverables-a.s3.amazonaws.com/videos/BMM%20Welcome%21-VEED.mp4",
-    "exercise": "Review the three pillars: Financial, Physical, and Psychological. Set your intention for the next 21 days. Write down one sentence about where you are right now in each area.",
-    "description": "For the next 21 days, we're going to reset three key areas of your life: your finances, your body, and your mindset."
+    "exercise": "Choose your start date and your daily reading spot. Write one honest sentence each for money, body, and stress.",
+    "description": "For the next 21 days you'll work on three areas of your life: money, body, and stress. One small action a day. Today you just write down where you are.",
+    "hardDay": "Just pick the start date."
   },
   {
     "day": 1,
-    "title": "Reset Your Mindset",
+    "title": "Name Your Yo-Yo",
     "phase": "foundation",
     "pillar": "mindset",
     "videoUrl": "",
-    "exercise": "Write down one area where you've been cycling (money, fitness, stress). What's your honest baseline right now? Don't judge it. Just name it.",
-    "description": "Most of us live in a yo-yo: we spike, we crash, we promise to restart. Today we reset the narrative."
+    "exercise": "Write down one area where you've been living on the yo-yo, and your honest baseline in that area right now. Don't judge it. Just name it.",
+    "description": "The yo-yo: you push, you crash, you promise to restart. You can't bend a baseline you haven't named.",
+    "hardDay": "Just name the area. Fill in the number tomorrow."
   },
   {
     "day": 2,
-    "title": "Financial Pillar \u2014 Peace of Mind Account",
+    "title": "Your Peace of Mind Number",
     "phase": "foundation",
     "pillar": "financial",
     "videoUrl": "https://bmm-deliverables-a.s3.amazonaws.com/BMM%20Financial%20Margin-VEED.mp4",
-    "exercise": "Calculate your baseline monthly needs: housing, food, utilities, essential transport. Write it down. That's your Peace of Mind number.",
-    "description": "We're building a Peace of Mind Account \u2014 a separate savings bucket that exists for one purpose: to cover 30 days of your basic expenses."
+    "exercise": "Add up one month of essentials: housing, food, utilities, getting to work, insurance, minimum payments. That's your Peace of Mind number. Then write down your first marker: $500 (or a smaller amount if that fits your situation better).",
+    "description": "Your Peace of Mind Account is a separate savings account with one job: turning the next surprise bill from an emergency into an expense.",
+    "hardDay": "Write down just your monthly housing cost. Finish the list tomorrow."
   },
   {
     "day": 3,
-    "title": "Physical Pillar \u2014 Establish Baseline",
+    "title": "Your Body's Baseline",
     "phase": "foundation",
     "pillar": "physical",
     "videoUrl": "https://bmm-deliverables-a.s3.amazonaws.com/videos/BMM%20Physical%20Margin-VEED.mp4",
-    "exercise": "Track three things for the next 7 days: (1) daily steps or movement minutes, (2) one meal per day, and (3) sleep quality (1\u201310 scale). Just observe.",
-    "description": "Your baseline is: how much movement are you doing right now? How's your energy? Your sleep? Your basic nutrition?"
+    "exercise": "Start tracking three things for the next 7 days: movement (steps or minutes), what you eat at one meal each day, and sleep quality from 1 to 10. Just observe.",
+    "description": "This week isn't about changing anything. It's about seeing what an ordinary week looks like.",
+    "hardDay": "Just rate last night's sleep from 1 to 10."
   },
   {
     "day": 4,
-    "title": "Psychological Pillar \u2014 Stress Architecture",
+    "title": "Your Stress Blueprint",
     "phase": "foundation",
     "pillar": "psychological",
     "videoUrl": "https://bmm-deliverables-a.s3.amazonaws.com/BMM%20Psychological%20Margin-VEED.mp4",
-    "exercise": "For three days this week, note: What triggered stress? How did your body respond? How did you recover (or not)? Write it down.",
-    "description": "Stress architecture = the invisible patterns that trigger your stress, the way you respond, and the recovery (or lack thereof)."
+    "exercise": "Do the 4x4x4x4 breath once. Then start your stress blueprint: what triggered stress, how your body responded, and how you recovered. Three entries over the next three days.",
+    "description": "Stress has a pattern: a trigger, a response in your body, and a recovery (or not). Once you can see the pattern, you can work with it.",
+    "hardDay": "Just do the breath once. Four rounds."
   },
   {
     "day": 5,
-    "title": "Integration \u2014 Three-Pillar Snapshot",
+    "title": "The Three-Pillar Snapshot",
     "phase": "foundation",
     "pillar": "integration",
     "videoUrl": "https://bmm-deliverables-a.s3.amazonaws.com/BMM%20Bonus%20video-VEED.mp4",
-    "exercise": "Write one sentence for each pillar about your baseline. Example: 'Financially, I need $3,500/month to feel stable. Physically, I'm moving 4k steps/day. Psychologically, Monday mornings are my stress trigger.'",
-    "description": "Your financial stress often shows up as physical tension. Your sleep baseline impacts your spending baseline. We're optimizing one life with three dimensions."
+    "exercise": "Write your three-pillar snapshot, one sentence each, with numbers. Example: 'I need $3,500 a month to cover essentials. I'm moving about 4,000 steps a day. Monday mornings are my biggest stress trigger.' Then draw at least one arrow connecting two of them.",
+    "description": "Money stress can show up as tension in your body. Poor sleep can show up in your spending. It's one life, not three separate projects.",
+    "hardDay": "Write just one of the three sentences."
   },
   {
     "day": 6,
-    "title": "Weekly Reflection",
+    "title": "Look Back at the Week",
     "phase": "foundation",
     "pillar": "reflection",
     "videoUrl": "",
-    "exercise": "Write down three things you noticed this week about your baseline. It could be a surprise, a pattern, or just a clearer number than before.",
-    "description": "Reflection isn't just feel-good journaling. It's the pause that lets you actually integrate what you've learned."
+    "exercise": "Write down three things you noticed about your baselines this week. A surprise, a pattern, or just a clearer number than before.",
+    "description": "Reflection isn't journaling for its own sake. The pause is where you make sense of what you've been doing. Without it, a week of tracking is just a pile of numbers.",
+    "hardDay": "Write down one."
   },
   {
     "day": 7,
-    "title": "Foundation Recap",
+    "title": "Pick Your Anchor",
     "phase": "foundation",
     "pillar": "recap",
     "videoUrl": "",
-    "exercise": "Pick one baseline number from this week (your Peace of Mind number, your daily step goal, your stress trigger). Write it somewhere visible. That's your anchor.",
-    "description": "In seven days, you've done something most people never do: you've gotten honest about where you actually are."
+    "exercise": "Choose one number from this week to be your anchor: your Peace of Mind number, your daily steps, or your top stress trigger. Write it somewhere you'll see it every day. Open your Peace of Mind Account if you've decided to.",
+    "description": "One number you see every day is a simple reminder of what you're working on.",
+    "hardDay": "Write your anchor number on a sticky note. Stick it anywhere."
   },
   {
     "day": 8,
-    "title": "Financial \u2014 Spending Baseline",
+    "title": "Where the Money Goes",
     "phase": "momentum",
     "pillar": "financial",
     "videoUrl": "",
-    "exercise": "Pull your last 30 days of spending. Categorize into: Essentials (needs), Comfort (small pleasures), and Leaks (recurring charges you forgot about).",
-    "description": "Most of us spend money on autopilot. Today we make it conscious."
+    "exercise": "Sort your last 30 days of spending into Essentials, Comfort, and Leaks. Pick one leak to plug this week, and move that amount into your Peace of Mind Account. Then look at the list once more and ask: if a stranger saw only this, what would they say my priorities are?",
+    "description": "Spending can run on autopilot. Leaks are a good place to start, because plugging them costs you nothing you were enjoying. The last question is adapted from what author James Clear calls the alien test: if someone saw only your actions, and couldn't hear your explanations, what would they say your priorities are?",
+    "hardDay": "Find one subscription you don't use and cancel it."
   },
   {
     "day": 9,
-    "title": "Physical \u2014 Deepening",
+    "title": "Just a Little More",
     "phase": "momentum",
     "pillar": "physical",
     "videoUrl": "",
-    "exercise": "Take your baseline movement from week one. Add 5\u201310% to it. If you were at 5,000 steps/day, aim for 5,250.",
-    "description": "Baseline bending works because it's gradual. Your body resists extreme change. But 5% more movement? Your body can do that."
+    "exercise": "Take your movement baseline from last week and add 5 to 10 percent. If you averaged 4,000 steps, aim for 4,200 to 4,400. Write down your one simple action and start it today.",
+    "description": "A small change is easier to fit into an ordinary week. You can add a little more later.",
+    "hardDay": "Walk for two extra minutes. That counts."
   },
   {
     "day": 10,
-    "title": "Psychological \u2014 Stress Response as Data",
+    "title": "Stress Is Data",
     "phase": "momentum",
     "pillar": "psychological",
     "videoUrl": "",
-    "exercise": "Pick one stress trigger from last week. Write down: (1) the trigger, (2) your physical response, (3) what you needed in that moment.",
-    "description": "Instead of fighting your stress response, let's learn from it. Your stress response isn't broken. It's information."
+    "exercise": "Pick one trigger from your blueprint. Write the trigger, your body's response, and what you needed in that moment. Do the 4x4x4x4 breath at least once.",
+    "description": "A stress reaction isn't a character flaw. It's something you can notice and learn from.",
+    "hardDay": "Do the breath once. Name the trigger in one word."
   },
   {
     "day": 11,
-    "title": "Turbocharge Protocol Teaser",
+    "title": "Find Your Biggest Opportunity",
     "phase": "momentum",
     "pillar": "integration",
     "videoUrl": "",
-    "exercise": "Review your three-pillar baseline from Day 5. Where's the biggest opportunity for a 15% improvement?",
-    "description": "Starting Day 15, we introduce the Turbocharge Protocol \u2014 a three-day framework that creates a rapid-iteration cycle."
+    "exercise": "Reread your Day 5 snapshot. In each pillar, circle the biggest opportunity for about a 15 percent improvement.",
+    "description": "Fifteen percent is noticeable but not an overhaul. Adjust it down if it feels like too much. Next week you'll turn these into moves.",
+    "hardDay": "Circle one opportunity in one pillar."
   },
   {
     "day": 12,
-    "title": "Tracking System Audit",
+    "title": "Keep Score, Simply",
     "phase": "momentum",
     "pillar": "integration",
     "videoUrl": "",
-    "exercise": "Set up your tracking for the next three days: one column for financial, one for physical, one for psychological. Use whatever tool feels natural.",
-    "description": "You don't need fancy apps. You need clarity. Simple tracking beats fancy apps every time."
+    "exercise": "Set up your three-column tracker (money, body, stress) and fill in today's row. Paper, your phone's notes, or the check-in in this app all work.",
+    "description": "You don't need a fancy system. You need to be able to see, at a glance, whether you did the thing.",
+    "hardDay": "Put a check mark on today's date on a calendar if you did your one simple action."
   },
   {
     "day": 13,
-    "title": "Midpoint \u2014 How Far You've Come",
+    "title": "What You Wish You'd Known",
     "phase": "momentum",
     "pillar": "reflection",
     "videoUrl": "",
-    "exercise": "One reflection: What's one thing you wish you'd had clarity on earlier? That's the thing worth building systems around.",
-    "description": "You're halfway through the challenge. Clarity changes everything."
+    "exercise": "Write down the one thing you wish you'd had clarity on earlier. Then write one simple way to keep it visible from now on.",
+    "description": "The thing you wish you'd known sooner is the thing worth building a system around.",
+    "hardDay": "Just write the one thing."
   },
   {
     "day": 14,
-    "title": "Midpoint Reflection",
+    "title": "Halfway",
     "phase": "momentum",
     "pillar": "reflection",
     "videoUrl": "",
-    "exercise": "Write down three specific changes you've noticed since Day 1. Then write one thing you want to nail in the final seven days.",
-    "description": "In two weeks, you've mapped your baseline across three pillars. You're not the same person who started 14 days ago."
+    "exercise": "Write down three changes you've noticed since Day 1, and the one thing you want to nail in the last week.",
+    "description": "Two weeks in, the changes may be small. Writing them down gives you something concrete to look back on, and it points your last week at what matters most.",
+    "hardDay": "Write one change."
   },
   {
     "day": 15,
-    "title": "Turbocharge Protocol \u2014 Part 1: Alignment",
+    "title": "Your Next Move, Part 1: Line Them Up",
     "phase": "activation",
     "pillar": "integration",
     "videoUrl": "",
-    "exercise": "Look at your three pillars. Identify one place where they're working against each other. Write down one small fix for each connection.",
-    "description": "Making sure your financial baseline, physical baseline, and psychological baseline are working together, not against each other."
+    "exercise": "Find one place where two pillars are working against each other. Write down one small fix, and start it today.",
+    "description": "When one pillar undercuts another, fixing the connection can help in more than one area.",
+    "hardDay": "Just name the two pillars that fight the most."
   },
   {
     "day": 16,
-    "title": "Turbocharge Protocol \u2014 Part 2: Optimization",
+    "title": "Your Next Move, Part 2: Your 15 Percent Moves",
     "phase": "activation",
     "pillar": "integration",
     "videoUrl": "",
-    "exercise": "For each pillar, write down your 15% move: one spending leak to cut, one movement adjustment, one stress-response change.",
-    "description": "What's one 15% improvement in each pillar that you can execute right now?"
+    "exercise": "Write down your three 15 percent moves, one per pillar: a leak or comfort expense to trim, a movement or eating adjustment, a change in how you respond to stress. Choose one and start it today.",
+    "description": "Each move is specific enough that someone could tell whether you did it, and small enough to do in a bad week.",
+    "hardDay": "Write down one move and start it."
   },
   {
     "day": 17,
-    "title": "Turbocharge Protocol \u2014 Part 3: Lock In",
+    "title": "Your Next Move, Part 3: Lock It In",
     "phase": "activation",
     "pillar": "integration",
     "videoUrl": "",
-    "exercise": "For your three 15% moves, write down: How will you do this automatically? System beats willpower. Always.",
-    "description": "Turning those 15% improvements into habits, systems, and daily routines. Not through willpower. Through design."
+    "exercise": "For the move you started, write down and set up one thing that makes it happen without relying on motivation. An automatic transfer, a calendar block, shoes by the door.",
+    "description": "Motivation comes and goes. Something set up ahead of time keeps working on the days you don't feel like it.",
+    "hardDay": "Set up one small thing ahead of time for the move you chose, like a $5 weekly automatic transfer or your shoes by the door."
   },
   {
     "day": 18,
-    "title": "Habit Stacking",
+    "title": "Hook It to Something You Already Do",
     "phase": "activation",
     "pillar": "integration",
     "videoUrl": "",
-    "exercise": "Identify three existing routines (morning coffee, lunch break, evening wind-down). For each one, write down one new habit you'll stack onto it.",
-    "description": "Habit Stacking = linking a new habit to an existing routine. Don't rely on motivation. Routines are permanent."
+    "exercise": "Choose one daily routine (your morning coffee, brushing your teeth, getting into bed) and attach your new move to it. Write down the routine and the action.",
+    "description": "A routine you already do every day is a reliable reminder. Many writers on habits have described this idea; it isn't original to this app.",
+    "hardDay": "Attach one round of breathing to your morning coffee, or whatever you do first every day."
   },
   {
     "day": 19,
-    "title": "Setbacks & Reset Protocol",
+    "title": "When You Slip",
     "phase": "activation",
     "pillar": "integration",
     "videoUrl": "",
-    "exercise": "Write down your Reset Protocol in one paragraph. What do you do when you slip financially, physically, or psychologically?",
-    "description": "You're going to slip. That's not failure. That's data. The Reset Protocol is what you do when you slip."
+    "exercise": "Write your reset plan in one paragraph. What's your smallest restart in each pillar? When do you restart? (The very next chance.) What will you ask? (\"What got in the way?\" not \"What's wrong with me?\")",
+    "description": "You're going to slip. That's information, not failure. A 2010 University College London study found that missing one chance to do a new behavior did not meaningfully set back how the habit formed. What matters is the restart.",
+    "hardDay": "Write just your smallest restart for each pillar."
   },
   {
     "day": 20,
-    "title": "Fusion Formula",
+    "title": "Your One Page",
     "phase": "activation",
     "pillar": "integration",
     "videoUrl": "",
-    "exercise": "On one sheet of paper, write: My Peace of Mind number is $___. My daily movement baseline is ___. My stress reset routine is ___.",
-    "description": "The Fusion Formula is your complete operating system for the next 90 days and beyond."
+    "exercise": "Fill in your one page. Money: my Peace of Mind number, today's balance, my automatic transfer, my next milestone, and my next-dollar step. Body: my movement baseline, my one simple action, my 15 percent move. Stress: my most common trigger, my reset routine, my cue to use it. Anchors: when ___ happens, I ___. And one line for when I slip.",
+    "description": "One page you can read in a minute. An honest page with a few blanks is more useful than a complete one full of guesses. Your next-dollar step is where your next available dollar goes. The Roadmap order: once your separate Peace of Mind Account reaches $1,000, enough to get the full company match if your plan offers one, then high-interest debt if you have any, then the rest of your Peace of Mind number.",
+    "hardDay": "Fill in just the three \"My ... is\" lines you know best."
   },
   {
     "day": 21,
-    "title": "90-Day Plan & Pathways Forward",
+    "title": "What Comes Next",
     "phase": "activation",
     "pillar": "integration",
     "videoUrl": "",
-    "exercise": "Read all three pathways (Solo, 401Grow for business owners, Build More Margin for teams). Which resonates?",
-    "description": "In 21 days, you've built a complete framework. Now comes the real question: How do you sustain this? And what's next?"
+    "exercise": "Reread your Day 0 sentences. Write three new ones about where you are today in money, body, and stress. Set calendar reminders for 30, 60, and 90 days from now.",
+    "description": "The 21 days end here. Your 30, 60, and 90-day reminders give you three chances to look again and adjust. Starting tomorrow, this app switches to Keep Your Margin: a short daily check-in and a five-minute weekly check.",
+    "hardDay": "Set just the 30-day reminder."
   }
 ]

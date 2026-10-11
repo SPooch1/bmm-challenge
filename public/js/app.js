@@ -58,7 +58,18 @@ function showToast(message) {
     const navBtn = document.querySelector(`.nav-item[data-view="${viewName}"]`);
     if (navBtn) navBtn.classList.add('active');
     window.scrollTo({ top: 0 });
+    // Keep Your Margin home shows savings/breathing totals: refresh on return
+    if (viewName === 'today' && typeof Margin !== 'undefined') Margin.refreshHome();
   }
+
+  // A PWA left open across midnight: re-render (or reload) so nothing writes to yesterday
+  let currentStartDate = null;
+  let currentElapsed = 0;
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) return;
+    if (currentStartDate && Challenge.calculateElapsedDay(currentStartDate) !== currentElapsed) { window.location.reload(); return; }
+    if (typeof Margin !== 'undefined') Margin.refreshHome();
+  });
 
   navItems.forEach(item => {
     item.addEventListener('click', () => switchView(item.dataset.view));
@@ -87,6 +98,10 @@ function showToast(message) {
     });
   }
 
+  // Set per sign-in; read by the Progress tab handler below
+  let currentProgressOpts = null;
+  let currentChallengeDay = 0;
+
   // Initialize check-in form
   Checkin.init(
     () => Auth.getUid(),
@@ -97,20 +112,40 @@ function showToast(message) {
   Auth.onAuthStateChanged(async userData => {
     if (!userData) return;
 
-    // Calculate current day
-    const day = Challenge.calculateCurrentDay(userData.challengeStartDate);
+    // Calculate current day. `day` is the challenge day (0-21) and keys every
+    // challenge-side record; `elapsed` is uncapped and drives Keep Your Margin.
+    const elapsed = Challenge.calculateElapsedDay(userData.challengeStartDate);
+    const day = Math.min(elapsed, 21);
+    const marginMode = elapsed > 21;
+    const startDate = userData.challengeStartDate;
 
-    // Check if pre-assessment needed (Day 0 or first visit)
+    // Owner-only settings (Peace of Mind number, health action, resets) + Day 22+ logs
+    const marginSettings = await Margin.load(userData.id);
+
+    // Check if pre-assessment needed. Never day-gate the baseline: cohort members
+    // inherit the cohort's start date, so a late joiner can land on day 2+ and must
+    // still get a baseline — otherwise they're silently excluded from every
+    // before/after comparison. Only skip once the post-survey already exists.
     const surveyView = document.getElementById('view-survey');
     const surveyContainer = document.getElementById('survey-container');
     const preSurvey = await Survey.getSurvey(userData.id, 'pre');
+    const postSurvey = await Survey.getSurvey(userData.id, 'post');
 
-    if (!preSurvey && day <= 1) {
+    if (!preSurvey && !postSurvey) {
       // Show pre-assessment survey
       surveyView.style.display = 'block';
       document.getElementById('view-today').classList.remove('active');
       surveyView.classList.add('active');
       await Survey.showSurvey(userData.id, 'pre', surveyContainer, () => {
+        // If the user arrived on a milestone deep link (?survey=m3/m6/m12), the
+        // milestone flow below already evaluated with no baseline and skipped —
+        // reload (query string preserved) so it runs now that the baseline exists.
+        const pendingMs = (new URLSearchParams(window.location.search).get('survey') || '').toLowerCase();
+        if (Survey.MILESTONES.includes(pendingMs)) {
+          showToast('Baseline saved — one more quick check-in!');
+          setTimeout(() => window.location.reload(), 800);
+          return;
+        }
         surveyView.style.display = 'none';
         surveyView.classList.remove('active');
         surveyContainer.innerHTML = '';
@@ -121,37 +156,86 @@ function showToast(message) {
     }
 
     // Show post-assessment on Day 21+ if pre exists but post doesn't
-    if (preSurvey && day >= 21) {
-      const postSurvey = await Survey.getSurvey(userData.id, 'post');
-      if (!postSurvey) {
-        surveyView.style.display = 'block';
-        document.getElementById('view-today').classList.remove('active');
-        surveyView.classList.add('active');
-        await Survey.showSurvey(userData.id, 'post', surveyContainer, async responses => {
-          // Keep the survey view on screen so the before/after comparison —
-          // the payoff of the whole challenge — is actually seen
-          const postData = { responses };
-          Survey.renderComparison(preSurvey, postData, surveyContainer);
-          const doneBtn = document.createElement('button');
-          doneBtn.className = 'btn btn-primary btn-full';
-          doneBtn.textContent = 'Continue to Today';
-          doneBtn.onclick = () => {
-            surveyView.style.display = 'none';
-            surveyView.classList.remove('active');
-            surveyContainer.innerHTML = '';
-            document.getElementById('view-today').classList.add('active');
-            window.scrollTo({ top: 0 });
-          };
-          surveyContainer.appendChild(doneBtn);
+    if (preSurvey && day >= 21 && !postSurvey) {
+      surveyView.style.display = 'block';
+      document.getElementById('view-today').classList.remove('active');
+      surveyView.classList.add('active');
+      await Survey.showSurvey(userData.id, 'post', surveyContainer, async responses => {
+        // Keep the survey view on screen so the before/after comparison —
+        // the payoff of the whole challenge — is actually seen
+        const postData = { responses };
+        Survey.renderComparison(preSurvey, postData, surveyContainer, 'post');
+        const doneBtn = document.createElement('button');
+        doneBtn.className = 'btn btn-primary btn-full';
+        doneBtn.textContent = 'Continue to Today';
+        doneBtn.onclick = () => {
+          surveyView.style.display = 'none';
+          surveyView.classList.remove('active');
+          surveyContainer.innerHTML = '';
+          document.getElementById('view-today').classList.add('active');
           window.scrollTo({ top: 0 });
-        });
+        };
+        surveyContainer.appendChild(doneBtn);
+        window.scrollTo({ top: 0 });
+      });
+    }
+
+    // Roadmap milestone re-measure (m3/m6/m12). Reached two ways: ?survey=m3 deep
+    // links in the monthly Roadmap emails, and the in-app card on the Keep Your
+    // Margin home once 90/180/365 days have passed. Pillars-only; baseline = pre-survey.
+    async function runMilestone(ms) {
+      if (!preSurvey || !Survey.MILESTONES.includes(ms)) return;
+      const existingMs = await Survey.getSurvey(userData.id, ms);
+      if (existingMs) {
+        showToast('You already completed this check-in. Thank you!');
+        return;
+      }
+      surveyView.style.display = 'block';
+      document.getElementById('view-today').classList.remove('active');
+      surveyView.classList.add('active');
+      window.scrollTo({ top: 0 });
+      await Survey.showSurvey(userData.id, ms, surveyContainer, responses => {
+        Survey.renderComparison(preSurvey, { responses }, surveyContainer, ms);
+        const doneBtn = document.createElement('button');
+        doneBtn.className = 'btn btn-primary btn-full';
+        doneBtn.textContent = 'Continue to Today';
+        doneBtn.onclick = () => {
+          surveyView.style.display = 'none';
+          surveyView.classList.remove('active');
+          surveyContainer.innerHTML = '';
+          document.getElementById('view-today').classList.add('active');
+          window.scrollTo({ top: 0 });
+          const card = document.querySelector('.milestone-card');
+          if (card) card.style.display = 'none';
+        };
+        surveyContainer.appendChild(doneBtn);
+        window.scrollTo({ top: 0 });
+      });
+    }
+    const milestone = (new URLSearchParams(window.location.search).get('survey') || '').toLowerCase();
+    if (preSurvey && Survey.MILESTONES.includes(milestone)) await runMilestone(milestone);
+
+    // Which milestone is due in-app (latest one reached, not yet completed)?
+    let dueMilestone = null;
+    if (preSurvey && marginMode) {
+      const ladder = [{ id: 'm12', at: 365, label: '12-Month' }, { id: 'm6', at: 180, label: '6-Month' }, { id: 'm3', at: 90, label: '3-Month' }];
+      for (const m of ladder) {
+        if (elapsed >= m.at) {
+          const done = await Survey.getSurvey(userData.id, m.id);
+          if (!done) dueMilestone = m;
+          break;
+        }
       }
     }
 
-    // Render today's content
+    // Render today's content (plus the Day 2 / Day 17+ capture inputs)
     let viewingDay = day;
-    Challenge.renderToday(day);
-
+    function renderDay(d) {
+      Challenge.renderToday(d);
+      Margin.renderCapture(d, { marginMode });
+    }
+    renderDay(day);
+    Checkin.setHealthAction(marginSettings.healthAction && day >= 17 ? marginSettings.healthAction : '');
 
     // Day navigation
     const prevBtn = document.getElementById('day-prev');
@@ -162,8 +246,10 @@ function showToast(message) {
       prevBtn.disabled = viewingDay <= 0;
       nextBtn.disabled = viewingDay >= day;
       backLink.style.display = viewingDay !== day ? 'inline' : 'none';
-      // Hide check-in form when viewing past/future days
-      document.getElementById('checkin-card').style.display = viewingDay === day ? 'block' : 'none';
+      // Hide check-in form when viewing past/future days. In Keep Your Margin
+      // mode the daily check-in lives on the margin home, so the challenge
+      // check-in stays hidden (Day 21 has already been logged or passed).
+      document.getElementById('checkin-card').style.display = (viewingDay === day && !marginMode) ? 'block' : 'none';
     }
 
     // onclick assignments (not addEventListener) so a sign-out/sign-in
@@ -171,7 +257,7 @@ function showToast(message) {
     prevBtn.onclick = () => {
       if (viewingDay > 0) {
         viewingDay--;
-        Challenge.renderToday(viewingDay);
+        renderDay(viewingDay);
         updateDayNav();
       }
     };
@@ -179,7 +265,7 @@ function showToast(message) {
     nextBtn.onclick = () => {
       if (viewingDay < day) {
         viewingDay++;
-        Challenge.renderToday(viewingDay);
+        renderDay(viewingDay);
         updateDayNav();
       }
     };
@@ -187,7 +273,7 @@ function showToast(message) {
     backLink.onclick = e => {
       e.preventDefault();
       viewingDay = day;
-      Challenge.renderToday(day);
+      renderDay(day);
       updateDayNav();
     };
 
@@ -251,11 +337,32 @@ function showToast(message) {
     // Load check-in data for today
     await Checkin.loadCheckin(userData.id, day);
 
-    // Streak motivation
-    const progressData = await Progress.loadProgress(userData.id, day);
+    // Savings first (badges and the margin home read the balance), then breathing
+    // history (dated sessions, before/after) so badges can count it
+    await PeaceOfMind.load(userData.id, day, { marginMode, elapsed, target: marginSettings.pomTarget || 0 });
+    const breathSessions = await BreathingTimer.loadStats(userData.id);
 
-    // Show completion banner only when all 21 days are actually checked in
-    if (progressData && progressData.completedDays >= 21) {
+    // Progress. In Keep Your Margin mode the trends/history/badges switch to the
+    // date-keyed series (challenge days mapped to dates + Day 22+ logs).
+    const progressOpts = () => ({
+      marginMode,
+      elapsed,
+      seriesFor: logs => Margin.buildSeries(logs, startDate),
+      actionStreakFor: series => Margin.actionStreak(series),
+      breathTotal: Math.max(breathSessions.length, userData.breathingSessions || 0),
+      pomFunded: !!(Margin.getSettings().pomTarget && PeaceOfMind.getTotal() >= Margin.getSettings().pomTarget),
+      resets: (Margin.getSettings().resets || []).length
+    });
+    const progressData = await Progress.loadProgress(userData.id, day, progressOpts());
+    currentProgressOpts = progressOpts;
+    currentChallengeDay = day;
+    currentStartDate = startDate;
+    currentElapsed = elapsed;
+    Margin.init({ switchView, runMilestone, getUid: () => Auth.getUid() });
+
+    // Show completion banner only when all 21 days are actually checked in, and
+    // only while the challenge surface is the home screen (the margin hero takes over after).
+    if (progressData && progressData.completedDays >= 21 && !marginMode) {
       document.getElementById('completion-banner').style.display = 'block';
     }
 
@@ -311,21 +418,35 @@ function showToast(message) {
         const pct = day > 0 ? Math.round((progressData.completedDays / day) * 100) : 0;
         navigator.share({
           title: 'Build More Margin Challenge',
-          text: `I'm on Day ${day} of the 21-Day Build More Margin Challenge! ${progressData.streak}-day streak, ${pct}% completion.`,
+          text: marginMode
+            ? `Day ${elapsed} of building margin. The 21-Day Build More Margin Challenge is done and the habits are still going.`
+            : `I'm on Day ${day} of the 21-Day Build More Margin Challenge! ${progressData.streak}-day streak, ${pct}% completion.`,
           url: 'https://challenge.buildmoremargin.com'
         }).catch(() => {});
       };
     }
 
-    // Sync breathing sessions from Firebase
-    if (userData.breathingSessions && userData.breathingSessions > parseInt(localStorage.getItem('breathingSessions') || '0')) {
-      localStorage.setItem('breathingSessions', String(userData.breathingSessions));
-      const btEl = document.getElementById('breathing-total');
-      if (btEl) btEl.textContent = userData.breathingSessions;
-    }
+    // Sync breathing sessions from Firebase (server count wins over this device)
+    BreathingTimer.setCount(Math.max(userData.breathingSessions || 0, breathSessions.length));
+    BreathingTimer.renderStats();
 
-    // Load savings
-    await PeaceOfMind.load(userData.id, day);
+    // Keep Your Margin home (Day 22+). The challenge surface collapses behind
+    // "Revisit the 21 days"; streak chip, Bitsy line and quote move into the hero.
+    const marginHome = document.getElementById('margin-home');
+    const challengeHome = document.getElementById('challenge-home');
+    if (marginMode) {
+      Margin.renderHome({ elapsed, dailyLogs: progressData ? progressData.logs : {}, startDate, dueMilestone, userData });
+      marginHome.style.display = 'block';
+      challengeHome.style.display = 'none';
+      streakBar.style.display = 'none';
+      bitsyLine.style.display = 'none';
+      quoteEl.style.display = 'none';
+      document.getElementById('tomorrow-card').style.display = 'none';
+    } else {
+      marginHome.style.display = 'none';
+      challengeHome.style.display = 'block';
+      quoteEl.style.display = '';
+    }
 
     // Personalized greeting + day counter
     const greetingEl = document.getElementById('app-greeting');
@@ -336,7 +457,9 @@ function showToast(message) {
       greetingEl.textContent = `${timeGreeting}, ${firstName}`;
     }
     const subtitleEl = document.querySelector('.app-header .subtitle');
-    if (subtitleEl && day >= 1) {
+    if (subtitleEl && marginMode) {
+      subtitleEl.textContent = elapsed <= 90 ? `Keep Your Margin · Day ${elapsed} of your 90-Day Plan` : `Keep Your Margin · Week ${Math.ceil(elapsed / 7)}`;
+    } else if (subtitleEl && day >= 1) {
       subtitleEl.textContent = `21-Day Challenge · Day ${day} of 21`;
     }
 
@@ -377,67 +500,30 @@ function showToast(message) {
       saveDateBtn.textContent = 'Saved!';
       await db.collection('users').doc(userData.id).update({ challengeStartDate: newDate });
       userData.challengeStartDate = newDate;
-      const newDay = Challenge.calculateCurrentDay(newDate);
-      Challenge.renderToday(newDay);
-      await Checkin.loadCheckin(userData.id, newDay);
-      setTimeout(() => { saveDateBtn.textContent = 'Save Settings'; }, 2000);
+      // Start date changes the mode (challenge vs Keep Your Margin), so reload.
+      setTimeout(() => window.location.reload(), 600);
     };
+
+    // Re-run the 21 days (individual accounts; cohort accounts get a note)
+    Margin.renderRestartCard(userData, progressData ? progressData.logs : {}, progressData, postSurvey);
+
+    // Home-screen shortcuts (manifest.json) and links can open a specific tab
+    const wantedView = (new URLSearchParams(window.location.search).get('view') || '').toLowerCase();
+    if (['today', 'progress', 'breathing', 'savings', 'profile'].includes(wantedView) && !document.getElementById('view-survey').classList.contains('active')) {
+      switchView(wantedView);
+      if (wantedView === 'progress') await Progress.loadProgress(userData.id, day, progressOpts());
+    }
   });
 
   // Load progress when switching to progress tab
   document.querySelector('.nav-item[data-view="progress"]').addEventListener('click', async () => {
     const uid = Auth.getUid();
     if (uid) {
-      await Progress.loadProgress(uid, Challenge.getCurrentDay());
-      // Load leaderboard for company participants
-      const user = Auth.getUser();
-      if (user && user.companyId) {
-        loadLeaderboard(user.companyId, uid);
-      }
+      await Progress.loadProgress(uid, currentChallengeDay, currentProgressOpts ? currentProgressOpts() : undefined);
+      // Team leaderboard removed: it queried other users' docs from a participant
+      // session, which Firestore rules (correctly) deny, so it never rendered.
+      // Future fix: an aggregate participation doc written by an admin/server
+      // process that participants are allowed to read — not a rules change.
     }
   });
-
-  async function loadLeaderboard(companyId, myUid) {
-    const card = document.getElementById('leaderboard-card');
-    const list = document.getElementById('leaderboard-list');
-    try {
-      const snapshot = await db.collection('users')
-        .where('companyId', '==', companyId)
-        .where('role', '==', 'participant')
-        .get();
-
-      if (snapshot.empty || snapshot.size < 2) return;
-
-      const entries = [];
-      const logPromises = [];
-
-      snapshot.forEach(doc => {
-        const data = { id: doc.id, ...doc.data() };
-        entries.push(data);
-        logPromises.push(
-          db.collection('users').doc(doc.id).collection('dailyLogs').get().then(logs => {
-            data.completedDays = 0;
-            logs.forEach(l => { if (l.data().completed) data.completedDays++; });
-          })
-        );
-      });
-
-      await Promise.all(logPromises);
-      entries.sort((a, b) => b.completedDays - a.completedDays);
-
-      card.style.display = 'block';
-      list.innerHTML = entries.slice(0, 10).map((e, i) => {
-        const isMe = e.id === myUid;
-        const medal = i === 0 ? '&#129351;' : i === 1 ? '&#129352;' : i === 2 ? '&#129353;' : '';
-        const firstName = (e.name || 'Anonymous').split(' ')[0];
-        return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);${isMe ? 'font-weight:700;color:var(--green);' : ''}">
-          <span style="min-width:28px;text-align:center;font-size:${medal ? '1.2rem' : '0.85rem'};">${medal || (i + 1)}</span>
-          <span style="flex:1;">${firstName}${isMe ? ' (You)' : ''}</span>
-          <span style="font-size:0.85rem;color:var(--slate);">${e.completedDays} days</span>
-        </div>`;
-      }).join('');
-    } catch (e) {
-      // Can't load leaderboard — might not have permissions
-    }
-  }
 })();
