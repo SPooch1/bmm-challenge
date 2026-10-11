@@ -632,11 +632,11 @@
     { id: 'savings', label: 'Savings Habit' },
     { id: 'exercise', label: 'Exercise' },
     { id: 'breathing', label: 'Breathing' },
-    { id: 'p_health', label: 'Pillar — Health' },
-    { id: 'p_wealth', label: 'Pillar — Wealth' },
-    { id: 'p_finwell', label: 'Pillar — Financial Wellness' },
-    { id: 'p_retsave', label: 'Pillar — Retirement Savings' },
-    { id: 'p_jobskills', label: 'Pillar — Job Skills' }
+    { id: 'p_health', label: 'Pillar: Health' },
+    { id: 'p_wealth', label: 'Pillar: Wealth' },
+    { id: 'p_finwell', label: 'Pillar: Financial Wellness' },
+    { id: 'p_retsave', label: 'Pillar: Retirement Savings' },
+    { id: 'p_jobskills', label: 'Pillar: Job Skills' }
   ];
 
   // Cohort average for one question of one survey, from the aggregate counters.
@@ -664,7 +664,7 @@
 
     const avg = avgResponse;
 
-    let html = '<p style="color:var(--slate);font-size:0.85rem;margin-bottom:12px;">Cohort averages (scale 1–10). Individual responses are private to each participant — only the group trend is shown.</p>';
+    let html = '<p style="color:var(--slate);font-size:0.85rem;margin-bottom:12px;">Cohort averages (scale 1 to 10). Individual responses are private to each participant. Only the group trend is shown.</p>';
     html += '<table class="participant-table"><thead><tr><th>Area</th><th style="text-align:center;">Start (avg)</th><th style="text-align:center;">End (avg)</th><th style="text-align:center;">Change</th></tr></thead><tbody>';
     QUESTIONS.forEach(q => {
       const pre = avg('pre', q.id);
@@ -695,7 +695,7 @@
       ];
       const cell = v => v != null ? v.toFixed(1) : '-';
       html += '<h3 style="margin:20px 0 6px;font-size:0.95rem;">Readiness Pillars over time</h3>';
-      html += '<p style="color:var(--slate);font-size:0.78rem;margin-bottom:10px;">Cohort averages (1–10, higher = better). Baseline is the pre-survey; M3/M6/M12 are the Roadmap check-ins.</p>';
+      html += '<p style="color:var(--slate);font-size:0.78rem;margin-bottom:10px;">Cohort averages (1 to 10, higher = better). Baseline is the pre-survey; M3/M6/M12 are the Roadmap check-ins.</p>';
       html += '<table class="participant-table"><thead><tr><th>Pillar</th><th style="text-align:center;">Baseline</th><th style="text-align:center;">M3</th><th style="text-align:center;">M6</th><th style="text-align:center;">M12</th></tr></thead><tbody>';
       PILLARS.forEach(p => {
         html += `<tr><td>${p.label}</td>
@@ -813,7 +813,7 @@
       }).join('');
       assessmentSection = `<h2>Wellness Assessment: Cohort Averages (Start vs. End)</h2>
         <table><thead><tr><th>Area</th><th style="text-align:center;">Start (avg)</th><th style="text-align:center;">End (avg)</th><th style="text-align:center;">Change</th></tr></thead><tbody>${assessRows}</tbody></table>
-        <div style="font-size:0.72rem;color:#94A3B8;margin-top:6px;">Based on ${nPre} start / ${nPost} end responses (scale 1&ndash;10). Averages show once ${MIN_GROUP} or more people have answered. Improvement = lower stress &amp; overwhelm, higher everything else. Group averages only &mdash; individual responses are never shown.</div>`;
+        <div style="font-size:0.72rem;color:#94A3B8;margin-top:6px;">Based on ${nPre} start / ${nPost} end responses (scale 1 to 10). Averages show once ${MIN_GROUP} or more people have answered. Improvement = lower stress &amp; overwhelm, higher everything else. Group averages only. Individual responses are never shown.</div>`;
     }
 
     const rows = participants.slice().sort((a, b) => b.completionPct - a.completionPct).map(p => `

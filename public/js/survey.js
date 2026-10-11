@@ -10,9 +10,9 @@ const Survey = (() => {
     { id: 'exercise', label: 'How often do you exercise or move intentionally?', min: 'Never', max: 'Daily' },
     { id: 'breathing', label: 'Do you practice any breathing or stress-relief techniques?', min: 'Never', max: 'Daily' },
     // --- Real Retirement Readiness: the 5 Pillars (baseline for the 12-Month Roadmap) ---
-    { id: 'p_health', label: 'How would you rate your overall health — physical and mental — right now?', min: 'Poor', max: 'Excellent',
+    { id: 'p_health', label: 'How would you rate your overall health, physical and mental, right now?', min: 'Poor', max: 'Excellent',
       section: 'Real Retirement Readiness', sectionNote: 'Five quick ones so we can track your bigger-picture progress over the year.' },
-    { id: 'p_wealth', label: 'How would you rate your overall financial position — savings vs. debt?', min: 'Very weak', max: 'Very strong' },
+    { id: 'p_wealth', label: 'How would you rate your overall financial position (savings vs. debt)?', min: 'Very weak', max: 'Very strong' },
     { id: 'p_finwell', label: 'How in control of your day-to-day money do you feel?', min: 'Not at all', max: 'Completely' },
     { id: 'p_retsave', label: "How confident are you that you're saving enough to retire on time?", min: 'Not confident', max: 'Very confident' },
     { id: 'p_jobskills', label: 'How confident are you that your skills keep you valuable and employable?', min: 'Not confident', max: 'Very confident' }

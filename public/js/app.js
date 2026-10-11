@@ -144,7 +144,7 @@ function showToast(message) {
         // reload (query string preserved) so it runs now that the baseline exists.
         const pendingMs = (new URLSearchParams(window.location.search).get('survey') || '').toLowerCase();
         if (Survey.MILESTONES.includes(pendingMs)) {
-          showToast('Baseline saved — one more quick check-in!');
+          showToast('Baseline saved. One more quick check-in.');
           setTimeout(() => window.location.reload(), 800);
           return;
         }
@@ -153,7 +153,7 @@ function showToast(message) {
         surveyContainer.innerHTML = '';
         document.getElementById('view-today').classList.add('active');
         window.scrollTo({ top: 0 });
-        showToast('Baseline saved — let\'s start your challenge!');
+        showToast('Baseline saved. Day 0 is ready.');
       });
     }
 
@@ -386,11 +386,11 @@ function showToast(message) {
     if (progressData && progressData.streak > 0) {
       streakBar.style.display = 'flex';
       const s = progressData.streak;
-      if (s >= 21) streakMsg.textContent = '21-day streak! You crushed it.';
-      else if (s >= 14) streakMsg.textContent = s + '-day streak — final stretch!';
-      else if (s >= 7) streakMsg.textContent = s + '-day streak — unstoppable!';
-      else if (s >= 3) streakMsg.textContent = s + '-day streak — building momentum';
-      else streakMsg.textContent = s + '-day streak — keep going!';
+      if (s >= 21) streakMsg.textContent = '21-day streak. All 21 days checked in.';
+      else if (s >= 14) streakMsg.textContent = s + '-day streak. Final stretch.';
+      else if (s >= 7) streakMsg.textContent = s + '-day streak. Two weeks is in sight.';
+      else if (s >= 3) streakMsg.textContent = s + '-day streak. Building momentum.';
+      else streakMsg.textContent = s + '-day streak. Keep going.';
       if (progressData.graceUsed) streakMsg.textContent += ' 🛡️';
     }
 
@@ -400,22 +400,22 @@ function showToast(message) {
     if (bitsyText && bitsyLine) {
       const st = progressData ? progressData.streak : 0;
       let line;
-      if (st >= 14) line = "Final stretch — you're proof this works. Don't be an Itsy now.";
+      if (st >= 14) line = "Final stretch. " + st + " days in a row. Don't be an Itsy now.";
       else if (st >= 7) line = "A week strong. This is what momentum feels like.";
-      else if (st >= 3) line = "Three days in a row. The habit is taking hold.";
+      else if (st >= 3) line = st + " days in a row. The habit is taking hold.";
       else {
         const lines = [
-          "Welcome aboard. I'm Bitsy — let's build some margin together.",
+          "Welcome aboard. I'm Bitsy. Let's build some margin together.",
           "Small moves today beat big plans someday. Let's go.",
           "Your Peace of Mind number starts with one deposit. Even $5 counts.",
           "Movement is margin. A little more than yesterday is a win.",
-          "Stress isn't the enemy — unmanaged stress is. Breathe with me.",
+          "Stress isn't the enemy. Unmanaged stress is. Breathe with me.",
           "Three pillars, one you. Keep stacking the small stuff.",
           "Progress over perfection. Just show up today.",
           "Don't be an Itsy. Two minutes is all today asks.",
           "You're building something quietly powerful. Keep at it.",
           "Check in, breathe, save a little. That's the whole game.",
-          "The compound effect is real — and it's working for you.",
+          "Small deposits add up. So do small walks.",
           "Almost there. Finish what you started; future-you is watching."
         ];
         line = lines[day % lines.length];
