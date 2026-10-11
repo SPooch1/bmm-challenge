@@ -52,11 +52,11 @@ function showToast(message) {
 
   function switchView(viewName) {
     views.forEach(v => v.classList.remove('active'));
-    navItems.forEach(n => n.classList.remove('active'));
+    navItems.forEach(n => { n.classList.remove('active'); n.removeAttribute('aria-current'); });
     const target = document.getElementById('view-' + viewName);
     if (target) target.classList.add('active');
     const navBtn = document.querySelector(`.nav-item[data-view="${viewName}"]`);
-    if (navBtn) navBtn.classList.add('active');
+    if (navBtn) { navBtn.classList.add('active'); navBtn.setAttribute('aria-current', 'page'); }
     window.scrollTo({ top: 0 });
     // Keep Your Margin home shows savings/breathing totals: refresh on return
     if (viewName === 'today' && typeof Margin !== 'undefined') Margin.refreshHome();
@@ -78,14 +78,18 @@ function showToast(message) {
   // Load challenge content
   await Challenge.loadDays();
 
-  // Exercise expand/collapse
-  document.getElementById('exercise-toggle').addEventListener('click', () => {
+  // Exercise expand/collapse (click, Enter or Space)
+  const exerciseToggle = document.getElementById('exercise-toggle');
+  function toggleExercise() {
     const detail = document.getElementById('exercise-detail');
     const arrow = document.getElementById('exercise-arrow');
     const show = detail.style.display === 'none';
     detail.style.display = show ? 'block' : 'none';
     arrow.style.transform = show ? 'rotate(180deg)' : '';
-  });
+    exerciseToggle.setAttribute('aria-expanded', String(show));
+  }
+  exerciseToggle.addEventListener('click', toggleExercise);
+  exerciseToggle.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleExercise(); } });
 
   // Quick check-in: optional detail fields collapsed by default (protects the "2 minutes a day" promise)
   const moreToggle = document.getElementById('checkin-more-toggle');

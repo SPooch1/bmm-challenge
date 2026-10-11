@@ -572,6 +572,18 @@ input[type="range"]::-moz-range-thumb {
   background: none;
 }
 
+.nav-item { min-height: 48px; min-width: 56px; justify-content: center; }
+.nav-item[aria-current="page"], .nav-item.active { color: var(--sky); }
+/* Keyboard focus: visible on every control, never on a plain mouse click */
+.btn:focus-visible, .nav-item:focus-visible, a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 3px solid var(--amber); outline-offset: 2px;
+}
+/* Day arrows and small icon buttons stay thumb-sized */
+#day-prev, #day-next { min-width: 44px; min-height: 44px; }
+.step-preset { min-height: 36px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
 .nav-item.active { color: var(--sky); }
 .nav-item.active svg { filter: drop-shadow(0 2px 6px rgba(14,165,233,0.4)); }
 .nav-item svg { width: 22px; height: 22px; transition: filter 0.2s; }

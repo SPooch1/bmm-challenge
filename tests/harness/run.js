@@ -17,7 +17,8 @@ async function open(browser, url, viewport) {
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', e => errors.push('pageerror: ' + e.message));
-  page.on('console', m => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
+  // A blocked network (fonts, video host) is not an app error: skip resource-load failures
+  page.on('console', m => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push('console: ' + m.text()); });
   page.on('dialog', d => d.accept());
   await page.goto(BASE + url);
   return { ctx, page, errors };

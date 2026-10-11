@@ -11,6 +11,10 @@
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" type="image/png" href="/icons/icon-192.png">
   <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://www.gstatic.com">
+  <link rel="preconnect" href="https://firestore.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/app.css">
 </head>
@@ -22,12 +26,12 @@
   </script>
 
   <!-- Offline Banner -->
-  <div id="offline-banner" style="display:none;position:fixed;top:0;left:0;right:0;background:var(--gold);color:var(--navy);text-align:center;padding:6px;font-size:0.8rem;font-weight:600;z-index:300;">
+  <div id="offline-banner" role="status" style="display:none;position:fixed;top:0;left:0;right:0;background:var(--gold);color:var(--navy);text-align:center;padding:6px;font-size:0.8rem;font-weight:600;z-index:300;">
     You're offline. Some features may be limited.
   </div>
 
   <!-- Loading Screen -->
-  <div id="loading-screen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 0%, #1E293B, #0B1120 72%);">
+  <div id="loading-screen" role="status" aria-live="polite" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 0%, #1E293B, #0B1120 72%);">
     <div style="text-align:center;color:var(--white);">
       <div class="spinner" style="border-top-color:var(--sky);margin-bottom:16px;"></div>
       <div style="font-weight:700;letter-spacing:-0.02em;">Build More Margin</div>
@@ -203,9 +207,9 @@
 
         <!-- Exercise + Description -->
         <div class="card">
-          <h3 style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;" id="exercise-toggle">
+          <h3 style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;" id="exercise-toggle" role="button" tabindex="0" aria-expanded="false" aria-controls="exercise-detail">
             Today's Exercise
-            <span id="exercise-arrow" style="font-size:0.8rem;color:var(--slate);transition:transform 0.2s;">&#9660;</span>
+            <span id="exercise-arrow" aria-hidden="true" style="font-size:0.8rem;color:var(--slate);transition:transform 0.2s;">&#9660;</span>
           </h3>
           <p id="today-exercise" style="margin-top:8px;"></p>
           <p id="today-hardday" class="hardday-line" style="display:none;"></p>
@@ -231,7 +235,7 @@
             </div>
 
             <div class="form-group" style="margin-top:12px;">
-              <label>Stress Level: <span id="stress-val" style="color:var(--green);font-size:1.1em;">5</span>/10</label>
+              <label for="checkin-stress">Stress Level: <span id="stress-val" style="color:var(--green);font-size:1.1em;">5</span>/10</label>
               <input type="range" id="checkin-stress" min="1" max="10" value="5" aria-label="Stress level from 1 to 10" oninput="document.getElementById('stress-val').textContent=this.value">
               <div class="range-labels"><span>Low</span><span>High</span></div>
             </div>
@@ -240,7 +244,7 @@
 
             <div id="checkin-details" style="display:none;">
             <div class="form-group" style="margin-top:12px;">
-              <label>Sleep Quality: <span id="sleep-val" style="color:var(--green);font-size:1.1em;">5</span>/10</label>
+              <label for="checkin-sleep">Sleep Quality: <span id="sleep-val" style="color:var(--green);font-size:1.1em;">5</span>/10</label>
               <input type="range" id="checkin-sleep" min="1" max="10" value="5" aria-label="Sleep quality from 1 to 10" oninput="document.getElementById('sleep-val').textContent=this.value">
               <div class="range-labels"><span>Poor</span><span>Great</span></div>
             </div>
@@ -473,7 +477,7 @@
 
     <!-- Bottom Nav -->
     <nav class="bottom-nav" role="navigation" aria-label="Main navigation">
-      <button class="nav-item active" data-view="today">
+      <button class="nav-item active" data-view="today" aria-current="page">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         Today
       </button>
