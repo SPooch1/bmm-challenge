@@ -1,0 +1,24 @@
+@page{size:6in 9in;margin:0.75in 0.6in 0.85in 0.8in;@bottom-center{content:counter(page);font-family:Georgia,serif;font-size:9pt;color:#555}}
+@page :first{@bottom-center{content:none}}
+body{font-family:Georgia,serif;font-size:11pt;line-height:1.45;color:#111}
+header#title-block-header{page-break-after:always;text-align:center;padding-top:2.2in}
+header .title{font-family:Helvetica,Arial,sans-serif;font-size:30pt;color:#0F172A;margin:0}
+header .subtitle{font-style:italic;font-size:13pt;color:#155E84;margin-top:.2in}
+header .author{font-family:Helvetica,Arial,sans-serif;margin-top:1.2in;font-size:13pt}
+nav#TOC{page-break-after:always;font-size:10pt} nav#TOC ul{list-style:none;padding-left:0}
+h1{font-family:Helvetica,Arial,sans-serif;color:#0F172A;font-size:18pt;page-break-before:always;margin-top:.6in}
+h2{font-family:Helvetica,Arial,sans-serif;color:#155E84;font-size:12.5pt;margin-top:.25in;page-break-after:avoid}
+p{margin:0 0 .09in;orphans:2;widows:2}
+blockquote{border-left:3px solid #F59E0B;margin:.1in 0;padding-left:.15in;font-style:italic}
+table{border-collapse:collapse;width:100%;font-size:8.5pt;page-break-inside:avoid}
+td,th{border:1px solid #888;padding:3px;height:14pt}
+
+.copyright{page-break-before:always;page-break-after:always;font-size:8.5pt;color:#333;padding-top:5.2in}
+.copyright p{margin:0 0 .08in}
+a{color:inherit;text-decoration:none}
+.part{page-break-before:always;margin-top:.55in;font-family:Helvetica,Arial,sans-serif;font-size:9.5pt;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#B45309}
+.part p{margin:0}
+.part + h1{page-break-before:auto;margin-top:.12in}
+figure{margin:.18in 0 .16in;text-align:center;page-break-inside:avoid}
+figure img{max-width:100%;height:auto}
+figcaption{font-family:Helvetica,Arial,sans-serif;font-size:8.5pt;color:#555;margin-top:.05in;font-style:italic}

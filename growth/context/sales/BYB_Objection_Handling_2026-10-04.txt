@@ -1,0 +1,135 @@
+BEND YOUR BASELINE: OBJECTION HANDLING FOR HR AND FINANCE
+Internal. Built 2026-10-04. For small and mid employers. Spoken answers, copy freely.
+
+HOW TO USE THIS
+- Each answer is short on purpose. Say it, then stop and let them talk.
+- The pilot is the only thing called free. Up to 25 employees, 21 days, zero cost, zero obligation, ends with a Day-21 summary.
+- No results claims. Nobody has finished a full cohort yet. Say "designed to," never "proven to."
+- Pricing after the pilot is not set. Do not quote a number.
+- Lines marked NOTE are for you, not for the prospect.
+
+
+1. "OUR RECORD KEEPER ALREADY GIVES US FINANCIAL WELLNESS FOR FREE."
+
+Good. Keep it. I'm not asking you to drop anything.
+
+Here's the difference. Those tools lead with information: articles, calculators, webinars. None of that is worthless. The problem is the order. Every one of them waits for the stressed employee to come to it. And every one of them leads with information instead of a win.
+
+This starts with one small win on Day 1, the same action for everyone. Then the information has somewhere to go.
+
+Do you know how many of your people used the record keeper's tools this year? If not, the pilot gives you a side by side for 21 days.
+
+NOTE: Do not describe any specific record keeper's product as weak. Keep it to "leads with information." If they push on whose is better, offer to look at what they have together.
+
+
+2. "WE TRIED A WELLNESS APP. NOBODY USED IT."
+
+That's a fair worry, and I'd rather hear it now.
+
+Feature-heavy apps hand people a menu and ask them to pick where to start. A stressed person picks nothing. This gives everyone one action on Day 1, a few minutes a day, and it starts with a win before any reading.
+
+I can't promise your people will use it. That's exactly what the 21 days are for. You see the participation numbers on Day 21 and decide from there.
+
+NOTE: "Hand people a menu" describes app design, not usage rates. Never cite an app download or drop-off figure.
+
+
+3. "WE DON'T HAVE BUDGET."
+
+You don't need any for the pilot. It's 21 days, up to 25 people, zero cost, zero obligation.
+
+If you keep going after that, and you have a 401(k), most and sometimes all of the funding comes from what you already spend on that plan. There may be some added cost, but it is rarely an entirely new outlay. HR doesn't have to go ask finance for a new program.
+
+NOTE: Only use the funding line if they have a plan. No plan means nothing to reallocate. Never say "free," "no cost," or "pays for itself" about anything past the pilot.
+
+
+4. "OUR EMPLOYEES WON'T DO SOMETHING EVERY DAY FOR 21 DAYS."
+
+Maybe not all of them. It's built to be small: a few minutes a day. One money step, one health action, and a two-minute breathing exercise.
+
+Missing a day doesn't knock anyone out. The streak forgives a single missed day so nobody quits over one bad day.
+
+The honest answer is we'll find out. That's what the pilot is for, and you'll see the participation numbers yourself.
+
+NOTE: The streak grace is real in the app (one missed day forgiven). Do not promise a completion rate.
+
+
+5. "WHAT RESULTS HAVE YOU HAD?"
+
+Straight answer: no group has finished all 21 days yet. That's why the pilot is free. You'd be one of the first.
+
+So we agree on what counts before we start. Four measures:
+1. How many of the people invited actually start.
+2. How many finish all 21 days.
+3. How many open a Peace of Mind Account, a separate cushion for the next surprise expense.
+4. How many are still active three or more days a week after Day 21.
+
+You get those in the Day-21 summary, as group numbers. If they're not good enough, you walk away and it cost you nothing.
+
+NOTE: Never borrow a competitor's outcome numbers or an industry engagement rate. Never suggest they ask other vendors for results; that standard comes right back at you.
+
+
+6. "IS THIS FINANCIAL ADVICE? WHAT ABOUT LIABILITY?"
+
+It's education, not advice. Nobody is told what to invest in or what to buy. Nothing is sold to employees.
+
+The steps are simple and the same for everyone: set aside a small cushion account, pick one daily health action, practice a two-minute breathing exercise. It doesn't touch your 401(k) investments or your plan decisions.
+
+If your attorney wants to look at the content before we start, I'm glad to send it.
+
+NOTE: Do not mention the RIA filing or anything about being named on the plan until Ohio makes the registration effective. Do not say "no liability" or "zero risk."
+
+
+7. "WILL YOU SEE OUR EMPLOYEES' DATA? WILL WE?"
+
+You won't send me an employee list. People sign themselves up from one link that HR forwards.
+
+On your side, HR sees group totals and who checked in. Never a named person's stress, savings, journal, or survey answers.
+
+I run the group. I don't hand anyone's personal answers to the company, period.
+
+NOTE: Do not say the database enforces this. The privacy field split is built (app branch privacy-split, 10/04) but not deployed, and there are no HR logins until it ships. Day 22 and later data is already owner-only. If they ask how it's protected technically, say you'll send a short written summary, then get it checked against the current build first.
+
+
+8. "WHY WOULD OUR BROKER, OR WHOEVER HANDLES OUR 401(K), BE OK WITH THIS?"
+
+The pilot doesn't change anything with them. Your plan, your health benefits, your broker, all stay exactly where they are.
+
+If the person who handles your plan wants to be part of it, I'm glad to have them in the room for the Day-21 review.
+
+NOTE: Do not promise you won't talk to them about the 401(k). The no-marketing promise on the partner one-pager is only for partners who bring you in, and Scott has not approved it yet. If the employer raises the plan themselves, that's their call.
+
+
+9. "WE'RE TOO SMALL."
+
+Small is fine. The pilot is built for a group of up to 25. There's nothing to install and nothing to connect to your payroll. HR forwards one link and I run it from there.
+
+A smaller group also makes the Day-21 summary easier to read. You'll know a lot of the names on the participation list.
+
+NOTE: With a very small group, group numbers can point to one person. Talk about that before starting.
+
+
+10. "CAN IT COME FROM PLAN ASSETS?"
+
+Plan on the company paying for it. Whether any part could come from plan assets is a question for your ERISA attorney, and I won't tell you yes.
+
+What I can say is the funding conversation starts with what you already spend on the plan. Most, and sometimes all, of it can come from there, with some possible added cost. We'd walk through that together with real numbers.
+
+NOTE: Never say "yes" or "probably" on plan assets. Reallo(k)ate means redirecting existing plan spend, not a legal ruling on plan-asset use.
+
+
+11. "WHAT DOES IT COST AFTER THE PILOT?"
+
+We talk about that after you've seen the Day-21 summary and decided it's worth continuing. If it isn't, there's nothing to discuss.
+
+If you work with me on your 401(k), the Employee Roadmap for the rest of the year is included in that engagement.
+
+NOTE: Standalone pricing is not set. Do not float a range, even a rough one.
+
+
+12. "WHY YOU AND NOT A BIG PROVIDER?"
+
+Because I'll run it myself. You get one person who knows your group, not a help desk.
+
+The tradeoff is real: I'm one person, there are no integrations, and I don't have finished cohorts yet. What you get in return is one action for everyone, it starts with a win, it covers money, health, and stress together, and it's aimed at what matters to the business, not just plan numbers.
+
+NOTE: Saying the weaknesses out loud first is deliberate. It builds trust with finance buyers and takes the punch out of the comparison.

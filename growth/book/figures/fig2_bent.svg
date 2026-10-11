@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="700" viewBox="0 0 1500 700" font-family="Helvetica, Arial, sans-serif">
+<rect width="1500" height="700" fill="#ffffff"/>
+<line x1="110" y1="590" x2="1420" y2="590" stroke="#0F172A" stroke-width="4"/>
+<line x1="110" y1="590" x2="110" y2="70" stroke="#0F172A" stroke-width="4"/>
+<text stroke="#ffffff" stroke-width="12" paint-order="stroke" stroke-linejoin="round" x="1420" y="640" text-anchor="end" font-size="42" fill="#334155">Time</text>
+<text stroke="#ffffff" stroke-width="12" paint-order="stroke" stroke-linejoin="round" x="60" y="330" text-anchor="middle" font-size="42" fill="#334155" transform="rotate(-90 60 330)">Where you are</text>
+<path d="M110 520 C 170 520, 200 170, 270 170 S 360 520, 420 520 C 480 520, 510 190, 580 190 S 670 520, 730 520 C 790 520, 820 160, 890 160 S 980 520, 1040 520 C 1100 520, 1130 200, 1200 200 S 1290 520, 1400 520" fill="none" stroke="#94A3B8" stroke-width="6" stroke-dasharray="16 12"/>
+<path d="M110 520 C 520 505, 950 400, 1400 250" fill="none" stroke="#0F172A" stroke-width="12" stroke-linecap="round"/><text stroke="#ffffff" stroke-width="12" paint-order="stroke" stroke-linejoin="round" x="590" y="170" text-anchor="middle" font-size="42" fill="#64748B">The yo-yo (dashed)</text>
+<text stroke="#ffffff" stroke-width="12" paint-order="stroke" stroke-linejoin="round" x="1395" y="220" text-anchor="end" font-size="44" font-weight="700" fill="#0F172A">A bent baseline</text></svg>

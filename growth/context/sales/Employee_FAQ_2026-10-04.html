@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Employee FAQ for the Bend Your Baseline 21-Day Challenge pilot. Built 2026-10-04.
+     Time-per-day wording comes from the app itself (days.json has no minute counts): "a few focused minutes a day",
+     breathing = two minutes, Keep Your Margin weekly check = five minutes. There is NO delete-account button in the
+     app (checked public/js 2026-10-04), so deletion is by email. Privacy lines describe what the employer sees;
+     the database field-split fix is not yet deployed, so no technical promise is made. -->
+<title>Bend Your Baseline Employee FAQ</title>
+<style>
+  @page { size: 8.5in 11in; margin: 0.5in 0.6in 0.45in; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root{ --cream:#F4EFE3; --card:#FFFFFF; --border:#E4DCCB; --ink:#2A2722; --muted:#8C8474;
+         --p1:#0F172A; --p2:#155E84; --p3:#0EA5E9; --p4:#F59E0B; }
+  html,body{ -webkit-print-color-adjust:exact; print-color-adjust:exact; background:#FFFFFF; }
+  body{ font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; color:var(--ink); max-width:7.3in; }
+  .head{ display:flex; justify-content:space-between; align-items:flex-start; gap:16px; }
+  .over{ font-size:9.5px; font-weight:800; letter-spacing:2.5px; color:var(--p4); text-transform:uppercase; }
+  h1{ font-family:Georgia,serif; font-size:28px; line-height:1.05; margin:4px 0 4px; }
+  .sub{ font-family:Georgia,serif; font-style:italic; font-size:13px; color:#5C564B; line-height:1.35; max-width:4.8in; }
+  .brand{ text-align:right; flex:0 0 auto; }
+  .logo{ font-size:12.5px; font-weight:800; }
+  .logo .gold{ color:var(--p4); }
+  .tag{ font-size:8.5px; letter-spacing:1.5px; color:var(--muted); font-weight:700; text-transform:uppercase; margin-top:4px; line-height:1.35; }
+  .rule{ height:2.5px; background:var(--ink); margin:10px 0 12px; }
+  .q{ background:#FBF8F1; border:1px solid var(--border); border-radius:11px; padding:10px 14px; margin-bottom:9px; break-inside:avoid; page-break-inside:avoid; }
+  .q h2{ font-family:Georgia,serif; font-size:14px; color:var(--p1); margin-bottom:4px; }
+  .q p{ font-size:11px; line-height:1.5; color:#3C382F; margin-bottom:4px; }
+  .q p:last-child{ margin-bottom:0; }
+  .q ul{ margin:2px 0 4px 16px; }
+  .q li{ font-size:11px; line-height:1.45; color:#3C382F; margin-bottom:2px; }
+  .q b{ color:var(--ink); }
+  .q.priv{ border-left:5px solid var(--p3); }
+  .cta{ background:var(--p1); border-radius:12px; padding:11px 16px; display:flex; justify-content:space-between; align-items:center; gap:14px; color:#fff; margin-top:4px; break-inside:avoid; }
+  .cta .ch{ font-family:Georgia,serif; font-size:14px; font-weight:700; }
+  .cta .contact{ text-align:right; font-size:10.5px; line-height:1.5; }
+  .cta .gold{ color:var(--p4); font-weight:800; }
+</style>
+</head>
+<body>
+  <div class="head">
+    <div>
+      <div class="over">Bend Your Baseline &middot; The 21-Day Challenge</div>
+      <h1>Questions You Might Have</h1>
+      <div class="sub">Plain answers about the 21-day challenge your employer is offering: what it is, how long it takes, and who sees what.</div>
+    </div>
+    <div class="brand">
+      <div class="logo">Workplace Financial <span class="gold">Solutions</span></div>
+      <div class="tag">Scott Pooch<br>Retirement Plan Consultant and Educator</div>
+    </div>
+  </div>
+  <div class="rule"></div>
+
+  <div class="q">
+    <h2>What is it?</h2>
+    <p>21 days of small daily actions in three areas of your life, done in an app on your phone or computer. Each day you aim for three targets:</p>
+    <ul>
+      <li><b>Money:</b> start a Peace of Mind Account.</li>
+      <li><b>Health:</b> one simple daily health action you can keep up in a busy week.</li>
+      <li><b>Stress:</b> 4x4x4x4 breathing, a two-minute reset.</li>
+    </ul>
+    <p>Each day also has one short exercise and a quick check-in. The goal is to give you a few small actions you can choose to keep using after the 21 days end.</p>
+  </div>
+
+  <div class="q">
+    <h2>How long does each day take?</h2>
+    <p>A few minutes. A day has one short exercise, a quick check-in, and on a few early days a short video. The breathing exercise takes about two minutes. Some exercises take longer, like sorting a month of spending on Day 8, so every day also has a shorter "hard day version" for busy days.</p>
+  </div>
+
+  <div class="q">
+    <h2>Is it free for me?</h2>
+    <p>Yes. It costs you nothing, and there is nothing to buy. Nothing to download from an app store either: it runs in your phone's browser, and you can add it to your home screen.</p>
+  </div>
+
+  <div class="q priv">
+    <h2>What does my employer see?</h2>
+    <p><b>Your employer sees:</b> that you joined, how far along you are, and whether you are still checking in. They also get a Day-21 summary with group totals and group averages based on the people who took part.</p>
+    <p>Your employer does not see your individual stress ratings, savings amounts, notes or journal entries, or your individual answers to the start and end questions. Those answers may be included in group averages.</p>
+    <p>Scott Pooch runs the program and prepares the group summary. He does not share any one person's numbers with your employer.</p>
+  </div>
+
+  <div class="q">
+    <h2>Is this financial advice?</h2>
+    <p>No. It is education. The challenge helps you build habits. It does not tell you what to invest in, and it is not financial, investment, tax, legal, or medical advice. For advice about your own situation, talk with a professional you choose.</p>
+  </div>
+
+  <div class="q">
+    <h2>What is a Peace of Mind Account?</h2>
+    <p>A separate savings account set aside for the next surprise bill. On Day 2 you add up one month of essentials (housing, food, utilities, getting to work, insurance, minimum payments). The challenge calls that your Peace of Mind number. Your first marker is $500, or a smaller amount if that fits your situation better.</p>
+    <p>If you decide to open one, you open it at your own bank or credit union. The app only tracks your progress. It never moves money and never asks for your bank login.</p>
+  </div>
+
+  <div class="q">
+    <h2>What is 4x4x4x4 breathing?</h2>
+    <p>A two-minute stress reset. Breathe in for 4 counts, hold for 4, breathe out for 4, hold for 4. The app has a guided timer that runs four rounds. You can use it any time stress hits, not only during the challenge.</p>
+  </div>
+
+  <div class="q">
+    <h2>What if I miss a day?</h2>
+    <p>Pick up where the calendar is. You don't start over. The app moves you to today's day, and you can page back to read any day you missed. Your streak forgives a single missed day. If a day feels like too much, do the hard day version.</p>
+  </div>
+
+  <div class="q">
+    <h2>What happens after Day 21?</h2>
+    <p>On Day 21 the app asks the same short questions you answered at the start, so you can compare your own answers. Your employer sees group averages from those answers, never your individual answers.</p>
+    <p>Starting Day 22 the app switches to <b>Keep Your Margin</b>: a short daily check-in for your health action and stress, your Peace of Mind progress, and a five-minute weekly check. It also asks a few quick questions at 90, 180, and 365 days. Your account stays yours. Your employer's summary can show whether people are still active after Day 21, never what anyone entered.</p>
+  </div>
+
+  <div class="q">
+    <h2>How do I delete my data?</h2>
+    <p>Email scott@scottpooch.com and ask to have your account and data deleted. There is no delete button inside the app.</p>
+  </div>
+
+  <div class="q">
+    <h2>Who runs it?</h2>
+    <p>Scott Pooch, a retirement plan consultant and educator in Columbus, Ohio, with 20+ years working with business owners. The program is offered through Workplace Financial Solutions. The app runs on the Build More Margin platform, so you may see that name when you sign in.</p>
+  </div>
+
+  <div class="cta">
+    <div class="ch">Questions? Ask your HR contact, or email Scott.</div>
+    <div class="contact"><span class="gold">scott@scottpooch.com</span><br>workplacefinancialsolutions.com</div>
+  </div>
+</body>
+</html>

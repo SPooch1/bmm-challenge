@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bend Your Baseline for Advisors</title>
+<style>
+  @page { size: 8.5in 11in; margin: 0; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root{
+    --cream:#F4EFE3; --card:#FFFFFF; --border:#E4DCCB;
+    --ink:#2A2722; --muted:#8C8474; --rule:#2A2722;
+    --p1:#0F172A;  /* 01 Get Grounded — navy */
+    --p2:#155E84;  /* 02 Take Control — navy-sky */
+    --p3:#0EA5E9;  /* 03 Grow & Protect — sky */
+    --p4:#F59E0B;  /* 04 Finish Strong — amber */
+  }
+  html,body{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  body{
+    font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;
+    color:var(--ink); width:8.5in; height:11in; background:var(--cream);
+    padding:0.5in 0.55in 0.4in; display:flex; flex-direction:column;
+  }
+  .serif{ font-family:Georgia,'Times New Roman',serif; }
+
+  .head{ display:flex; justify-content:space-between; align-items:flex-start; }
+  .over{ font-size:10px; font-weight:800; letter-spacing:3px; color:var(--p4); text-transform:uppercase; }
+  h1{ font-family:Georgia,serif; font-size:32px; color:var(--ink); line-height:1; margin:4px 0 5px; font-weight:700; }
+  .sub{ font-family:Georgia,serif; font-style:italic; font-size:13.5px; color:#5C564B; max-width:5.2in; line-height:1.35; }
+  .brand{ text-align:right; padding-top:2px; }
+  .logo{ display:inline-flex; align-items:center; gap:7px; font-size:14px; font-weight:800; letter-spacing:.5px; color:var(--ink); }
+  .logo .mk{ width:22px; height:22px; border-radius:6px; background:var(--p3); color:#fff; display:flex; align-items:center; justify-content:center; font-family:Georgia,serif; font-size:14px; }
+  .logo .gold{ color:var(--p4); }
+  .tag{ font-size:9px; letter-spacing:2px; color:var(--muted); font-weight:700; text-transform:uppercase; margin-top:3px; }
+  .rule{ height:2.5px; background:var(--rule); margin:11px 0 12px; }
+
+  /* lead row */
+  .lead{ display:flex; gap:14px; margin-bottom:13px; }
+  .lead .what{ flex:1.35; font-size:11.5px; line-height:1.5; color:#3C382F; }
+  .lead .what b{ color:var(--ink); }
+  .lead .why{ flex:1; background:var(--card); border:1px solid var(--border); border-radius:11px; padding:10px 13px; }
+  .lead .why .h{ font-size:8.5px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--p4); margin-bottom:5px; }
+  .lead .why .r{ font-size:10.5px; line-height:1.45; color:#4A453B; padding-left:14px; position:relative; margin-bottom:4px; }
+  .lead .why .r::before{ content:"\2713"; position:absolute; left:0; top:0; color:var(--p3); font-weight:800; }
+
+  .sec-h{ font-family:Georgia,serif; font-size:15px; font-weight:700; color:var(--ink); margin:0 0 8px; }
+  .sec-h .em{ font-style:italic; }
+
+  /* phase grid */
+  .grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:9px; margin-bottom:13px; }
+  .phase{ background:var(--card); border:1px solid var(--border); border-radius:11px; overflow:hidden; box-shadow:0 1px 2px rgba(0,0,0,.04); }
+  .phase .cap{ padding:8px 11px 7px; color:#fff; }
+  .phase .cap .pn{ font-size:9px; font-weight:800; letter-spacing:1px; opacity:.85; }
+  .phase .cap .pl{ font-family:Georgia,serif; font-size:13.5px; font-weight:700; line-height:1.05; }
+  .phase.p1 .cap{ background:var(--p1);} .phase.p2 .cap{ background:var(--p2);}
+  .phase.p3 .cap{ background:var(--p3);} .phase.p4 .cap{ background:var(--p4);}
+  .phase ol{ list-style:none; padding:8px 11px 10px; }
+  .phase li{ font-size:10.5px; line-height:1.25; color:#3C382F; padding:4px 0 4px 21px; position:relative; border-bottom:1px solid #F0EADC; }
+  .phase li:last-child{ border-bottom:none; }
+  .phase li .mn{ position:absolute; left:0; top:4px; font-family:Georgia,serif; font-size:10px; font-weight:800; color:var(--muted); }
+  .phase li b{ color:var(--ink); font-weight:700; }
+  .phase li .ms{ display:block; color:var(--muted); font-size:9px; line-height:1.2; margin-top:1px; }
+
+  /* month 1 strip */
+  .m1{ background:#EDE6D6; border:1px dashed #CFC6B2; border-radius:10px; padding:9px 14px; font-size:11px; line-height:1.45; color:#3C382F; margin-bottom:13px; }
+  .m1 b{ color:var(--ink); }
+
+  /* wedge */
+  .wedge{ display:flex; gap:0; border:1px solid var(--border); border-radius:11px; overflow:hidden; margin-bottom:13px; }
+  .wcol{ flex:1; padding:11px 14px; }
+  .wcol.a{ background:#FBF7EE; border-right:1px solid var(--border); }
+  .wcol.b{ background:#fff; }
+  .wcol .wh{ font-size:8.5px; font-weight:800; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
+  .wcol.a .wh{ color:var(--muted); } .wcol.b .wh{ color:var(--p3); }
+  .wcol .ln{ font-size:10.5px; line-height:1.45; color:#4A453B; padding-left:14px; position:relative; margin-bottom:3px; }
+  .wcol.a .ln::before{ content:"\2013"; position:absolute; left:0; color:var(--muted); }
+  .wcol.b .ln::before{ content:"+"; position:absolute; left:0; color:var(--p3); font-weight:800; }
+  .wcol.b .ln b{ color:var(--ink); }
+
+  .cta{ margin-top:auto; background:var(--p1); border-radius:12px; padding:13px 18px; display:flex; justify-content:space-between; align-items:center; color:#fff; }
+  .cta .ch{ font-family:Georgia,serif; font-size:16px; font-weight:700; line-height:1.2; max-width:4.2in; }
+  .cta .contact{ text-align:right; font-size:11px; line-height:1.5; }
+  .cta .contact b{ color:#fff; } .cta .contact .gold{ color:var(--p4); font-weight:800; }
+
+  .foot{ margin-top:8px; display:flex; justify-content:space-between; align-items:center; font-size:8.5px; color:var(--muted); }
+  .foot .site{ color:var(--p3); font-weight:800; }
+</style>
+<style>
+  .stat{ display:flex; gap:10px; margin-bottom:6px; }
+  .stat .n{ font-family:Georgia,serif; font-size:30px; font-weight:700; color:var(--p2); line-height:1; min-width:0.8in; }
+  .stat .t{ font-size:10.5px; line-height:1.4; color:#4A453B; }
+  .src{ font-size:8.5px; color:var(--muted); line-height:1.35; margin-top:4px; }
+  .steps{ display:grid; grid-template-columns:repeat(4,1fr); gap:9px; margin-bottom:13px; }
+  .step{ background:var(--card); border:1px solid var(--border); border-radius:11px; padding:10px 11px; }
+  .step .sn{ font-family:Georgia,serif; font-size:18px; font-weight:700; color:var(--p4); line-height:1; }
+  .step .st{ font-size:11px; font-weight:700; color:var(--ink); margin:4px 0 3px; line-height:1.2; }
+  .step .sd{ font-size:9.8px; line-height:1.35; color:#4A453B; }
+  .founding{ background:#EDE6D6; border:1px dashed #CFC6B2; border-radius:10px; padding:9px 14px; font-size:11px; line-height:1.45; color:#3C382F; margin-bottom:13px; }
+  .founding b{ color:var(--ink); }
+</style>
+</head>
+<body>
+  <div class="head">
+    <div>
+      <div class="over">For 401(k) advisors and plan consultants</div>
+      <h1>Bend Your Baseline</h1>
+      <div class="sub">A 21-day employee challenge and a 12-month roadmap for your client plans, starting with one. You keep the relationship. I run the program.</div>
+    </div>
+    <div class="brand">
+      <div class="logo">SCOTT <span class="gold">POOCH</span></div>
+      <div class="tag">Retirement Plan Consultant and Educator</div>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
+  <div class="lead">
+    <div class="what">
+      <b>More plan information is not the fix on its own.</b> About half of participants already say they get more than they can absorb, and much of it goes unread. Bend Your Baseline is built around small actions people can repeat, rather than more to read.<br><br>
+      It gives your plans something to <b>do</b>, not something to read. Employees start with a 21-day challenge on their phone or computer, a few minutes a day, then move into one monthly module for the rest of the year. Each step asks the employee to do something, not just read something.
+    </div>
+    <div class="why">
+      <div class="h">What participants say</div>
+      <div class="stat"><div class="n">53%</div><div class="t">feel they are presented with more information about their plans than they can absorb.</div></div>
+      <div class="stat"><div class="n">48%</div><div class="t">admit they do not take the time to read all the investment information their plans provide.</div></div>
+      <div class="src">J.P. Morgan Asset Management, 2026 DC Plan Participant Survey: 1,716 participants at employers with 50 or more employees, fielded January 2026.</div>
+    </div>
+  </div>
+
+  <div class="sec-h">What employees do in the first <span class="em">21 days</span></div>
+  <div class="wedge">
+    <div class="wcol b">
+      <div class="wh">Money</div>
+      <div class="ln"><b>Open a Peace of Mind Account</b>, a separate cushion set aside for the next surprise expense.</div>
+    </div>
+    <div class="wcol b" style="border-left:1px solid var(--border)">
+      <div class="wh">Health</div>
+      <div class="ln"><b>One simple daily action</b> for the body, kept small enough for a busy week.</div>
+    </div>
+    <div class="wcol b" style="border-left:1px solid var(--border)">
+      <div class="wh">Stress</div>
+      <div class="ln"><b>A two-minute breathing exercise</b> they can use when stress hits.</div>
+    </div>
+  </div>
+
+  <div class="sec-h">What <span class="em">you</span> get, and what the <span class="em">plan sponsor</span> gets</div>
+  <div class="wedge">
+    <div class="wcol b" style="border-right:1px solid var(--border)">
+      <div class="wh">For you</div>
+      <div class="ln"><b>Something practical to bring</b> to a plan review, beyond the usual plan discussion</div>
+      <div class="ln"><b>A reason to stay involved</b> with the sponsor and employees all year</div>
+      <div class="ln"><b>You introduce it; I deliver it.</b> You sit in on the results review</div>
+      <div class="ln"><b>Your client relationship stays yours.</b> I deliver the program through you and do not market my retirement plan consulting to sponsors you introduce</div>
+    </div>
+    <div class="wcol a" style="border-right:none">
+      <div class="wh" style="color:var(--p2)">For the employer</div>
+      <div class="ln">A Day-21 summary: participation, completion, and the group's average stress check-in, shown only in aggregate</div>
+      <div class="ln">The employer sees participation and completion, never an employee's personal money or stress answers</div>
+      <div class="ln">The employer does not send me an employee list. Employees enroll themselves from one link</div>
+      <div class="ln">Very little work for HR. They forward one link; I run the group from there</div>
+    </div>
+  </div>
+
+  <div class="sec-h">How it <span class="em">starts</span></div>
+  <div class="steps">
+    <div class="step"><div class="sn">1</div><div class="st">A 20-minute call</div><div class="sd">We talk through which client plan could make sense for a first group.</div></div>
+    <div class="step"><div class="sn">2</div><div class="st">One plan, one group</div><div class="sd">Up to 25 employees and a shared start date. HR forwards one link.</div></div>
+    <div class="step"><div class="sn">3</div><div class="st">21 days</div><div class="sd">Employees do the challenge. I run the group and track participation and completion.</div></div>
+    <div class="step"><div class="sn">4</div><div class="st">Results review</div><div class="sd">We walk the sponsor through the summary together. The sponsor decides whether to continue.</div></div>
+  </div>
+
+  <div class="founding"><b>Founding partners.</b> The program is new, and I am starting with advisory firms willing to test it with one client plan. Your first group is at no cost. We discuss pricing only after you have seen the Day-21 summary and decided the program is worth continuing.</div>
+
+  <div class="cta">
+    <div class="ch">Try it with one plan first.</div>
+    <div class="contact">
+      <b>Scott Pooch</b> &middot; Columbus, Ohio<br>
+      scott@scottpooch.com &middot; 614-434-6670<br>
+      <span class="gold">meet.scottpooch.com/book/30-min-consultations</span>
+    </div>
+  </div>
+  <div class="foot">
+    <span>The 12-month roadmap: Get Grounded &middot; Take Control &middot; Grow and Protect &middot; Finish Strong</span>
+    <span class="site">bendyourbaseline.com</span>
+  </div>
+</body>
+</html>

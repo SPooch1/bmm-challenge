@@ -1,0 +1,85 @@
+KDP LISTING: Bend Your Baseline (Book 1 of the Baseline Series)
+Regenerated 2026-10-05 in Basecamp (the 9/27 Desktop copy went with the MBP). Source of truth for the upload. Copy the blocks below into kdp.amazon.com field by field.
+
+==========================================================
+BOOK DETAILS (Kindle and paperback share these)
+==========================================================
+Language: English
+Book title: Bend Your Baseline
+Subtitle: Why Good Habits Don't Stick, and 21 Days to Raise Your Floor
+Series: leave blank (add the Baseline Series page when Book 2 exists; series plan 9/27)
+Edition number: leave blank
+Author: Scott Pooch
+Contributors: none
+AI-generated content: YES, answer the KDP question honestly: text drafted with AI tools and edited by the author; illustrations are the author's own (SVG figures and the Bitsy drawings). KDP rule verified 9/27: AI-generated text must be disclosed at upload.
+Primary audience: not for children; no sexually explicit content; reading age blank
+
+==========================================================
+DESCRIPTION (KDP cap 4,000 characters; this block is about 2,250 with tags)
+Words gate 2026-10-05: Codex read-only (gpt-5.5), 7 findings: TAKEN 5 (sharper opening line, "usually gone by March" and "most people" dropped as unsupported, keyword 2 and 7 made searchable); REJECTED 2 ("small enough to keep" is the book's own thesis wording, not an outcome claim; the "programs their people stop using" bio line mirrors the approved speaker bio).
+Allowed tags used: <b>, <p>, <br>. Paste as is.
+==========================================================
+<b>You already know how habits work. This is for the part after the reading: the days where you actually do something.</b>
+<p>Diets snap back. Budgets snap back. The big fresh start that felt so good in January can be gone a few months later. It is easy to blame the plan, or yourself. The pull comes from somewhere else: your baseline, the result your ordinary days tend to produce. A plan is a push. When the push ends, the ordinary days are still there.</p>
+<p>Bend Your Baseline is a short book with one job: raise the floor you fall back to, with changes small enough to keep after the push is over.</p>
+<p><b>Part One</b> explains why good intentions revert, and why more information, more motivation, more personalization, and more apps do not fix it. Four short chapters you can read in one sitting.</p>
+<p><b>Part Two</b> is 21 days, one short chapter per day, each ending with something to do today in less time than it takes to read the chapter. You will find your Peace of Mind number, start a Peace of Mind Account, set a body baseline you can hold on your worst week, and build a stress blueprint from what actually happens in your days. Every day has a hard-day version, small enough to do when everything goes wrong.</p>
+<p><b>Part Three</b> is Day 22 and after: how to keep what you built, what to do when the storm hits, and a bonus chapter for anyone who leads a team and has watched a wellness program or company initiative fade.</p>
+<p>A free companion app follows the book day by day, with a breathing timer and a savings tracker. Nothing to download from an app store. Paper works fine too; the trackers are in the back.</p>
+<p>Scott Pooch is a retirement plan consultant and educator in Columbus, Ohio, and a former college distance running coach. He has spent more than twenty years watching employers spend real money on programs their people stop using. This book is what he tells the people in the room.</p>
+<p>Start smaller than you think you need to. If you cannot do it on your worst day, it is too big. Shrink it.</p>
+
+==========================================================
+KEYWORDS (7 boxes, 50 characters each; no other authors or titles, KDP rule verified 9/27)
+==========================================================
+1. habits that stick after motivation fades
+2. 21 day habit challenge
+3. emergency fund savings plan for beginners
+4. why diets and budgets fail
+5. small daily habits financial wellness
+6. stress management breathing habit
+7. new year resolutions habits
+
+==========================================================
+CATEGORIES (KDP allows up to 3 per format, chosen from Amazon's own browse tree, not BISAC;
+verified 2026-10-05 against live Amazon best-seller pages)
+==========================================================
+1. Kindle Store > Kindle eBooks > Self-Help > Personal Transformation
+   https://www.amazon.com/Best-Sellers-Personal-Transformation/zgbs/digital-text/156571011
+2. Kindle Store > Kindle eBooks > Business & Money > Personal Finance > Budgeting & Money Management
+   https://www.amazon.com/Best-Sellers-Kindle-Store-Budgeting-Money-Management/zgbs/digital-text/8493814011
+3. Kindle Store > Kindle eBooks > Self-Help > Motivational
+   https://www.amazon.com/Best-Sellers-Kindle-Store-Motivational-Self-Help/zgbs/digital-text/156570011
+Paperback: pick the same three under Books > Self-Help / Books > Business & Money (the paperback tree mirrors these; KDP's picker shows the path).
+Rule reference: 3 categories per format and 7 keyword boxes of 50 characters, https://www.builtwritten.com/blog/kdp-categories-and-keywords-get-found-2026
+
+==========================================================
+KINDLE EBOOK
+==========================================================
+Manuscript: Speaking/book-21-day/build/Bend_Your_Baseline_21_Day.epub (rebuilt 2026-10-05; the EPUB now carries the subtitle in its metadata)
+Cover: Speaking/book-21-day/build/Bend_Your_Baseline_Kindle_Cover_1600x2560.jpg
+DRM: No
+Pre-order: No
+ISBN: none for Kindle (not needed)
+Territories: All territories (worldwide rights)
+Primary marketplace: Amazon.com
+KDP Select: ENROLL (decided 9/27); run the free promotion at launch
+Pricing (decided by Scott 9/27): $2.99 USD, 70% royalty; other marketplaces: let KDP convert from the US price
+Plan: drop Book 1 to $0.99 (35% royalty, the KDP minimum) when Book 2 launches
+
+==========================================================
+PAPERBACK
+==========================================================
+Manuscript: Speaking/book-21-day/build/Bend_Your_Baseline_Paperback_Interior_6x9.pdf (PAGECOUNT pages, rebuilt 2026-10-05)
+Cover: Speaking/book-21-day/build/Bend_Your_Baseline_Paperback_Cover_Wrap.pdf (full wrap, spine sized to the page count by build.py)
+ISBN: Free KDP ISBN unless Scott says otherwise
+Print options: black & white interior, white paper (the spine width in the wrap cover assumes white paper), 6 x 9 in (15.24 x 22.86 cm), no bleed, matte cover finish (my pick; glossy is the alternative)
+Territories: All territories
+Pricing: Scott decides. KDP shows the minimum list price after it computes printing cost; a 6x9 black-and-white book of this length usually prints for a few dollars, so $9.99 to $12.99 is the range to look at.
+
+==========================================================
+STILL ON SCOTT
+==========================================================
+1. Confirm the biography fact "coached Division I college distance runners for four years" (it is in the book's About the Author, the back cover, the launch LinkedIn post, and the description above as "a former college distance running coach"). If the years or level are different, say so and I will fix every copy before upload.
+2. Paperback list price.
+3. The upload itself (KDP login, the AI disclosure question, and the final Publish click). After it is live: the /getbook redirect on bendyourbaseline.com switches to the Amazon URL (one-line v15 deploy), then the launch LinkedIn post (01_401grow/content/linkedin/LI_POST_BYB_Book_Launch_2026-09-27.txt) with the real link in the first comment.

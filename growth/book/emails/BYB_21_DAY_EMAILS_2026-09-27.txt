@@ -1,0 +1,98 @@
+BYB BOOK READERS: 21-DAY EMAILS (MailerLite automation)
+Trigger: subscriber joins group "BYB Book Readers - 21-Day Emails" (only readers who ticked the box on bendyourbaseline.com/book).
+From: Scott Pooch. Reply-to: scott@scottpooch.com. Plain-text style.
+⚠ Emails 2 and 4 name the January 4, 2027 founding group. After January, swap that paragraph for the next group date or remove it.
+
+==============================================================
+EMAIL 1: send 1 day after joining
+Subject: Start smaller than you think
+Preview: One tip for Day 0 through Day 3.
+==============================================================
+Hi {$name|there},
+
+Thanks for picking up Bend Your Baseline. You'll get one short email from me each week of the 21 days. That's it.
+
+One tip for the first few days: start smaller than you think you should.
+
+Day 0 asks for three honest sentences about money, body, and stress. Day 2 asks for your Peace of Mind number. Neither one needs to look good. They just need to be true. The point is to put your starting line on paper.
+
+If a day's action feels too big, use the hard day version at the bottom of the chapter instead.
+
+The app is here whenever you want it:
+https://challenge.buildmoremargin.com
+
+Talk soon,
+Scott
+
+==============================================================
+EMAIL 2: send 7 days after Email 1
+Subject: Pick one number
+Preview: Week 1 is about seeing, not fixing.
+==============================================================
+Hi {$name|there},
+
+If you've been following along, you're near the end of Week 1. This week is about seeing, not fixing. You don't need to make anything better this week.
+
+Day 7 asks you to pick one anchor number and put it somewhere you'll see it every day. The bathroom mirror. Your phone's lock screen. The dashboard. I'd do that one even if you've skipped a few days.
+
+Behind? No problem. Pick up at the next day. Missing a day doesn't reset anything.
+
+One more thing. If you'd rather do the 21 days with other people and a date on the calendar, I'm running a small founding group starting Monday, January 4, 2027, with four live calls. You can reserve one of the 20 seats now without paying:
+https://bendyourbaseline.com/group
+
+Scott
+
+==============================================================
+EMAIL 3: send 7 days after Email 2
+Subject: When you slip
+Preview: What to do on the day it falls apart.
+==============================================================
+Hi {$name|there},
+
+If a rough day shows up, here's the book's reset: use the hard day version the next time you come back to it. Not Monday. Not next month. That might mean the short breathing practice, your smaller movement option, or the amount you already chose for your Peace of Mind Account.
+
+Then ask one question: what got in the way? The schedule? The setup? Was the habit too big? Adjust that before you judge yourself for the missed day.
+
+Day 19 in the book has you write this down as your reset plan. It's short, and it's the page I'd keep.
+
+Scott
+
+P.S. If you lead a team, I also offer a no-cost 21-day pilot for groups of up to 25. If you'd like to talk it through: https://meet.scottpooch.com/book/30-min-consultations
+
+==============================================================
+EMAIL 4: send 7 days after Email 3
+Subject: Day 21 is a starting line
+Preview: What to keep, and what comes next.
+==============================================================
+Hi {$name|there},
+
+If you're at or near Day 21, go back and read the three sentences you wrote on Day 0. Then write three new ones.
+
+Don't worry about whether the new sentences look better than the first three. The exercise is simply to compare them, and to notice what you want to carry forward.
+
+If you want a simple way to continue, the book suggests keeping the same basic routine for a while rather than adding another layer. One option is a five-minute weekly check using what you've already been tracking: your Peace of Mind Account, your chosen action, the breathing practice, and what you want to make room for next week.
+
+If you'd like company for your next round, the founding group starts Monday, January 4, 2027: four live calls on Tuesday evenings, 20 seats, $97 founding price. You can reserve a seat now without paying. I'll send the payment link in early December, and you decide then whether to confirm:
+https://bendyourbaseline.com/group
+
+Scott
+
+==============================================================
+EMAIL 5: send 7 days after Email 4
+Subject: Last one from me
+Preview: One question, if you have a minute.
+==============================================================
+Hi {$name|there},
+
+This is the last of the weekly emails. Thanks for letting me into your inbox for a month.
+
+If you have a minute, I'd love to know one thing: which part of the 21 days felt easiest to use, and which felt hardest? Just hit reply. I read these myself, and your answer will help me decide what to clarify or change in a future edition.
+
+The app also has a Keep Your Margin mode for Day 22 and after, if you'd like to keep using it:
+https://challenge.buildmoremargin.com
+
+And if you ever want to bring this to your team or your organization, here's my calendar:
+https://meet.scottpooch.com/book/30-min-consultations
+
+Thanks,
+Scott

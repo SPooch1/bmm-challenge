@@ -1,0 +1,249 @@
+<title>Bend Your Baseline Program Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: single reading column (~70ch) with full-width tables; a "gate" timeline down the middle of the plan. */
+:root{
+  --bg:#F7F8FA; --surface:#FFFFFF; --fg:#0F172A; --muted:#4A5568; --line:#D8DEE8;
+  --sky:#0B83BE; --amber:#B86E00; --amber-soft:#FFF4DF; --sky-soft:#E6F4FB;
+  --display:"Fraunces", Georgia, serif; --body:"Source Sans 3", -apple-system, "Segoe UI", sans-serif; --mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0B1220; --surface:#131C2E; --fg:#E6EBF3; --muted:#A3AEC2; --line:#26324A;
+  --sky:#46B6EC; --amber:#F2A93B; --amber-soft:#2A2112; --sky-soft:#0F2534; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0B1220; --surface:#131C2E; --fg:#E6EBF3; --muted:#A3AEC2; --line:#26324A;
+  --sky:#46B6EC; --amber:#F2A93B; --amber-soft:#2A2112; --sky-soft:#0F2534; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:17px/1.6 var(--body);padding-inline:16px;padding-block:40px 80px}
+main{max-width:860px;margin:0 auto;display:grid;gap:48px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;line-height:1.2;margin:0}
+h1{font-size:clamp(2rem,5vw,2.8rem);font-weight:650}
+h2{font-size:1.6rem;font-weight:650}
+h3{font-size:1.15rem;font-weight:650}
+p{margin:0;max-width:68ch}
+section{display:grid;gap:16px}
+.eyebrow{font:500 .78rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--sky)}
+.meta{color:var(--muted);font-size:.95rem}
+.call{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--amber);padding:24px;display:grid;gap:12px}
+.call p{font-size:1.1rem}
+ul,ol{margin:0;padding-left:1.25rem;display:grid;gap:6px;max-width:68ch}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.two>div{background:var(--surface);border:1px solid var(--line);padding:20px;display:grid;gap:10px;align-content:start;min-width:0}
+.tbl{overflow-x:auto;border:1px solid var(--line);background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:.95rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:500 .75rem/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--bg)}
+tr:last-child td{border-bottom:0}
+td.num{font-variant-numeric:tabular-nums}
+.gates{display:grid;border-left:2px solid var(--line);margin-left:8px}
+.gate{position:relative;padding:0 0 28px 24px;display:grid;gap:8px}
+.gate::before{content:"";position:absolute;left:-9px;top:4px;width:16px;height:16px;border-radius:50%;background:var(--bg);border:3px solid var(--sky)}
+.gate.now::before{background:var(--amber);border-color:var(--amber)}
+.gate .when{font:500 .8rem/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.pass{background:var(--sky-soft);padding:10px 14px;font-size:.95rem}
+.pill{display:inline-block;font:500 .72rem/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;padding:5px 8px;border-radius:3px;white-space:nowrap}
+.pill.done{background:var(--sky-soft);color:var(--sky)}
+.pill.hold{background:var(--amber-soft);color:var(--amber)}
+.decide{background:var(--amber-soft);padding:20px;display:grid;gap:14px}
+.decide ol{gap:12px}
+.decide strong{display:block}
+.note{font-size:.9rem;color:var(--muted)}
+code{font:500 .85em var(--mono);word-break:break-all}
+a{color:var(--sky)}
+a:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+</style>
+
+<main>
+<header style="display:grid;gap:12px">
+  <div class="eyebrow">Workplace Financial Solutions · Bend Your Baseline</div>
+  <h1>Turning the 21-Day Challenge and The Employee Roadmap into a program employers pay for</h1>
+  <p class="meta">Plan of record, October 4, 2026. Prices are drafts for your decision, not canon. Nothing here has been sent to anyone.</p>
+</header>
+
+<section class="call">
+  <div class="eyebrow">The call</div>
+  <p><strong>Build it now as the way into plan conversations. Sell it as a product in 2027, after the first groups finish.</strong></p>
+  <p>Your December target is 4 to 10 plans. So every 21-day pilot this fall goes to an employer that has a 401(k) you would want, and success means a plan conversation plus a finished group. A group that finishes gives you what every competitor has and you lack: your own numbers.</p>
+</section>
+
+<section>
+  <div class="eyebrow">Where it stands</div>
+  <h2>What is strong, and what has to be true before an outside company logs in</h2>
+  <div class="two">
+    <div>
+      <h3>Strong today</h3>
+      <ul>
+        <li>One action for everyone, no menu. The employee never has to pick where to start.</li>
+        <li>Starts with a win (the Peace of Mind Account) before any education.</li>
+        <li>Health, money and stress in one program, aimed at turnover, productivity and health costs, not plan leakage.</li>
+        <li>HR forwards one link. No employee list changes hands.</li>
+        <li>Day 22 and after keeps going (Keep Your Margin, 90/180/365-day check-ins), which is what makes a yearly license possible.</li>
+        <li>The book (Book 1) and the keynote give it a public face competitors cannot copy.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Gaps</h3>
+      <ul>
+        <li><strong>No finished group yet.</strong> No outcome claims anywhere until one finishes.</li>
+        <li><strong>Privacy in the first 21 days.</strong> Today a company admin could read daily entries and survey answers by name. Fix built and reviewed (see below), not yet live. Until it is, no HR logins.</li>
+        <li><strong>Seat limit.</strong> Shown on screen but not enforced. Fix built, not yet live.</li>
+        <li><strong>One person.</strong> You run every group by hand, and there is no multi-company admin.</li>
+        <li><strong>The Roadmap had no delivery.</strong> Months 2 to 12 ran on ProductDyno, retired 8/26. Now built into the app (see below), not yet live.</li>
+        <li><strong>Website.</strong> The Roadmap page made claims that were not true or broke your rules. Fixed in the new site build.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">The offer</div>
+  <h2>Four ways an employer can buy it</h2>
+  <p>The first two rows are the ones that matter this year. The others start once a group has finished.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Offer</th><th>Who</th><th>Draft price</th><th>When</th></tr></thead>
+    <tbody>
+      <tr><td><strong>21-day pilot</strong><br>Up to 25 employees, Day-21 summary, 30-minute review</td><td>Any employer; this fall, only ones with a 401(k) you want</td><td class="num">$0, zero obligation (canon)</td><td>Now</td></tr>
+      <tr><td><strong>Inside a WFS or 401Grow engagement</strong><br>Challenge plus The Employee Roadmap for the year</td><td>Plans you take over</td><td class="num">Included; most, and sometimes all, of the funding from what they already spend on the plan</td><td>Now (canon)</td></tr>
+      <tr><td><strong>Employee Roadmap year, standalone</strong><br>Challenge, 12 monthly modules, Keep Your Margin, check-in surveys, quarterly summary</td><td>Employers who keep their current plan provider</td><td class="num">10 to 25 employees: $1,500/yr<br>26 to 50: $2,500/yr<br>51 to 100: $4,000/yr<br>101 to 250: $7,500/yr<br>250+: quoted</td><td>After first finished group</td></tr>
+      <tr><td><strong>Extra Challenge group</strong><br>New hires, a second location, a re-run</td><td>Existing clients</td><td class="num">$1,500 per group of up to 25</td><td>After first finished group</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Why these numbers: a flat price per company is easier for a small employer to say yes to than a per-employee rate. Hermes' $3 to $5 per employee per month comes to $900 to $1,500 a year at 25 people, which sat under its own $3,000 minimum. The tiers work out to roughly $30 to $150 per employee per year, below the coaching platforms because there is no one-on-one coaching. Your time per group is my estimate, not measured: about 4 hours (setup, kickoff, weekly check, Day-21 review). Measure it on the first pilot and reprice if it runs long. Benchmarks found: BrightPlan $41.64 to $71.40 per employee per year with planner access (Sourcewell, 2023); EBRI 2018 found 43% of large employers spent $50 or less per employee per year. The smallest tier runs above BrightPlan per head because it carries your time on a small group.</p>
+</section>
+
+<section>
+  <div class="eyebrow">The sequence</div>
+  <h2>Move to the next stage only when the gate is met</h2>
+  <div class="gates">
+    <div class="gate now">
+      <div class="when">Oct to Dec 2026 · now</div>
+      <h3>Make it safe, run 2 to 3 pilots</h3>
+      <ul>
+        <li>Deploy the privacy fix and seat limit (built; needs the Firebase tool and your OK).</li>
+        <li>Deploy the corrected WFS Roadmap page (v22 zip built).</li>
+        <li>Offer the pilot one-to-one to warm contacts whose company has a 401(k). Start with the list below.</li>
+        <li>Set the four scorecard targets before the first group starts.</li>
+      </ul>
+      <div class="pass"><strong>Gate:</strong> at least one group has finished 21 days, with the scorecard filled in from the app's own numbers.</div>
+    </div>
+    <div class="gate">
+      <div class="when">Jan to Mar 2027</div>
+      <h3>First paid conversions</h3>
+      <ul>
+        <li>Turn each Day-21 review into a plan conversation or a paid Roadmap year.</li>
+        <li>Share what the groups actually did, in plain numbers, with the employer's permission.</li>
+        <li>The founding group ($97, starts Jan 4) and the book run in parallel on the individual side.</li>
+        <li>Partner firms only if you decide yes on the question below.</li>
+      </ul>
+      <div class="pass"><strong>Gate:</strong> 5 finished groups and at least one paid result (a plan or a Roadmap year) that came from a pilot.</div>
+    </div>
+    <div class="gate">
+      <div class="when">Apr to Sep 2027</div>
+      <h3>Partners with reach</h3>
+      <ul>
+        <li>Regional record keepers, TPAs, PEOs and credit unions, with the results in hand.</li>
+        <li>Build the multi-company admin before taking on a partner with many employers.</li>
+        <li>Decide white-label vs Bend Your Baseline only when a partner asks and pays.</li>
+      </ul>
+      <div class="pass"><strong>Gate:</strong> self-serve admin built, a written privacy and data summary, and 10+ finished groups.</div>
+    </div>
+    <div class="gate">
+      <div class="when">Late 2027 and after</div>
+      <h3>Broker-dealers and national record keepers</h3>
+      <p>Only with data, a security questionnaire answered, and an ERISA attorney's view on how it can be paid for. Not before.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">This fall's pilots</div>
+  <h2>Who to offer the pilot to first</h2>
+  <p>From your own records (19 names in <code>GTM/Top100/BYB_Pilot_Targets_2026-10-04.csv</code>). Ranked by how close each is to a plan conversation. None of the four host pilot notes planned on 9/05 appears in the account folders as sent, but those folders only cover one mailbox, so I check Gmail before drafting anything.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>#</th><th>Who</th><th>Why first</th><th>First touch</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1</td><td><strong>Columbus Hardscapes</strong>, Jenny Hewitt</td><td>Only warm employer with a confirmed 401(k) who has already asked for something (Form 5500-SF, 9 active participants). She asked for the Plan Snapshot; it went to her 9/18.</td><td>Follow-up on the Snapshot thread, after a Gmail check for her reply</td></tr>
+      <tr><td class="num">2</td><td><strong>CFC Properties</strong>, Allison McGow, HR Manager</td><td>Hosted the 9/09 wellness talk. First in your planned host order.</td><td>The one-to-one pilot note; you see her in person Nov 13</td></tr>
+      <tr><td class="num">3</td><td><strong>MW Metals</strong>, Carissa Rexroth</td><td>Booked host, Dayton. Second in the planned order.</td><td>Pilot note after her session delivers</td></tr>
+      <tr><td class="num">4</td><td><strong>The Vaughan Agency</strong>, Don Vaughan</td><td>Ohio owner, under 25 staff, decides himself.</td><td>Hold until the open AI quote resolves; do not stack asks</td></tr>
+      <tr><td class="num">5</td><td><strong>Commercial Service of Bloomington</strong>, Charity Chase</td><td>Opted in from the wellness talk page.</td><td>Prior-contact check first (their CFO is in the old Lemlist export)</td></tr>
+      <tr><td class="num">6</td><td><strong>DSI, Inc.</strong>, Alan Pinney</td><td>Opted in from the wellness talk page.</td><td>Short note offering the pilot</td></tr>
+      <tr><td class="num">7</td><td><strong>TaxSlayer</strong>, Paige Walden, Head of People</td><td>In the planned host order.</td><td>In person Jan 14, or a note after</td></tr>
+      <tr><td class="num">8</td><td><strong>CMI Consulting</strong>, Beverly Clemons</td><td>Last in the planned host order.</td><td>Pilot note after her session</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Also on the list: STAR Financial and LightGuide (71-participant plan; raise the pilot only after the approved Oct 12 coffee message, never in it). Left off on purpose: anyone marked do-not-contact, chapters, CPAs, record keepers, and the cold Form 5500 list.</p>
+  <h3>The scorecard, set before launch</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Measure</th><th>Comes from</th><th>Suggested target (you confirm)</th></tr></thead>
+    <tbody>
+      <tr><td>Share of invited employees who start</td><td>Seats joined vs headcount invited</td><td class="num">40%</td></tr>
+      <tr><td>Share of starters who finish 21 days</td><td>Dashboard completion</td><td class="num">50%</td></tr>
+      <tr><td>Share who open a Peace of Mind Account</td><td>Group savings count (no names)</td><td class="num">30% of finishers</td></tr>
+      <tr><td>Finishers active 3+ days a week after Day 21</td><td>"After Day 21" card</td><td class="num">40% at 30 days</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">The targets are my suggested starting points, not benchmarks. They are written down first so the result cannot be judged after the fact.</p>
+</section>
+
+<section>
+  <div class="eyebrow">Channels</div>
+  <h2>Who to sell through, in order</h2>
+  <ol>
+    <li><strong>Your own prospects and clients.</strong> The pilot opens a plan conversation; the Roadmap is a named deliverable when you take over a plan.</li>
+    <li><strong>Employers direct, standalone.</strong> Small at first. The competitor is "it comes with our record keeper," so it sells on the one-action design and on your own numbers once you have them.</li>
+    <li><strong>Other 401(k) firms (the partner lane).</strong> The best outside reach, but it conflicts with how you make money. See the decision below.</li>
+    <li><strong>Regional record keepers, TPAs, PEOs, credit unions.</strong> 2027, with data.</li>
+    <li><strong>Broker-dealers and national record keepers.</strong> Late 2027 at the earliest.</li>
+  </ol>
+</section>
+
+<section>
+  <div class="eyebrow">Competitors</div>
+  <h2>Who the buyer compares you to</h2>
+  <p>Verified on each company's own pages (full battlecard: <code>GTM/Sales-Tools/BYB_Competitor_Battlecard_2026-10-04.md</code>). Outcome numbers below are the vendors' own claims, with no method shown.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Competitor</th><th>What the buyer hears</th><th>Where you differ</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Record keepers</strong> (Empower, Principal, Fidelity)</td><td>Wellness tools come inside the plan. Empower: "One provider, one experience."</td><td>Their tools wait for the employee to log in and choose. Yours hands everyone one action a day and starts with a win.</td></tr>
+      <tr><td><strong>Zero-cost perks</strong> (Payactiv, Paychex Perks)</td><td>"No cost to the business."</td><td>Earned-wage access and discounts are not a habit program. They don't build a Peace of Mind Account.</td></tr>
+      <tr><td><strong>Ramsey SmartDollar</strong></td><td>2,000+ companies, 5 million employees. Custom pricing, and it also runs pilots.</td><td>A pilot alone is not different. One-action design, health and stress included, and you in the room are.</td></tr>
+      <tr><td><strong>BrightPlan</strong></td><td>Planner access. Only public price found: $5.95 list, $3.47 discounted, per employee per month (Sourcewell contract, 2023).</td><td>Lower touch, lower price, no coaching. Small employers can say yes without a procurement process.</td></tr>
+      <tr><td><strong>OneDigital</strong></td><td>Retirement plan plus "financial wellness coaches" for small and midsized businesses.</td><td>The closest match to a WFS engagement. Your answer is the Reallo(k)ate funding frame and the Day-21 summary.</td></tr>
+      <tr><td><strong>Origin, Financial Finesse, Brightside</strong></td><td>ROI claims ($2.39 to $5.50 per dollar) and turnover claims.</td><td>Do not answer with claims. Answer with the scorecard you set before the pilot.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Hermes' errors, corrected: the LPL and SmartDollar tie-up rests on a 2015 announcement; the SHRM "$10 to $30 per month" figure is a 2021 journalist's estimate, not SHRM research; the "43% spend under $50" figure is EBRI 2018, firms with 500+ employees only.</p>
+</section>
+
+<section>
+  <div class="eyebrow">Built today</div>
+  <h2>What exists now, and its status</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Piece</th><th>Where</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td><strong>App privacy fix and seat limit.</strong> HR sees each person's progress only. Stress, savings, notes, survey answers and even group totals are blocked for HR by the database itself; you read the totals and put them in the Day-21 summary. 25-seat cap enforced. Migration tool included.</td><td><code>~/bmm-challenge</code>, branch <code>privacy-split</code>; patches in <code>assets/bmm/app-specs/</code></td><td><span class="pill done">Built · tests pass · Codex: no findings</span><br><span class="pill hold">Deploy needs the Firebase tool + your OK</span></td></tr>
+      <tr><td><strong>Monthly Roadmap delivery in the app.</strong> One module a month after Day 21, only for employers you switch on.</td><td>same branch</td><td><span class="pill done">Built · tests pass · Codex: no findings</span><br><span class="pill hold">Ships with the app deploy; turn on per employer after the modules are uploaded</span></td></tr>
+      <tr><td><strong>12 Roadmap modules, refreshed.</strong> "The Employee Roadmap" name, phase labels, sourced figures (2026 IRS limits checked), no advice-like lines.</td><td><code>assets/bmm/employee-roadmap-modules/out/</code></td><td><span class="pill done">ChatGPT + Codex passed</span><br><span class="pill hold">Upload to file storage needs your OK</span></td></tr>
+      <tr><td><strong>WFS website v22.</strong> Roadmap page fixed: true claims only, locked trap names, approved funding sentence, pilot button now emails you.</td><td><code>_deploy/wfs-website-v22.zip</code> (1,707,448 B, md5 0cd28546…)</td><td><span class="pill done">ChatGPT + Codex passed</span><br><span class="pill hold">Ready for you to deploy</span></td></tr>
+      <tr><td><strong>Pilot kit.</strong> Employer one-pager, terms sheet, HR launch emails, employee FAQ, Day-21 review meeting guide.</td><td><code>assets/bmm/pilot-kit/</code></td><td><span class="pill done">ChatGPT passed, fixes applied</span></td></tr>
+      <tr><td><strong>"Why Wellness Fails" guide.</strong> Retired stats removed, locked trap names, privacy line corrected.</td><td><code>assets/bmm/employee-roadmap-guide/</code> + copy in <code>GTM/Sales-Tools/</code></td><td><span class="pill done">ChatGPT passed, fixes applied</span></td></tr>
+      <tr><td><strong>Competitor battlecard, objection answers, pilot target list.</strong></td><td><code>GTM/Sales-Tools/</code>, <code>GTM/Top100/BYB_Pilot_Targets_2026-10-04.csv</code></td><td><span class="pill done">Internal, sources checked</span></td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Still open, not built: a multi-company admin view (needed before any partner with many employers), and the old Challenge one-pager in <code>assets/bmm/one-pagers/</code> still carries a retired statistic; the new pilot one-pager replaces it for outside employers.</p>
+</section>
+
+<section class="decide">
+  <div class="eyebrow">Your calls</div>
+  <h2>Decisions only you can make</h2>
+  <ol>
+    <li><strong>Deploy the app fix and upload the modules.</strong> Both built and reviewed. The app deploy needs the Firebase tool (on your MacBook Pro) and runs in five steps over about two days. OK to do both when the Pro is back?</li>
+    <li><strong>The partner lane.</strong> My pick: keep the partner one-pager in the drawer until five groups have finished. A no-poaching promise gives away your best source of plan leads. The other way: say yes now for reach, and accept that those plans are off-limits.</li>
+    <li><strong>Pricing.</strong> Approve the draft tiers as working numbers, or tell me what to change. They stay off every external page until you say so.</li>
+    <li><strong>Scorecard targets.</strong> Confirm or change the four suggested targets before the first pilot starts.</li>
+    <li><strong>Capacity.</strong> How many groups you are willing to run by hand at once. My suggestion: 2 at a time this fall.</li>
+  </ol>
+</section>
+</main>

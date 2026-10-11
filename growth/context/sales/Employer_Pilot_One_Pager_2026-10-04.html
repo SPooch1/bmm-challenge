@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Bend Your Baseline employer pilot one-pager, built 2026-10-04. Replaces BMM_21-Day_Challenge_One-Pager for outside employers.
+     Stats: PwC EFWS 2026 59% and J.P. Morgan 2026 53% (CITED_STATISTICS_REFERENCE.md). No prices. No outcome claims.
+     Privacy lines describe what HR sees in the Day-21 summary; the database field-split fix is not yet deployed, so no technical promise is made. -->
+<title>Bend Your Baseline Employer Pilot</title>
+<style>
+  @page { size: 8.5in 11in; margin: 0; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root{
+    --cream:#F4EFE3; --card:#FFFFFF; --border:#E4DCCB;
+    --ink:#2A2722; --muted:#8C8474; --rule:#2A2722;
+    --p1:#0F172A; --p2:#155E84; --p3:#0EA5E9; --p4:#F59E0B;
+  }
+  html,body{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  body{
+    font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;
+    color:var(--ink); width:8.5in; height:11in; background:var(--cream);
+    padding:0.45in 0.55in 0.35in; display:flex; flex-direction:column; overflow:hidden;
+  }
+  .head{ display:flex; justify-content:space-between; align-items:flex-start; gap:16px; }
+  .over{ font-size:9.5px; font-weight:800; letter-spacing:2.5px; color:var(--p4); text-transform:uppercase; }
+  h1{ font-family:Georgia,serif; font-size:30px; color:var(--ink); line-height:1.05; margin:4px 0 5px; font-weight:700; }
+  .sub{ font-family:Georgia,serif; font-style:italic; font-size:13px; color:#5C564B; max-width:4.9in; line-height:1.35; }
+  .brand{ text-align:right; padding-top:2px; flex:0 0 auto; }
+  .logo{ font-size:12.5px; font-weight:800; letter-spacing:.3px; color:var(--ink); line-height:1.2; }
+  .logo .gold{ color:var(--p4); }
+  .tag{ font-size:8.5px; letter-spacing:1.5px; color:var(--muted); font-weight:700; text-transform:uppercase; margin-top:4px; line-height:1.35; }
+  .rule{ height:2.5px; background:var(--rule); margin:10px 0 11px; }
+
+  .lead{ display:flex; gap:14px; margin-bottom:11px; }
+  .lead .what{ flex:1.3; font-size:11px; line-height:1.5; color:#3C382F; }
+  .lead .what b{ color:var(--ink); }
+  .lead .why{ flex:1; background:var(--card); border:1px solid var(--border); border-radius:11px; padding:9px 12px; }
+  .lead .why .h{ font-size:8.5px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--p4); margin-bottom:5px; }
+  .stat{ display:flex; gap:10px; margin-bottom:5px; align-items:flex-start; }
+  .stat .n{ font-family:Georgia,serif; font-size:27px; font-weight:700; color:var(--p2); line-height:1; min-width:0.72in; }
+  .stat .t{ font-size:10px; line-height:1.38; color:#4A453B; }
+  .src{ font-size:7.8px; color:var(--muted); line-height:1.35; margin-top:3px; }
+
+  .sec-h{ font-family:Georgia,serif; font-size:14.5px; font-weight:700; color:var(--ink); margin:0 0 7px; }
+  .sec-h .em{ font-style:italic; }
+
+  .row3{ display:flex; border:1px solid var(--border); border-radius:11px; overflow:hidden; margin-bottom:11px; background:#fff; }
+  .row3 .c{ flex:1; padding:9px 12px; }
+  .row3 .c + .c{ border-left:1px solid var(--border); }
+  .wh{ font-size:8.5px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--p3); margin-bottom:4px; }
+  .ln{ font-size:10.2px; line-height:1.42; color:#4A453B; }
+  .ln b{ color:var(--ink); }
+
+  .two{ display:flex; gap:10px; margin-bottom:11px; }
+  .box{ flex:1; background:var(--card); border:1px solid var(--border); border-radius:11px; padding:9px 12px; }
+  .box .wh{ color:var(--p2); }
+  .li{ font-size:10.1px; line-height:1.4; color:#4A453B; padding-left:13px; position:relative; margin-bottom:3px; }
+  .li::before{ content:"+"; position:absolute; left:0; top:0; color:var(--p3); font-weight:800; }
+  .li.no::before{ content:"x"; color:#B45309; }
+  .li b{ color:var(--ink); }
+
+  .steps{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:11px; }
+  .step{ background:var(--card); border:1px solid var(--border); border-radius:11px; padding:8px 10px; }
+  .step .sn{ font-family:Georgia,serif; font-size:16px; font-weight:700; color:var(--p4); line-height:1; }
+  .step .st{ font-size:10.5px; font-weight:700; color:var(--ink); margin:3px 0 2px; line-height:1.2; }
+  .step .sd{ font-size:9.4px; line-height:1.33; color:#4A453B; }
+
+  .next{ background:#EDE6D6; border:1px dashed #CFC6B2; border-radius:10px; padding:8px 13px; font-size:10.4px; line-height:1.45; color:#3C382F; margin-bottom:11px; }
+  .next b{ color:var(--ink); }
+
+  .offer{ display:flex; gap:0; border-radius:11px; overflow:hidden; border:1px solid var(--border); margin-bottom:10px; }
+  .offer .o{ flex:1; background:#fff; padding:8px 10px; text-align:center; }
+  .offer .o + .o{ border-left:1px solid var(--border); }
+  .offer .big{ font-family:Georgia,serif; font-size:17px; font-weight:700; color:var(--p1); line-height:1.1; }
+  .offer .lab{ font-size:8.5px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); font-weight:700; margin-top:2px; }
+
+  .cta{ margin-top:auto; background:var(--p1); border-radius:12px; padding:12px 17px; display:flex; justify-content:space-between; align-items:center; gap:14px; color:#fff; }
+  .cta .ch{ font-family:Georgia,serif; font-size:15.5px; font-weight:700; line-height:1.25; max-width:3.6in; }
+  .cta .ch small{ display:block; font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-weight:400; font-size:10px; color:#C9D3DE; margin-top:3px; }
+  .cta .contact{ text-align:right; font-size:10.5px; line-height:1.5; }
+  .cta .contact .gold{ color:var(--p4); font-weight:800; }
+  .foot{ margin-top:6px; display:flex; justify-content:space-between; gap:12px; font-size:7.8px; color:var(--muted); line-height:1.35; }
+</style>
+</head>
+<body>
+  <div class="head">
+    <div>
+      <div class="over">For HR and finance at employers with a 401(k)</div>
+      <h1>Bend Your Baseline</h1>
+      <div class="sub">A free 21-day pilot for up to 25 of your employees. Small daily actions for money, health and stress, designed to build two things: momentum and money.</div>
+    </div>
+    <div class="brand">
+      <div class="logo">Workplace Financial <span class="gold">Solutions</span></div>
+      <div class="tag">Scott Pooch<br>Retirement Plan Consultant and Educator</div>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
+  <div class="lead">
+    <div class="what">
+      <b>Built for employers with a 401(k) and roughly 10 to 250 employees.</b> Your people get plenty of information already. Plan materials, benefit guides, newsletters. More information does not always make the next step easier for someone who is stretched thin.<br><br>
+      Bend Your Baseline starts with something to <b>do</b>, not something to read. Employees take a few minutes a day for 21 days, and each day asks for one small action they can choose to keep using after the challenge ends.
+    </div>
+    <div class="why">
+      <div class="h">What HR does</div>
+      <div class="li"><b>Picks a start date</b> and forwards one email with one link.</div>
+      <div class="li"><b>No employee list.</b> Employees sign themselves up. You never send names or emails.</div>
+      <div class="li"><b>20 minutes at kickoff, 30 at the review.</b> Scott runs the group from there.</div>
+    </div>
+  </div>
+
+  <div class="sec-h">What employees do: <span class="em">three daily targets</span></div>
+  <div class="row3">
+    <div class="c"><div class="wh">Money</div><div class="ln"><b>Start a Peace of Mind Account</b>, a separate savings account set aside for the next surprise bill.</div></div>
+    <div class="c"><div class="wh">Health</div><div class="ln"><b>One simple daily health action</b>, small enough to keep doing in a busy week.</div></div>
+    <div class="c"><div class="wh">Stress</div><div class="ln"><b>4x4x4x4 breathing</b>, a two-minute reset they can use when stress hits.</div></div>
+  </div>
+
+  <div class="two">
+    <div class="box">
+      <div class="wh">What employees say</div>
+      <div class="stat"><div class="n">59%</div><div class="t">of employees say they are stressed about their finances right now.</div></div>
+      <div class="stat"><div class="n">53%</div><div class="t">of 401(k) participants feel they get more information about their plans than they can absorb.</div></div>
+      <div class="src">Sources: PwC 2026 Employee Financial Wellness Survey (nearly 3,500 employees, January 2026). J.P. Morgan Asset Management 2026 DC Plan Participant Survey (1,716 participants at employers with 50 or more employees, January 2026).</div>
+    </div>
+    <div class="box">
+      <div class="wh">What HR sees</div>
+      <div class="li"><b>Who joined, how far along each person is, and whether they are still checking in.</b> Then a Day-21 summary with group averages.</div>
+      <div class="li"><b>The Day-21 summary covers</b> participation, completion, and the group's average start and end check-ins. Scott keeps the admin view; HR gets the Day-21 summary.</div>
+      <div class="li no"><b>Never</b> any one person's stress ratings, savings amounts, notes or survey answers.</div>
+    </div>
+  </div>
+
+  <div class="sec-h">How the pilot <span class="em">runs</span></div>
+  <div class="steps">
+    <div class="step"><div class="sn">1</div><div class="st">Kickoff call</div><div class="sd">20 minutes. We set the start date and you get the link and a ready-to-send email.</div></div>
+    <div class="step"><div class="sn">2</div><div class="st">Day 1</div><div class="sd">Employees join from the link on a phone or computer. Nothing to download from an app store.</div></div>
+    <div class="step"><div class="sn">3</div><div class="st">Day 21</div><div class="sd">The 21-Day Challenge ends. The app switches to Keep Your Margin, a lighter follow-on mode, for employees who want to keep using it.</div></div>
+    <div class="step"><div class="sn">4</div><div class="st">Review meeting</div><div class="sd">Within about a week. We walk through the Day-21 summary together. You decide what comes next.</div></div>
+  </div>
+
+  <div class="next"><b>What comes next, if you want it: The Employee Roadmap.</b> Twelve monthly modules across four phases (Get Grounded, Take Control, Grow &amp; Protect, Finish Strong), one action at a time. The 21-Day Challenge is Month 1. The Roadmap is delivered as part of a Workplace Financial Solutions engagement, and we pay for it with what we call Reallo(k)ate: most, and sometimes all, of the funding comes from what you already spend on the plan. There may be some added cost, but it is rarely an entirely new outlay. We talk through options at the review.</div>
+
+  <div class="offer">
+    <div class="o"><div class="big">21 days</div><div class="lab">One group, one start date</div></div>
+    <div class="o"><div class="big">Up to 25</div><div class="lab">Employees</div></div>
+    <div class="o"><div class="big">Zero cost</div><div class="lab">For the 21-day pilot</div></div>
+    <div class="o"><div class="big">Zero obligation</div><div class="lab">You decide at the review</div></div>
+  </div>
+
+  <div class="cta">
+    <div class="ch">Book the free 21-day pilot.<small>A 20-minute call sets the start date, or email a question first.</small></div>
+    <div class="contact">
+      <span class="gold">workplacefinancialsolutions.com/book</span><br>
+      scott@scottpooch.com &middot; 614-434-6670<br>
+      Scott Pooch &middot; Columbus, Ohio
+    </div>
+  </div>
+  <div class="foot">
+    <span>Education, not advice. The app runs on the Build More Margin platform. The Peace of Mind Account is opened at the employee's own bank; the app tracks progress and moves no money.</span>
+    <span>workplacefinancialsolutions.com</span>
+  </div>
+</body>
+</html>

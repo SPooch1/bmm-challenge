@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="700" viewBox="0 0 1500 700" font-family="Helvetica, Arial, sans-serif">
+<rect width="1500" height="700" fill="#ffffff"/>
+<line x1="110" y1="590" x2="1420" y2="590" stroke="#0F172A" stroke-width="4"/>
+<line x1="110" y1="590" x2="110" y2="70" stroke="#0F172A" stroke-width="4"/>
+<text stroke="#ffffff" stroke-width="12" paint-order="stroke" stroke-linejoin="round" x="1420" y="640" text-anchor="end" font-size="42" fill="#334155">Time</text>
+<text stroke="#ffffff" stroke-width="12" paint-order="stroke" stroke-linejoin="round" x="60" y="330" text-anchor="middle" font-size="42" fill="#334155" transform="rotate(-90 60 330)">Where you are</text>
+<line x1="110" y1="520" x2="1400" y2="520" stroke="#94A3B8" stroke-width="4" stroke-dasharray="14 12"/>
+<path d="M110 520 C 170 520, 200 170, 270 170 S 360 520, 420 520 C 480 520, 510 190, 580 190 S 670 520, 730 520 C 790 520, 820 160, 890 160 S 980 520, 1040 520 C 1100 520, 1130 200, 1200 200 S 1290 520, 1400 520" fill="none" stroke="#0F172A" stroke-width="9"/><text stroke="#ffffff" stroke-width="12" paint-order="stroke" stroke-linejoin="round" x="270" y="145" text-anchor="middle" font-size="42" fill="#0F172A">The push</text>
+<text stroke="#ffffff" stroke-width="12" paint-order="stroke" stroke-linejoin="round" x="1405" y="572" text-anchor="end" font-size="42" fill="#475569">Back to the same baseline</text></svg>
