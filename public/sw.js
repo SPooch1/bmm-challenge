@@ -16,6 +16,7 @@ const STATIC_ASSETS = [
   '/js/breathing-timer.js',
   '/js/peace-of-mind.js',
   '/js/survey.js',
+  '/js/reminder.js',
   '/js/app.js',
   '/content/days.json',
   '/manifest.json',

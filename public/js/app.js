@@ -562,6 +562,13 @@ function showToast(message) {
     // Re-run the 21 days (individual accounts; cohort accounts get a note)
     Margin.renderRestartCard(userData, progressData ? progressData.logs : {}, progressData, postSurvey);
 
+    // Daily reminder (calendar alert; the app sends no notifications). Prompt on
+    // the Today view for the first days, always available on Profile.
+    if (typeof Reminder !== 'undefined') {
+      Reminder.render(document.getElementById('reminder-card'), { startDate, marginMode });
+      if (!marginMode && day <= 3) Reminder.render(document.getElementById('reminder-prompt'), { startDate, marginMode, dismissable: true });
+    }
+
     // Home-screen shortcuts (manifest.json) and links can open a specific tab
     const wantedView = (new URLSearchParams(window.location.search).get('view') || '').toLowerCase();
     if (['today', 'progress', 'breathing', 'savings', 'profile'].includes(wantedView) && !document.getElementById('view-survey').classList.contains('active')) {
