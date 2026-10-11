@@ -115,7 +115,7 @@ const Reminder = (() => {
     box.innerHTML = `
       <h3 style="display:flex;align-items:center;justify-content:space-between;">Daily reminder
         ${opts.dismissable ? '<button type="button" id="reminder-dismiss" aria-label="Hide this reminder prompt" style="background:none;border:none;color:var(--slate);font-size:1.2rem;cursor:pointer;padding:0 4px;">&times;</button>' : ''}</h3>
-      <p style="font-size:0.9rem;color:var(--slate);margin-top:6px;">This app does not send notifications. A daily calendar alert does the same job. Pick a time, then add it.</p>
+      <p style="font-size:0.9rem;color:var(--slate);margin-top:6px;">This app does not send notifications. Your phone's calendar can remind you instead. Pick a time, then add it.</p>
       <div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap;">
         <label for="reminder-time" style="font-size:0.85rem;font-weight:600;">Time</label>
         <input type="time" id="reminder-time" value="${time}" style="flex:0 0 130px;">

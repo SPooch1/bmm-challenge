@@ -67,7 +67,7 @@ Other people using the app can't see your entries.
 
 # Day 1: Name Your Yo-Yo
 
-Maybe you live on a yo-yo in at least one area of life. We spike, we crash, we promise to restart. Today, we stop the promising and start with the truth.
+Maybe you live on a yo-yo in at least one area of life. You spike, you crash, you promise to restart. Today, we stop the promising and start with the truth.
 
 Think back over the last few years. Where have you cycled? Where have you started strong more than once and ended up back at the beginning?
 
