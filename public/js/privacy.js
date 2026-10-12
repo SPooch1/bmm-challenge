@@ -12,7 +12,7 @@ const Privacy = (() => {
   // keeps working mid-cohort. Flip to false before the final rules go out (see the
   // deploy order in CLAUDE.md). If the server already enforces the final rules, a
   // dual write is refused and the app retries the lean write on its own.
-  const LEGACY_DUAL_WRITE = false;
+  const LEGACY_DUAL_WRITE = true;
 
   const DAILY_PRIVATE = ['stress', 'sleep', 'steps', 'notes'];
   const DAILY_SHELL = ['completed', 'action', 'breathing', 'meal'];

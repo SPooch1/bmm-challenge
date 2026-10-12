@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bmm-challenge-v15';
+const CACHE_NAME = 'bmm-challenge-v14';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
