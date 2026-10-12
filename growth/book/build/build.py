@@ -17,7 +17,15 @@ PARTS = ['01_front_and_part1.md', '02_part2_week1.md', '03_part2_week2.md',
          '04_part2_week3.md', '05_part3_and_back.md']
 
 def run(*a):
-    subprocess.run(a, check=True, capture_output=True)
+    # Headless Chrome sometimes writes its output and then never exits (MBP, 10/11).
+    # Give it two minutes; if the output file was written during the call, carry on.
+    out = next((x.split('=', 1)[1] for x in a if x.startswith(('--print-to-pdf=', '--screenshot='))), None)
+    start = __import__('time').time()
+    try:
+        subprocess.run(a, check=True, capture_output=True, timeout=120 if out else None)
+    except subprocess.TimeoutExpired:
+        if not (out and os.path.exists(out) and os.path.getmtime(out) >= start):
+            raise
 
 def chrome_pdf(src_html, out_pdf):
     run(CHROME, '--headless=new', '--disable-gpu', '--user-data-dir=/tmp/byb-book-chrome', '--no-first-run', '--no-pdf-header-footer',
