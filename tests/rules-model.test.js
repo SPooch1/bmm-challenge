@@ -413,7 +413,8 @@ test('app paths: dual write, lean fallback under final rules, merged reads', asy
     const shell = app.fake.read('users/amy/dailyLogs/3');
     const priv = app.fake.read('users/amy/dailyLogs/3/private/data');
     assert.equal(priv.stress, 6); assert.equal(priv.notes, 'hi');
-    if (mode === 'transitional') assert.equal(shell.stress, 6, 'dual write');
+    const dualWrite = /LEGACY_DUAL_WRITE = true/.test(require('fs').readFileSync(require('path').join(__dirname, '../public/js/privacy.js'), 'utf8'));
+    if (mode === 'transitional' && dualWrite) assert.equal(shell.stress, 6, 'dual write');
     else assert.equal(shell.stress, undefined, 'lean fallback');
     const logs = await app.Privacy.loadDailyLogs('amy');
     assert.equal(logs['3'].stress, 6); assert.equal(logs['3'].completed, true); assert.equal(logs['3'].notes, 'hi');
@@ -421,7 +422,7 @@ test('app paths: dual write, lean fallback under final rules, merged reads', asy
     assert.deepEqual((await app.Privacy.loadAssessment('amy', 'pre')).responses, { stress: 8, sleep: 4 });
     await app.Privacy.saveSavings('amy', [{ amount: 25, iso: '2026-10-01' }]);
     assert.equal((await app.Privacy.loadSavings('amy'))[0].amount, 25);
-    assert.equal(app.fake.read('users/amy').savingsEntries === undefined, mode === 'final');
+    assert.equal(app.fake.read('users/amy').savingsEntries === undefined, mode === 'final' || !dualWrite);
   }
 });
 

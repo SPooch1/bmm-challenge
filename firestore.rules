@@ -1,10 +1,7 @@
 rules_version = '2';
 // Privacy field split + aggregates + seat cap (2026-10-04).
-// THIS FILE = the TRANSITIONAL rules (deploy step 1). Blocks between
-// ">>> TRANSITIONAL" and "<<< TRANSITIONAL" exist only for the dual-write window
-// and the one-time migration; lines starting "// [FINAL] " replace them in the
-// final rules. Generate the final file with `node tools/make-final-rules.js`
-// (writes firestore.rules.final) and follow the deploy order in CLAUDE.md.
+// THIS FILE = the FINAL rules (deploy step 5), generated from firestore.rules by
+// tools/make-final-rules.js. Do not edit by hand.
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -33,13 +30,6 @@ service cloud.firestore {
       return signedIn() && cid != null && isCompanyAdmin(cid);
     }
 
-    // >>> TRANSITIONAL
-    // One-time migration (tools/migrate.html), run by Scott's account with
-    // migrator: true set in the Firestore console. Removed in the final rules.
-    function isMigrator() {
-      return signedIn() && userData(request.auth.uid).get('migrator', false) == true;
-    }
-    // <<< TRANSITIONAL
 
     // Fields an admin may see on a daily shell / survey shell.
     function dailyShellFields() { return ['completed', 'action', 'breathing', 'meal', 'savedAt']; }
@@ -190,39 +180,23 @@ service cloud.firestore {
         && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'companyId', 'inviteCode', 'migrator', 'cohortManager', 'privacyV'])
         // a doc marked clean (admin-readable) can never take the old savings fields again
         && !(resource.data.get('privacyV', 0) == 2 && request.resource.data.keys().hasAny(['savingsEntries', 'savingsRev']))
-        // [FINAL]         && !request.resource.data.keys().hasAny(['savingsEntries', 'savingsRev'])
+        && !request.resource.data.keys().hasAny(['savingsEntries', 'savingsRev'])
         ;
 
-      // >>> TRANSITIONAL
-      allow read, update: if isMigrator();
-      // <<< TRANSITIONAL
     }
 
     // Daily log SHELL: engagement only (completed, action, breathing, meal, savedAt).
     // The admin read is a get, and only on a shell holding nothing but those fields.
     match /users/{userId}/dailyLogs/{day} {
       allow read, delete: if isOwner(userId);
-      // >>> TRANSITIONAL
-      // Dual-write window: the old private fields may still be written to the shell.
       allow create, update: if isOwner(userId)
-        && request.resource.data.keys().hasOnly(['completed', 'action', 'breathing', 'meal', 'savedAt', 'stress', 'sleep', 'steps', 'notes']);
-      // Old-format shells (with private fields) are readable only by the migrator
-      // account (Scott), never by an HR admin, even during the window.
+        && request.resource.data.keys().hasOnly(dailyShellFields());
       allow get: if (resource == null || resource.data.keys().hasOnly(dailyShellFields()))
         && isAdminOf(userId);
-      allow read, update: if isMigrator();
-      // <<< TRANSITIONAL
-      // [FINAL]       allow create, update: if isOwner(userId)
-      // [FINAL]         && request.resource.data.keys().hasOnly(dailyShellFields());
-      // [FINAL]       allow get: if (resource == null || resource.data.keys().hasOnly(dailyShellFields()))
-      // [FINAL]         && isAdminOf(userId);
 
       // stress, sleep, steps, notes: OWNER ONLY. No admin branch, on purpose.
       match /private/{doc} {
         allow read, write: if isOwner(userId);
-        // >>> TRANSITIONAL
-        allow read, write: if isMigrator();
-        // <<< TRANSITIONAL
       }
     }
 
@@ -230,20 +204,12 @@ service cloud.firestore {
     // (cohort averages come from the aggregates).
     match /users/{userId}/assessments/{type} {
       allow read, delete: if isOwner(userId);
-      // >>> TRANSITIONAL
       allow create, update: if isOwner(userId)
-        && request.resource.data.keys().hasOnly(['completedAt', 'responses']);
-      allow read, update: if isMigrator();
-      // <<< TRANSITIONAL
-      // [FINAL]       allow create, update: if isOwner(userId)
-      // [FINAL]         && request.resource.data.keys().hasOnly(['completedAt']);
+        && request.resource.data.keys().hasOnly(['completedAt']);
 
       // Raw survey responses: OWNER ONLY. No admin branch, on purpose.
       match /private/{doc} {
         allow read, write: if isOwner(userId);
-        // >>> TRANSITIONAL
-        allow read, write: if isMigrator();
-        // <<< TRANSITIONAL
       }
     }
 
@@ -252,9 +218,6 @@ service cloud.firestore {
     // (the Peace of Mind Account entries).
     match /users/{userId}/private/{doc} {
       allow read, write: if isOwner(userId);
-      // >>> TRANSITIONAL
-      allow read, write: if doc == 'savings' && isMigrator();
-      // <<< TRANSITIONAL
     }
     match /users/{userId}/marginLogs/{date} {
       allow read, write: if isOwner(userId);
@@ -277,9 +240,6 @@ service cloud.firestore {
     match /users/{userId}/aggLedger/{bucket} {
       allow read: if isOwner(userId);
       allow create, update: if isOwner(userId) && ledgerWriteOk(userId, bucket);
-      // >>> TRANSITIONAL
-      allow read, write: if isMigrator();
-      // <<< TRANSITIONAL
     }
 
     // Companies: admin of that company
@@ -296,9 +256,6 @@ service cloud.firestore {
         && (resource == null || readable(bucket, resource.data));
       allow create: if signedIn() && aggWriteOk(companyId, bucket, {});
       allow update: if signedIn() && aggWriteOk(companyId, bucket, resource.data);
-      // >>> TRANSITIONAL
-      allow read, write: if isMigrator();
-      // <<< TRANSITIONAL
     }
 
     // ---- Funnel counts (program owner only) ----
@@ -336,10 +293,6 @@ service cloud.firestore {
       allow update: if signedIn() && isCompanyAdmin(resource.data.companyId)
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['active'])
         && request.resource.data.active == false;
-      // >>> TRANSITIONAL
-      // Migration backfills seatsUsed on codes minted before seat counting.
-      allow read, update: if isMigrator();
-      // <<< TRANSITIONAL
       // Participant: claim one seat while creating their own user doc in the same
       // batch. Only seatsUsed changes, by exactly +1, never past maxSeats.
       allow update: if signedIn()
